@@ -553,11 +553,10 @@ class offerController {
         if(offerstype=="bestprices")
         {
           // Filter objects with offer value "enable" and sort them based on rate in descending order
-          let enabledObjects = offerarray.filter(obj => obj.offerED === "enable").sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate));
+          let enabledObjects = offerarray.filter(obj => obj.offerED === "enable" && obj.visibility==1).sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate));
 
           // Filter objects with offer value "disable" and sort them based on min in descending order
-          let disabledObjects = offerarray.filter(obj => obj.offerED === "disable")
-          .sort((a, b) => parseFloat(b.min) - parseFloat(a.min));
+          let disabledObjects = offerarray.filter(obj => obj.offerED === "disable" && obj.visibility==1).sort((a, b) => parseFloat(b.min) - parseFloat(a.min));
 
           // Concatenate the sorted arrays
           let sortedArray = enabledObjects.concat(disabledObjects);
