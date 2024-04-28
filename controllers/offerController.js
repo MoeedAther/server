@@ -560,16 +560,23 @@ class offerController {
 
           // Concatenate the sorted arrays
           let sortedArray = enabledObjects.concat(disabledObjects);
-
           return sortedArray;
+
         }else if(offerstype=="fastestswap"){
           let fastestswap_array=[offerarray[9], offerarray[10], offerarray[0], offerarray[1], offerarray[11], offerarray[12], offerarray[13], offerarray[14], offerarray[2], offerarray[3], offerarray[4], offerarray[5], offerarray[8], offerarray[6], offerarray[7] ];
           console.log("Fastest Swap");
-          return fastestswap_array;
+
+              // Filter out objects with visibility equal to 0
+              fastestswap_array = fastestswap_array.filter(obj => obj.visibility !== 0);
+              return fastestswap_array;
+
         }else if(offerstype=="bestrating"){
           let bestrating_array=[offerarray[11], offerarray[12], offerarray[9], offerarray[10], offerarray[8], offerarray[2], offerarray[3], offerarray[13], offerarray[14], offerarray[6], offerarray[7], offerarray[0], offerarray[1], offerarray[4], offerarray[5] ];
           console.log("Best Rating");
-          return bestrating_array;
+
+              // Filter out objects with visibility equal to 0
+              bestrating_array = bestrating_array.filter(obj => obj.visibility !== 0);
+              return bestrating_array;
         }
       }
 
