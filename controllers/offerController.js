@@ -94,7 +94,7 @@ class offerController {
 
     try {
 
-      const { sell, get, amount, offerstype } = req.body;
+      const { sell, get, amount, offerstype, fixed } = req.body;
       var sendingamount=parseFloat(amount);
       var response1, response2, response3, response4, response5, response6, response7, response8, response9, response10, response11, response12, response13, response14, response15, response16, response17, response18, response19, response20, response21;
       const apicalldelay = 1000;
@@ -549,17 +549,20 @@ class offerController {
       ];
 
       //Arranging offers based on offer sequence type function
-      function sortArrayDescending(offerarray, basevariable) {
+      function sortArrayDescending(offerarray) {
         if(offerstype=="bestprices")
         {
           // Filter objects with offer value "enable" and sort them based on rate in descending order
           let enabledObjects = offerarray.filter(obj => obj.offerED === "enable" && obj.visibility==1).sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate));
 
           // Filter objects with offer value "disable" and sort them based on min in descending order
-          let disabledObjects = offerarray.filter(obj => obj.offerED === "disable" && obj.visibility==1).sort((a, b) => parseFloat(b.min) - parseFloat(a.min));
+          let disabledObjects = offerarray.filter(obj => obj.offerED === "disable" && obj.visibility === 1).sort((a, b) => parseFloat(a.min) - parseFloat(b.min));
 
           // Concatenate the sorted arrays
           let sortedArray = enabledObjects.concat(disabledObjects);
+          
+          sortedArray=fixed=="Floating"?sortedArray.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):sortedArray.filter(obj => obj.transaction_type ==="Fixed");
+
           return sortedArray;
 
         }else if(offerstype=="fastestswap"){
@@ -568,6 +571,9 @@ class offerController {
 
               // Filter out objects with visibility equal to 0
               fastestswap_array = fastestswap_array.filter(obj => obj.visibility !== 0);
+              
+              fastestswap_array=fixed=="Floating"?fastestswap_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):fastestswap_array.filter(obj => obj.transaction_type ==="Fixed");
+              
               return fastestswap_array;
 
         }else if(offerstype=="bestrating"){
@@ -576,6 +582,9 @@ class offerController {
 
               // Filter out objects with visibility equal to 0
               bestrating_array = bestrating_array.filter(obj => obj.visibility !== 0);
+
+              bestrating_array=fixed=="Floating"?bestrating_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):bestrating_array.filter(obj => obj.transaction_type ==="Fixed");
+
               return bestrating_array;
         }
       }
