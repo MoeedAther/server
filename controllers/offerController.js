@@ -98,7 +98,7 @@ class offerController {
       var sendingamount=parseFloat(amount);
       var response1, response2, response3, response4, response5, response6, response7, response8, response9, response10, response11, response12, response13, response14, response15, response16, response17, response18, response19, response20, response21;
       const apicalldelay = 1000;
-      const responsecalldelay = 4000;
+      const responsecalldelay = 3500;
 
       //**************** Common Variables for Changelly *********************//
       const privateKey = crypto.createPrivateKey({
