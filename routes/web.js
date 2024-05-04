@@ -8,7 +8,7 @@ const router=express.Router();
 router.post('/pricecheck', offerController.offers)
 
 //Offer Controller
-router.post('/offers', offerController.offers)
+router.post('/offers', offerController.homeprice)
 
 
 export default router
