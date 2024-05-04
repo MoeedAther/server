@@ -1060,6 +1060,7 @@ class offerController {
 
   static homeprice = async (req, res) => {
     const { sel, get, amount } = req.body;
+    console.log("Hi Moeed")
     if (amount != "0" && amount != "0." && amount != 0 && amount != "") {
   
       const url=`https://api.changenow.io/v1/min-amount/${sel}_${get}?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
