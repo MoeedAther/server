@@ -98,7 +98,7 @@ class offerController {
       var sendingamount=parseFloat(amount);
       var response1, response2, response3, response4, response5, response6, response7, response8, response9, response10, response11, response12, response13, response14, response15, response16, response17, response18, response19, response20, response21;
       const apicalldelay = 1000;
-      const responsecalldelay = 3500;
+      const responsecalldelay = 4000;
 
       //**************** Common Variables for Changelly *********************//
       const privateKey = crypto.createPrivateKey({
@@ -261,6 +261,7 @@ class offerController {
           changenow_fixed_visibility=1;
         }
     } catch (error) {
+      
       console.log("Changenow Minimum and Maximum Fixed Response Handeling", error)
     }
       //********************* Changenow Floating Response Handeling **********************//
@@ -270,6 +271,7 @@ class offerController {
             changenow_floating_price = parseFloat(result2.estimatedAmount);
           }
       } catch (error) {
+        
         console.log("Changenow Floating Response Handeling",error)
       }
 
@@ -281,6 +283,7 @@ class offerController {
             changenow_fixed_rateId=result3.rateId
           }
       } catch (error) {
+        
         console.log("Changenow Fixed Response Handeling", error)
       }
 
@@ -296,6 +299,7 @@ class offerController {
           changehero_fixed_visibility=1;
         }
     } catch (error) {
+      
       console.log("Changehero Minimum and Maximum Floating Response Handeling", error)
     }
 
@@ -307,6 +311,7 @@ class offerController {
           changehero_floating_price=parseFloat(result.result);
         }
     } catch (error) {
+      
       console.log("Changehero Floating Response Handeling", error)
     }
 
@@ -320,6 +325,7 @@ class offerController {
           changehero_fixed_rateId=result.result[0].id;
         }
     } catch (error) {
+      
       console.log("Changehero Fixed Response Handeling", error)
     }
 
@@ -343,6 +349,7 @@ class offerController {
           }
         }
     } catch (error) {
+      
       console.log("Exolix Floating Response Handeling",error)
     }
 
@@ -364,6 +371,7 @@ class offerController {
           }
         }
     } catch (error) {
+      
         console.log("Exolix Fixed Response Handeling",error)
     }
 
@@ -381,6 +389,7 @@ class offerController {
           }
         }
     } catch (error) {
+      
       console.log("Godex Floating Response Handeling",error)
     }
 
@@ -397,6 +406,7 @@ class offerController {
           }
         }
     } catch (error) {
+      
       console.log(" Letsexchange Floating Response Handeling ", error)
     }
 
@@ -414,6 +424,7 @@ class offerController {
           }
         }
     } catch (error) {
+      
       console.log("Letsexchange Fixed Response Handeling",error)
     }
     
@@ -426,6 +437,7 @@ class offerController {
           stealthex_floating_visibility=1;
         }
     } catch (error) {
+      
       console.log("Stealthex Minmum Maximum Floating Api Response Handeling",error)
     }
 
@@ -438,6 +450,7 @@ class offerController {
           stealthex_fixed_visibility=1;
         }
     } catch (error) {
+      
       console.log("Stealthex Minmum Maximum Fixed Api Response Handeling",error)
     }
 
@@ -449,6 +462,7 @@ class offerController {
             stealthex_floating_price=parseFloat(result.estimated_amount);
         }
     } catch (error) {
+      
       console.log("Stealthex Floating Response Handeling",error);
       
     }
@@ -462,6 +476,7 @@ class offerController {
             stealthex_fixed_rateId=result.rate_id;
         }
     } catch (error) {
+      
       console.log("Stealthex Fixed Response Handeling",error)
     }
 
@@ -474,6 +489,7 @@ class offerController {
             simpleswap_floating_visibility=1;
         }
     } catch (error) {
+      
       console.log("Simpleswap Minimum Maximum Floating Response Handeling",error)
     }
 
@@ -487,7 +503,8 @@ class offerController {
             simpleswap_fixed_visibility=1;
         }
     } catch (error) {
-          console.log("Simpleswap Minimum Maximum Fixed Response Handeling",error)
+      
+      console.log("Simpleswap Minimum Maximum Fixed Response Handeling",error)
     }
 
       //*************** Simpleswap Floating Response Handeling ******************//
@@ -497,7 +514,8 @@ class offerController {
             simpleswap_floating_price=parseFloat(result);
         }
     } catch (error) {
-        console.log("Simpleswap Floating Response Handeling",error);
+      
+      console.log("Simpleswap Floating Response Handeling",error);
     }
 
 
@@ -509,6 +527,7 @@ class offerController {
             simpleswap_fixed_price=parseFloat(result);
         }
     } catch (error) {
+      
       console.log("Simpleswap Fixed Response Handeling",error);      
     }
 
@@ -590,6 +609,7 @@ class offerController {
       }
 
       const sortedArray = sortArrayDescending(offerarray, "rate");
+      console.log(sortedArray);
       return res.json({bestoffer:sortedArray[0].rate, offersarray:sortedArray});
       },responsecalldelay);
 
@@ -611,6 +631,7 @@ class offerController {
             }
 
           } catch (error) {
+            
             console.log("Changelly Minimum and Maximum Fixed and Floating",error);
           }
         })
@@ -627,6 +648,7 @@ class offerController {
               changelly_floating_price = parseFloat(data.result[0].amountTo);
             }
           } catch (error) {
+            
             console.log("Changelly Floating Api Call",error)
           }
         })
@@ -644,6 +666,7 @@ class offerController {
                   changelly_fixed_rateId= data.result[0].id;
                 }   
             } catch (error) {
+              
               console.log("Changelly Fixed Api Call", error);          
             }
           })
@@ -654,39 +677,45 @@ class offerController {
 
       //********************************************* Changenow Minimum Maximum Floating Api Call *******************************************/
       setTimeout(async() => {
-
+        try {
           response1 = await fetch(
-          `https://api.changenow.io/v2/exchange/range?fromCurrency=${sell}&toCurrency=${get}&flow=standard`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-changenow-api-key":changenow_api_key
-            },
-          }
-        )     
+            `https://api.changenow.io/v2/exchange/range?fromCurrency=${sell}&toCurrency=${get}&flow=standard`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                "x-changenow-api-key":changenow_api_key
+              },
+            }
+          )           
+        } catch (error) {
+          console.log("Changenow Minimum Maximum Floating Api Call", error);
+        }  
       
     }, apicalldelay)
 
       //********************************************* Changenow Minimum Maximum Fixed Api Call *******************************************/
       setTimeout(async() => {
-
+        try {
           response20 = await fetch(
-          `https://api.changenow.io/v2/exchange/range?fromCurrency=${sell}&toCurrency=${get}&flow=fixed-rate`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-changenow-api-key":changenow_api_key
-            },
-          }
-        )     
+            `https://api.changenow.io/v2/exchange/range?fromCurrency=${sell}&toCurrency=${get}&flow=fixed-rate`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                "x-changenow-api-key":changenow_api_key
+              },
+            }
+          ) 
+        } catch (error) {
+          console.log("Changenow Minimum Maximum Fixed Api Call", error);
+        }    
       
     }, apicalldelay)
 
       //********************************************* Changenow Floating Api Call *******************************************/
       setTimeout(async() => {
-  
+        try {
           response2 = await fetch(
             `https://api.changenow.io/v1/exchange-amount/${amount}/${sell}_${get}/?api_key=${changenow_api_key}`,
             {
@@ -695,14 +724,17 @@ class offerController {
                 "Content-Type": "application/json",
               },
             }
-          )       
+          )  
+        } catch (error) {
+          console.log("Changenow Floating Api Call", error);
+        }     
       
     }, apicalldelay)
 
 
       //********************************************* Changenow Fixed Api Call *******************************************/
       setTimeout(async() => {
-
+        try {
           response3 = await fetch(
             `https://api.changenow.io/v1/exchange-amount/fixed-rate/${amount}/${sell}_${get}?api_key=${changenow_api_key}&useRateId=true`,
             {
@@ -711,36 +743,42 @@ class offerController {
                 "Content-Type": "application/json",
               },
             }
-          )       
+          ) 
+        } catch (error) {
+          console.log("Changenow Fixed Api Call", error);
+        }      
       
     }, apicalldelay)
 
     //********************************************* Changehero Minimum and Maximum Floating Api Call *******************************************/
     setTimeout(async() => {
-
-      const param1 = {
-        jsonrpc: "2.0",
-        method: "getMinAmount",
-        params: {
-          from: sell,
-          to: get,
-        },
-      };
-
-      response4 = await fetch(`https://api.changehero.io/v2/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "api-key": changehero_api_key,
-        },
-        body: JSON.stringify(param1),
-      })     
+      try {
+        const param1 = {
+          jsonrpc: "2.0",
+          method: "getMinAmount",
+          params: {
+            from: sell,
+            to: get,
+          },
+        };
+  
+        response4 = await fetch(`https://api.changehero.io/v2/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "api-key": changehero_api_key,
+          },
+          body: JSON.stringify(param1),
+        })  
+      } catch (error) {
+        console.log("Changehero Minimum and Maximum Floating Api Call", error);
+      }   
   
 }, apicalldelay)
 
     //********************************************* Changehero Minimum and Maximum Fixed Api Call *******************************************/
     setTimeout(async() => {
-
+      try {
         const param = {
           jsonrpc: "2.0",
           method: "getFixRate",
@@ -757,118 +795,137 @@ class offerController {
           },
           body: JSON.stringify(param),
         })
+      } catch (error) {
+        console.log("Changehero Minimum and Maximum Fixed Api Call", error);
+      }
     
   }, apicalldelay)
 
       //********************************************* Changehero Floating Api Call *******************************************/
       setTimeout(async() => {
-
-        const param2 = {
-          jsonrpc: "2.0",
-          method: "getExchangeAmount",
-          params: {
-            from: sell,
-            to: get,
-            amount:amount
-          },
-        };
-
-        response5 = await fetch(
-          `https://api.changehero.io/v2/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "api-key": changehero_api_key,
+        try {
+          const param2 = {
+            jsonrpc: "2.0",
+            method: "getExchangeAmount",
+            params: {
+              from: sell,
+              to: get,
+              amount:amount
             },
-            body: JSON.stringify(param2),
-          }
-        )     
+          };
+  
+          response5 = await fetch(
+            `https://api.changehero.io/v2/`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "api-key": changehero_api_key,
+              },
+              body: JSON.stringify(param2),
+            }
+          )    
+        } catch (error) {
+          console.log("Changehero Floating Api Call", error);
+        } 
     
   }, apicalldelay)
 
 
       //********************************************* Changehero Fixed Api Call *******************************************/
       setTimeout(async() => {
-
-        const param = {
-          jsonrpc: "2.0",
-          method: "getFixRate",
-          params: {
-            from: sell,
-            to: get,
-          },
-        };
-        response6 = await fetch(`https://api.changehero.io/v2/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "api-key": changehero_api_key,
-          },
-          body: JSON.stringify(param),
-        })
+        try {
+          const param = {
+            jsonrpc: "2.0",
+            method: "getFixRate",
+            params: {
+              from: sell,
+              to: get,
+            },
+          };
+          response6 = await fetch(`https://api.changehero.io/v2/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "api-key": changehero_api_key,
+            },
+            body: JSON.stringify(param),
+          })
+        } catch (error) {
+          console.log("Changehero Fixed Api Call", error);
+        }
+       
     
   }, apicalldelay)
 
 
       //********************************************* Exolix Floating Api Call *******************************************/
       setTimeout(async() => {
-
-        response7 = await fetch(
-          `https://exolix.com/api/v2/rate?coinFrom=${sell}&coinTo=${get}&amount=${amount}&rateType=float`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )  
-    
-  }, apicalldelay)
-
-      //********************************************* Exolix Fixed Api Call *******************************************/
-        setTimeout(async() => {
-
-          response8 = await fetch(
-            `https://exolix.com/api/v2/rate?coinFrom=${sell}&coinTo=${get}&amount=${amount}&rateType=fixed`,
+        try {
+          response7 = await fetch(
+            `https://exolix.com/api/v2/rate?coinFrom=${sell}&coinTo=${get}&amount=${amount}&rateType=float`,
             {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
               },
             }
-          )
+          )  
+        } catch (error) {
+          console.log("Exolix Floating Api Call", error);
+        }
+    
+  }, apicalldelay)
+
+      //********************************************* Exolix Fixed Api Call *******************************************/
+        setTimeout(async() => {
+          try {
+            response8 = await fetch(
+              `https://exolix.com/api/v2/rate?coinFrom=${sell}&coinTo=${get}&amount=${amount}&rateType=fixed`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+          } catch (error) {
+            console.log("Exolix Fixed Api Call", error);
+          }
       
     }, apicalldelay)
 
       //********************************************* Godex Floating Api Call *******************************************/
       setTimeout(async() => {
-
-        const param = {
-          from: sell.toUpperCase(),
-          to: get.toUpperCase(),
-          amount: amount,
-        };
-
-        response9 = await fetch(
-          `https://api.godex.io/api/v1/info`,
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(param),
-          }
-        )
+        try {
+          const param = {
+            from: sell.toUpperCase(),
+            to: get.toUpperCase(),
+            amount: amount,
+          };
+  
+          response9 = await fetch(
+            `https://api.godex.io/api/v1/info`,
+            {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(param),
+            }
+          )
+        } catch (error) {
+          console.log("Exolix Floating Api Call", error);
+        }
     
   }, apicalldelay)
 
 
       //********************************************* Letsexchange Floating Api Call *******************************************/
       setTimeout(async () => {
-
-        let toncoinsell, toncoinget,param;
+        try {
+          let toncoinsell, toncoinget,param;
         if(sell=="toncoin" || get=="toncoin"){
           toncoinsell=sell=="toncoin"?"TON-ERC20":sell;
           toncoinget=get=="toncoin"?"TON-ERC20":get;
@@ -898,13 +955,16 @@ class offerController {
           },
           body: JSON.stringify(param),
         })
+        } catch (error) {
+          console.log("Letsexchange Floating Api Call", error);
+        }
 
       }, apicalldelay)
 
       //********************************************* Letsexchange Fixed Api Call *******************************************/
       setTimeout(async () => {
-
-        let toncoinsell, toncoinget,param;
+        try {
+          let toncoinsell, toncoinget,param;
         if(sell=="toncoin" || get=="toncoin"){
           toncoinsell=sell=="toncoin"?"TON-ERC20":sell;
           toncoinget=get=="toncoin"?"TON-ERC20":get;
@@ -934,121 +994,147 @@ class offerController {
           },
           body: JSON.stringify(param)
         })
+        } catch (error) {
+          console.log("Letsexchange Fixed Api Call", error);
+        } 
 
       }, apicalldelay)    
 
       //********************************************* Stealthex Minimum Maximum Floating Api Call *******************************************/
       setTimeout(async () => {
-
-        response12 = await fetch(
-          `https://api.stealthex.io/api/v2/range/${sell}/${get}?api_key=${stealthex_api_key}&fixed=false`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
+        try {
+          response12 = await fetch(
+            `https://api.stealthex.io/api/v2/range/${sell}/${get}?api_key=${stealthex_api_key}&fixed=false`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+        } catch (error) {
+          console.log("Stealthex Minimum Maximum Floating Api Call", error);
+        }
 
       }, apicalldelay)
       
       //********************************************* Stealthex Minimum Maximum Fixed Api Call *******************************************/
       setTimeout(async () => {
-
-        response13 = await fetch(
-          `https://api.stealthex.io/api/v2/range/${sell}/${get}?api_key=${stealthex_api_key}&fixed=true`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
+        try {
+          response13 = await fetch(
+            `https://api.stealthex.io/api/v2/range/${sell}/${get}?api_key=${stealthex_api_key}&fixed=true`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+        } catch (error) {
+          console.log("Stealthex Minimum Maximum Fixed Api Call", error);
+        }
 
       }, apicalldelay)    
 
       //********************************************* Stealthex Floating Api Call *******************************************/
       setTimeout(async () => {
-
-        response14 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sell}/${get}?amount=${amount}&api_key=${stealthex_api_key}&fixed=false`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        try {
+          response14 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sell}/${get}?amount=${amount}&api_key=${stealthex_api_key}&fixed=false`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        } catch (error) {
+          console.log("Stealthex Floating Api Call", error);
+        }
 
       }, apicalldelay)   
       
       //********************************************* Stealthex Fixed Api Call *******************************************/
       setTimeout(async () => {
-
-        response15 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sell}/${get}?amount=${amount}&api_key=${stealthex_api_key}&fixed=true`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        try {
+          response15 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sell}/${get}?amount=${amount}&api_key=${stealthex_api_key}&fixed=true`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        } catch (error) {
+          console.log("Stealthex Fixed Api Call", error);
+        }
 
       }, apicalldelay)   
 
       //********************************************* Simpleswap Minimum Maximum Floating Api Call *******************************************/
       setTimeout(async () => {
-
-        let sellcoin=sell=="toncoin"?"tonerc20":sell;
-        let getcoin=get=="toncoin"?"tonerc20":get;
-
-        response16 = await fetch(`https://api.simpleswap.io/get_ranges?api_key=${simpleswap_api_key}&fixed=false&currency_from=${sellcoin}&currency_to=${getcoin}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          }
-        });
+        try {
+          let sellcoin=sell=="toncoin"?"tonerc20":sell;
+          let getcoin=get=="toncoin"?"tonerc20":get;
+  
+          response16 = await fetch(`https://api.simpleswap.io/get_ranges?api_key=${simpleswap_api_key}&fixed=false&currency_from=${sellcoin}&currency_to=${getcoin}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            }
+          });
+        } catch (error) {
+          console.log("Simpleswap Minimum Maximum Floating Api Call", error);
+        }
 
       }, apicalldelay) 
 
       //********************************************* Simpleswap Minimum Maximum Fixed Api Call *******************************************/
       setTimeout(async () => {
-
-        let sellcoin=sell=="toncoin"?"tonerc20":sell;
-        let getcoin=get=="toncoin"?"tonerc20":get;
-
-        response17 = await fetch(`https://api.simpleswap.io/get_ranges?api_key=${simpleswap_api_key}&fixed=true&currency_from=${sellcoin}&currency_to=${getcoin}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          }
-        });
-
+        try {
+          let sellcoin=sell=="toncoin"?"tonerc20":sell;
+          let getcoin=get=="toncoin"?"tonerc20":get;
+  
+          response17 = await fetch(`https://api.simpleswap.io/get_ranges?api_key=${simpleswap_api_key}&fixed=true&currency_from=${sellcoin}&currency_to=${getcoin}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            }
+          });
+        } catch (error) {
+          console.log("Simpleswap Minimum Maximum Fixed Api Call", error);
+        }
 
       }, apicalldelay) 
 
       //********************************************* Simpleswap Floating Api Call *******************************************/
       setTimeout(async () => {
-
-        let sellcoin=sell=="toncoin"?"tonerc20":sell;
-        let getcoin=get=="toncoin"?"tonerc20":get;
-
-        response18 = await fetch(`http://api.simpleswap.io/get_estimated?api_key=${simpleswap_api_key}&fixed=false&currency_from=${sellcoin}&currency_to=${getcoin}&amount=${amount}`, {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                }
-              });
+        try {
+          let sellcoin=sell=="toncoin"?"tonerc20":sell;
+          let getcoin=get=="toncoin"?"tonerc20":get;
+  
+          response18 = await fetch(`http://api.simpleswap.io/get_estimated?api_key=${simpleswap_api_key}&fixed=false&currency_from=${sellcoin}&currency_to=${getcoin}&amount=${amount}`, {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                  }
+                });
+        } catch (error) {
+          console.log("Simpleswap Floating Api Call", error);
+        }
 
       }, apicalldelay) 
 
       //********************************************* Simpleswap Fixed Api Call *******************************************/
       setTimeout(async () => {
-
-        let sellcoin=sell=="toncoin"?"tonerc20":sell;
-        let getcoin=get=="toncoin"?"tonerc20":get;
-
-        response19 = await fetch(`http://api.simpleswap.io/get_estimated?api_key=${simpleswap_api_key}&fixed=true&currency_from=${sellcoin}&currency_to=${getcoin}&amount=${amount}`, {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                }
-              });
+        try {
+          let sellcoin=sell=="toncoin"?"tonerc20":sell;
+          let getcoin=get=="toncoin"?"tonerc20":get;
+  
+          response19 = await fetch(`http://api.simpleswap.io/get_estimated?api_key=${simpleswap_api_key}&fixed=true&currency_from=${sellcoin}&currency_to=${getcoin}&amount=${amount}`, {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                  }
+                });
+        } catch (error) {
+          console.log("Simpleswap Fixed Api Call", error);
+        }
 
       }, apicalldelay) 
       
@@ -1060,7 +1146,6 @@ class offerController {
 
   static homeprice = async (req, res) => {
     const { sel, get, amount } = req.body;
-    console.log("Hi Moeed")
     if (amount != "0" && amount != "0." && amount != 0 && amount != "") {
   
       const url=`https://api.changenow.io/v1/min-amount/${sel}_${get}?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
@@ -1114,6 +1199,142 @@ class offerController {
       
       return res.json({to:{amount:0, from:{min:0}, onesel:0}})
     }
+  };
+
+  static currencies = async (req, res) =>{
+    const url="https://api.changenow.io/v2/exchange/currencies?active=&flow=standard&buy=&sell=";
+    const response = await fetch(url);
+    const data = await response.json(response);
+    const array = data.map((coin,index) => {
+
+      var string=coin.name
+      var tick=coin.legacyTicker
+      let color="";
+
+      if(coin.network=="matic" && coin.ticker!="eth"){
+        color="rgb(218, 0, 80)";
+      }else if (coin.network=="omni"){
+        color="rgb(243, 147, 33)";
+      }else if (coin.network=="dot"){
+        color="rgb(218, 0, 80)";
+      }else if (coin.network=="sol"){
+        color="rgb(143, 74, 246)";
+      }else if (coin.network=="kcs"){
+        color="rgb(0, 147, 221)";
+      }else if (coin.network=="bep2"){
+        color="rgb(180, 191, 206)";
+      }else if (coin.network=="avaxx"){
+        color="rgb(94, 23, 254)";
+      }else if (coin.network=="chiliz"){
+        color="rgb(225, 17, 86)";
+      }else if (coin.network=="eth"){
+        color="rgb(79,173,208)";
+      }else if (coin.network=="bsc"){
+        color="rgb(255, 194,65)";
+      }else if (coin.network=="arbitrum"){
+        color="rgb(40, 160, 240)";
+      }else if (coin.network=="op"){
+        color="rgb(254, 5, 32)";
+      }else if (coin.network=="zksync"){
+        color="rgb(30, 105, 255)";
+      }else if (coin.network=="base"){
+        color="rgb(33, 81, 245)";
+      }else if (coin.network=="strk"){
+        color="rgb(0,0,0)";
+      }else if (coin.network=="lna"){
+        color="rgb(132, 220, 251)";
+      }else if (coin.network=="trx"){
+        color="rgb(238, 57, 50)";
+      }else if (coin.network=="algo"){
+        color="rgb(0,0,0)";
+      }else if (coin.network=="avaxc"){
+        color="rgb(254, 5, 32)";
+      }else if (coin.network=="near"){
+        color="rgb(108, 232, 158)";
+      }else if (coin.network=="kavaevm"){
+        color="rgb(255, 86, 79)";
+      }else if (coin.network=="eos"){
+        color="rgb(0,0,0";
+      }else if (coin.network=="xtz"){
+        color="rgb(230, 0, 122)";
+      }else if (coin.network=="xlm"){
+        color="rgb(57, 29, 210)";
+      }else if (coin.network=="ron"){
+        color="rgb(0, 177, 229)";
+      }else if (coin.network=="kcc"){
+        color="rgb(35, 175, 145)";
+      }else if (coin.network=="ada"){
+        color="rgb(60, 200, 200)";
+      }else if (coin.network=="cro"){
+        color="rgb(0,0,0)";
+      }else if (coin.network=="mnt"){
+        color="rgb(57, 119, 13)";
+      }else if (coin.network=="theta"){
+        color="rgb(180, 191, 206)";
+      }else if (coin.network=="chz"){
+        color="rgb(225, 18, 86)";
+      }
+      const index1 = string.indexOf("(");
+      const index2 = string.indexOf(")");
+
+      if(index1>=1 || index2>=1){
+        const substring1=string.substring(index1+1, index2);
+        const substring2=string.substring( index1-1, index2+1);
+        const substring3=string.substring( 0, index1);
+       
+        if(string==="Tether (STATEMINT(Polkadot))"){
+     
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false,  shortname:coin.ticker, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1, chainname2:"(Polkadot)", symbol2:substring3 };
+          
+        }else if(tick.includes("bsc")===true){
+
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Binance Smart Chain)" };
+
+        }else if(tick.includes("erc20")===true){
+
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (ERC20)" };
+
+        }else if(tick.includes("mainnet")===true){
+
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Mainnet)" };
+
+        }else if(tick.includes("matic")===true){
+
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Polygon)" };
+
+        }else{
+            return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3 };
+          }
+
+      }else{
+        const substring1=string.substring(index1+1, index2);
+        const substring2=string.substring( index1-1, index2+1);
+        const substring3=string.substring( 0, index1);
+
+        if(tick.includes("bsc")===true){
+
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Binance Smart Chain)" };
+
+        }else if(tick.includes("erc20")===true){
+
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (ERC20)" };
+
+        }else if(tick.includes("mainnet")===true){
+
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Mainnet)" };
+
+        }else if(tick.includes("matic")===true){
+
+          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Polygon)" };
+
+        }else{
+            return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name };
+          }                 
+      }
+
+})
+
+return res.json(array);
   };
 }
 export default offerController;
