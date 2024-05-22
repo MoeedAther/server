@@ -532,39 +532,71 @@ class offerController {
     }
 
 
+    function truncateNumber(num, limit) {
+      // Convert the number to a string
+      let numStr = num.toString();
+  
+      // Check if the number has a decimal point
+      const hasDecimal = numStr.includes('.');
+  
+      // If the number is longer than 16 characters
+      if (numStr.length > limit) {
+          // If the number has a decimal point
+          if (hasDecimal==true) {
+              // Find the index of the decimal point
+              const decimalIndex = numStr.indexOf('.');
+  
+              // Get the substring up to 16 characters, including the decimal point
+              numStr = numStr.substring(0, limit+1);
+              // If the decimal point is beyond the 16 characters, trim it
+              if (decimalIndex >= 16) {
+                  numStr = numStr.slice(0, -1);
+              }
+          } else {
+              // If the number doesn't have a decimal point, simply get the substring up to 16 characters
+              numStr = numStr.substring(0, limit);
+          }
+      }
+  
+      // Parse the truncated string back to a number and return it
+      return parseFloat(numStr);
+  }
+  
+
+
 
       //Response Array
       let offerarray = [
         //0
-        { name: "changelly", offerED:sendingamount>=changelly_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=changelly_floating_minimum_amount&&changelly_floating_price==0?0:changelly_floating_visibility, min:changelly_floating_minimum_amount.toFixed(6), max:changelly_floating_maximum_amount, transaction_type:"Floating", eta:"5-30 Min", kyc:"On Occasion", rating:"4.2/5", rate: changelly_floating_price.toFixed(8) },
+        { name: "changelly", offerED:sendingamount>=changelly_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=changelly_floating_minimum_amount&&changelly_floating_price==0?0:changelly_floating_visibility, min:truncateNumber(changelly_floating_minimum_amount,8), max:changelly_floating_maximum_amount, transaction_type:"Floating", eta:"5-30 Min", kyc:"On Occasion", rating:"4.2/5", rate: truncateNumber(changelly_floating_price, 16)},
         //1
-        { name: "changelly", offerED:sendingamount>=changelly_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=changelly_fixed_minimum_amount&&changelly_fixed_price==0?0:changelly_fixed_visibility, min:changelly_fixed_minimum_amount.toFixed(6), max:changelly_fixed_maximum_amount, transaction_type:"Fixed", eta:"5-30 Min", kyc:"On Occasion", rating:"4.2/5", rate: changelly_fixed_price.toFixed(8), rateId: changelly_fixed_rateId },
+        { name: "changelly", offerED:sendingamount>=changelly_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=changelly_fixed_minimum_amount&&changelly_fixed_price==0?0:changelly_fixed_visibility, min:truncateNumber(changelly_fixed_minimum_amount, 8), max:changelly_fixed_maximum_amount, transaction_type:"Fixed", eta:"5-30 Min", kyc:"On Occasion", rating:"4.2/5", rate: truncateNumber(changelly_fixed_price, 16), rateId: changelly_fixed_rateId },
         //2
-        { name: "changenow", offerED:sendingamount>=changenow_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=changenow_floating_minimum_amount&&changenow_floating_price==0?0:changenow_floating_visibility, min:changenow_floating_minimum_amount.toFixed(6), max:changenow_floating_maximum_amount, transaction_type:"Floating", eta:"10-60 Min", kyc:"On Occasion", rating:"4.5/5", rate: changenow_floating_price.toFixed(8) },
+        { name: "changenow", offerED:sendingamount>=changenow_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=changenow_floating_minimum_amount&&changenow_floating_price==0?0:changenow_floating_visibility, min:truncateNumber(changenow_floating_minimum_amount, 8), max:changenow_floating_maximum_amount, transaction_type:"Floating", eta:"10-60 Min", kyc:"On Occasion", rating:"4.5/5", rate: truncateNumber(changenow_floating_price, 16) },
         //3
-        { name: "changenow", offerED:sendingamount>=changenow_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=changenow_fixed_minimum_amount&&changenow_fixed_price==0?0:changenow_fixed_visibility, min:changenow_fixed_minimum_amount.toFixed(6), max:changenow_fixed_maximum_amount, transaction_type:"Fixed", eta:"10-60 Min", kyc:"On Occasion", rating:"4.5/5", rate: changenow_fixed_price.toFixed(8), rateId: changenow_fixed_rateId },
+        { name: "changenow", offerED:sendingamount>=changenow_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=changenow_fixed_minimum_amount&&changenow_fixed_price==0?0:changenow_fixed_visibility, min: truncateNumber(changenow_fixed_minimum_amount, 8), max:changenow_fixed_maximum_amount, transaction_type:"Fixed", eta:"10-60 Min", kyc:"On Occasion", rating:"4.5/5", rate: truncateNumber(changenow_fixed_price, 16), rateId: changenow_fixed_rateId },
         //4
-        { name: "changehero", offerED:sendingamount>=changehero_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=changehero_floating_minimum_amount&&changehero_floating_price==0?0:changehero_floating_visibility, min:changehero_floating_minimum_amount.toFixed(6), max:changehero_floating_maximum_amount, transaction_type:"Floating", eta:"12-26 Min", kyc:"On Occasion", rating:"3.7/5", rate: changehero_floating_price.toFixed(8) },
+        { name: "changehero", offerED:sendingamount>=changehero_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=changehero_floating_minimum_amount&&changehero_floating_price==0?0:changehero_floating_visibility, min: truncateNumber(changehero_floating_minimum_amount, 8), max:changehero_floating_maximum_amount, transaction_type:"Floating", eta:"12-26 Min", kyc:"On Occasion", rating:"3.7/5", rate: truncateNumber(changehero_floating_price, 16) },
         //5
-        { name: "changehero", offerED:sendingamount>=changehero_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=changehero_fixed_minimum_amount&&changehero_fixed_price==0?0:changehero_fixed_visibility, min:changehero_fixed_minimum_amount.toFixed(6), max:changehero_fixed_maximum_amount, transaction_type:"Fixed", eta:"12-26 Min", kyc:"On Occasion", rating:"3.7/5",  rate: changehero_fixed_price.toFixed(8), rateId: changehero_fixed_rateId },
+        { name: "changehero", offerED:sendingamount>=changehero_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=changehero_fixed_minimum_amount&&changehero_fixed_price==0?0:changehero_fixed_visibility, min: truncateNumber(changehero_fixed_minimum_amount, 8), max:changehero_fixed_maximum_amount, transaction_type:"Fixed", eta:"12-26 Min", kyc:"On Occasion", rating:"3.7/5",  rate: truncateNumber(changehero_fixed_price, 16), rateId: changehero_fixed_rateId },
         //6
-        { name: "exolix", offerED:sendingamount>=exolix_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=exolix_floating_minimum_amount&&exolix_floating_price==0?0:exolix_floating_visibility, min:exolix_floating_minimum_amount.toFixed(6), max:exolix_floating_maximum_amount, transaction_type:"Floating", eta:"22-46 Min", kyc:"Rarely Required", rating:"4.3/5", rate: exolix_floating_price.toFixed(8) },
+        { name: "exolix", offerED:sendingamount>=exolix_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=exolix_floating_minimum_amount&&exolix_floating_price==0?0:exolix_floating_visibility, min: truncateNumber(exolix_floating_minimum_amount, 8), max:exolix_floating_maximum_amount, transaction_type:"Floating", eta:"22-46 Min", kyc:"Rarely Required", rating:"4.3/5", rate: truncateNumber(exolix_floating_price, 16)},
         //7
-        { name: "exolix", offerED:sendingamount>=exolix_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=exolix_fixed_minimum_amount&&exolix_fixed_price==0?0:exolix_fixed_visibility, min:exolix_fixed_minimum_amount.toFixed(6), max:exolix_fixed_maximum_amount, transaction_type:"Fixed", eta:"22-46 Min", kyc:"Rarely Required", rating:"4.3/5", rate: exolix_fixed_price.toFixed(8) },
+        { name: "exolix", offerED:sendingamount>=exolix_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=exolix_fixed_minimum_amount&&exolix_fixed_price==0?0:exolix_fixed_visibility, min: truncateNumber(exolix_fixed_minimum_amount, 8), max:exolix_fixed_maximum_amount, transaction_type:"Fixed", eta:"22-46 Min", kyc:"Rarely Required", rating:"4.3/5", rate: truncateNumber(exolix_fixed_price, 16) },
         //8
-        { name: "godex", offerED:sendingamount>=godex_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=godex_floating_minimum_amount&&godex_floating_price==0?0:godex_floating_visibility, min:godex_floating_minimum_amount.toFixed(6), max:godex_floating_maximum_amount, transaction_type:"Floating", eta:"14-51 Min", kyc:"Rarely Required", rating:"4.6/5", rate: godex_floating_price.toFixed(8) },
+        { name: "godex", offerED:sendingamount>=godex_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=godex_floating_minimum_amount&&godex_floating_price==0?0:godex_floating_visibility, min: truncateNumber(godex_floating_minimum_amount, 8), max:godex_floating_maximum_amount, transaction_type:"Floating", eta:"14-51 Min", kyc:"Rarely Required", rating:"4.6/5", rate: truncateNumber(godex_floating_price, 16) },
         //9
-        { name: "letsexchange", offerED:sendingamount>=letsexchange_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=letsexchange_floating_minimum_amount&&letsexchange_floating_price==0?0:letsexchange_floating_visibility.toFixed(6), min:letsexchange_floating_minimum_amount, max:letsexchange_floating_maximum_amount, transaction_type:"Floating", eta:"2-44 Min", kyc:"Not Required", rating:"4.6/5", rate:letsexchange_floating_price.toFixed(8) },
+        { name: "letsexchange", offerED:sendingamount>=letsexchange_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=letsexchange_floating_minimum_amount&&letsexchange_floating_price==0?0:letsexchange_floating_visibility, min: truncateNumber(letsexchange_floating_minimum_amount, 8), max:letsexchange_floating_maximum_amount, transaction_type:"Floating", eta:"2-44 Min", kyc:"Not Required", rating:"4.6/5", rate: truncateNumber(letsexchange_floating_price, 16) },
         //10
-        { name: "letsexchange", offerED:sendingamount>=letsexchange_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=letsexchange_fixed_minimum_amount&&letsexchange_fixed_price==0?0:letsexchange_fixed_visibility, min:letsexchange_fixed_minimum_amount.toFixed(6), max:letsexchange_fixed_maximum_amount, transaction_type:"Fixed", eta:"2-44 Min", kyc:"Not Required", rating:"4.6/5", rate: letsexchange_fixed_price.toFixed(8), rateId: letsexchange_fixed_rateId },
+        { name: "letsexchange", offerED:sendingamount>=letsexchange_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=letsexchange_fixed_minimum_amount&&letsexchange_fixed_price==0?0:letsexchange_fixed_visibility, min:truncateNumber(letsexchange_fixed_minimum_amount, 8), max:letsexchange_fixed_maximum_amount, transaction_type:"Fixed", eta:"2-44 Min", kyc:"Not Required", rating:"4.6/5", rate: truncateNumber(letsexchange_fixed_price, 16), rateId: letsexchange_fixed_rateId },
         //11
-        { name: "stealthex", offerED:sendingamount>=stealthex_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=stealthex_floating_minimum_amount&&stealthex_floating_price==0?0:stealthex_floating_visibility, min:stealthex_floating_minimum_amount.toFixed(6), max:stealthex_floating_maximum_amount, transaction_type:"Floating", eta:"7-38 Min", kyc:"On Occasion", rating:"4.7/5", rate: stealthex_floating_price.toFixed(8)},
+        { name: "stealthex", offerED:sendingamount>=stealthex_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=stealthex_floating_minimum_amount&&stealthex_floating_price==0?0:stealthex_floating_visibility, min:truncateNumber(stealthex_floating_minimum_amount, 8), max:stealthex_floating_maximum_amount, transaction_type:"Floating", eta:"7-38 Min", kyc:"On Occasion", rating:"4.7/5", rate: truncateNumber(stealthex_floating_price, 16)},
         //12
-        { name: "stealthex", offerED:sendingamount>=stealthex_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=stealthex_fixed_minimum_amount&&stealthex_fixed_price==0?0:stealthex_fixed_visibility,  min:stealthex_fixed_minimum_amount.toFixed(6), max:stealthex_fixed_maximum_amount, transaction_type:"Fixed", eta:"7-38 Min", kyc:"On Occasion", rating:"4.7/5", rate: stealthex_fixed_price.toFixed(8), rateId: stealthex_fixed_rateId },
+        { name: "stealthex", offerED:sendingamount>=stealthex_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=stealthex_fixed_minimum_amount&&stealthex_fixed_price==0?0:stealthex_fixed_visibility,  min:truncateNumber(stealthex_fixed_minimum_amount, 8), max:stealthex_fixed_maximum_amount, transaction_type:"Fixed", eta:"7-38 Min", kyc:"On Occasion", rating:"4.7/5", rate: truncateNumber(stealthex_fixed_price, 16), rateId: stealthex_fixed_rateId },
         //13
-        { name: "simpleswap", offerED:sendingamount>=simpleswap_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=simpleswap_floating_minimum_amount&&simpleswap_floating_price==0?0:simpleswap_floating_visibility, min:simpleswap_floating_minimum_amount.toFixed(6), max:simpleswap_floating_maximum_amount, transaction_type:"Floating", eta:"9-50 Min", kyc:"Rarely Required", rating:"4.4/5", rate: simpleswap_floating_price.toFixed(8) },
+        { name: "simpleswap", offerED:sendingamount>=simpleswap_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=simpleswap_floating_minimum_amount&&simpleswap_floating_price==0?0:simpleswap_floating_visibility, min: truncateNumber(simpleswap_floating_minimum_amount, 8), max:simpleswap_floating_maximum_amount, transaction_type:"Floating", eta:"9-50 Min", kyc:"Rarely Required", rating:"4.4/5", rate:truncateNumber(simpleswap_floating_price, 16) },
         //14
-        { name: "simpleswap", offerED:sendingamount>=simpleswap_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=simpleswap_fixed_minimum_amount&&simpleswap_fixed_price==0?0:simpleswap_fixed_visibility, min:simpleswap_fixed_minimum_amount.toFixed(6), max:simpleswap_fixed_maximum_amount, transaction_type:"Fixed", eta:"9-50 Min", kyc:"Rarely Required", rating:"4.4/5",  rate: simpleswap_fixed_price.toFixed(8) },
+        { name: "simpleswap", offerED:sendingamount>=simpleswap_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=simpleswap_fixed_minimum_amount&&simpleswap_fixed_price==0?0:simpleswap_fixed_visibility, min: truncateNumber(simpleswap_fixed_minimum_amount, 8), max:simpleswap_fixed_maximum_amount, transaction_type:"Fixed", eta:"9-50 Min", kyc:"Rarely Required", rating:"4.4/5",  rate: truncateNumber(simpleswap_fixed_price, 16)},
       ];
 
       //Arranging offers based on offer sequence type function
@@ -1146,54 +1178,90 @@ class offerController {
 
   static homeprice = async (req, res) => {
     const { sel, get, amount } = req.body;
+        const stealthex_api_key=process.env.STEALTHEX;
     if (amount != "0" && amount != "0." && amount != 0 && amount != "") {
-  
-      const url=`https://api.changenow.io/v1/min-amount/${sel}_${get}?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
-      const options={
-        method:"GET",
-        header:{
-          "Content-Type":"application/json"
-        },
-      }
-      const response=await fetch(url,options);
-      const data=await response.json();
-      const minamount =data.minAmount;
-      if(minamount<=amount){
-        const url2=`https://api.changenow.io/v1/exchange-amount/${amount}/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
-        const options2={
-          method:"GET",
-          header:{
-            "Content-Type":"application/json"         
-          }
+
+      const response1 = await fetch(
+        `https://api.stealthex.io/api/v2/range/${sel}/${get}?api_key=${stealthex_api_key}&fixed=false`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
+      )
   
-        const response2=await fetch(url2,options2);
+      // const url=`https://api.changenow.io/v1/min-amount/${sel}_${get}?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
+      // const options={
+      //   method:"GET",
+      //   header:{
+      //     "Content-Type":"application/json"
+      //   },
+      // }
+      // const response=await fetch(url,options);
+      const data=await response1.json();
+      const minamount =data.min_amount;
+      if(minamount<=amount){
+        // const url2=`https://api.changenow.io/v1/exchange-amount/${amount}/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
+        // const options2={
+        //   method:"GET",
+        //   header:{
+        //     "Content-Type":"application/json"         
+        //   }
+        // }
+
+        const response2 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${amount}&api_key=${stealthex_api_key}&fixed=false`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+  
+        // const response2=await fetch(url2,options2);
         const data2=await response2.json();
   
-        const url3=`https://api.changenow.io/v1/exchange-amount/1/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
-        const options3={
-          method:"GET",
-          header:{
-            "Content-Type":"application/json"         
-          }
-        }
+        // const url3=`https://api.changenow.io/v1/exchange-amount/1/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
+        // const options3={
+        //   method:"GET",
+        //   header:{
+        //     "Content-Type":"application/json"         
+        //   }
+        // }
   
-        const response3=await fetch(url3,options3);
+        // const response3=await fetch(url3,options3);
+
+        const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${1}&api_key=${stealthex_api_key}&fixed=false`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+
         const data3=await response3.json();
-  
-        return res.json({to:{amount:data2.estimatedAmount, from:{min:minamount}, onesel:data3.estimatedAmount}})
+
+        console.log(data3)
+
+        return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount}})
       }else{
-        const url3=`https://api.changenow.io/v1/exchange-amount/1/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
-        const options3={
-          method:"GET",
-          header:{
-            "Content-Type":"application/json"         
-          }
-        }
+        // const url3=`https://api.changenow.io/v1/exchange-amount/1/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
+        // const options3={
+        //   method:"GET",
+        //   header:{
+        //     "Content-Type":"application/json"         
+        //   }
+        // }
+
+        const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${1}&api_key=${stealthex_api_key}&fixed=false`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
   
-        const response3=await fetch(url3,options3);
+        // const response3=await fetch(url3,options3);
         const data3=await response3.json();
-        return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimatedAmount}})
+        console.log(data3)
+        return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimated_amount}})
       }
     } else {
       
