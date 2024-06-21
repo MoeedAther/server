@@ -90,7 +90,7 @@ class offerController {
     let stealthex_fixed_visibility=0;
     let simpleswap_floating_visibility=0;
     let simpleswap_fixed_visibility=0;
-
+ 
 
     try {
 
@@ -251,6 +251,7 @@ class offerController {
         
     } catch (error) {
       console.log("Changenow Minimum and Maximum Floating Response Handeling", error)
+      console.log("My error", error)
     }
 
       //*************** Changenow Minimum and Maximum Fixed Response Handeling ******************//
