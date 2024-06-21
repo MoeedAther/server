@@ -22,7 +22,7 @@ class offerController {
     let changehero_floating_price=0;
     let exolix_floating_price=0;
     let godex_floating_price=0;
-    let letsexchange_floating_price=0;
+    let letsexchange_floating_price=0; 
     let stealthex_floating_price=0;
     let simpleswap_floating_price=0;
 
@@ -98,7 +98,7 @@ class offerController {
       var sendingamount=parseFloat(amount);
       var response1, response2, response3, response4, response5, response6, response7, response8, response9, response10, response11, response12, response13, response14, response15, response16, response17, response18, response19, response20, response21;
       const apicalldelay = 1000;
-      const responsecalldelay = 4000;
+      const responsecalldelay = 5000;
 
       //**************** Common Variables for Changelly *********************//
       const privateKey = crypto.createPrivateKey({
@@ -243,18 +243,19 @@ class offerController {
 
       //*************** Changenow Minimum and Maximum Floating Response Handeling ******************//
       try {
-        const result1 = await response1.json();
+          const result1 = await response1.json();
         if(!isNaN(result1.minAmount)){
           changenow_floating_minimum_amount=parseFloat(result1.minAmount);
           changenow_floating_visibility=1;
         }
+        
     } catch (error) {
       console.log("Changenow Minimum and Maximum Floating Response Handeling", error)
     }
 
       //*************** Changenow Minimum and Maximum Fixed Response Handeling ******************//
       try {
-        const result1 = await response20.json();
+          const result1 = await response20.json();
         if(!isNaN(result1.minAmount&&result1.maxAmount)){
           changenow_fixed_minimum_amount=parseFloat(result1.minAmount);
           changenow_fixed_maximum_amount=parseFloat(result1.maxAmount);
@@ -266,7 +267,7 @@ class offerController {
     }
       //********************* Changenow Floating Response Handeling **********************//
       try {
-          const result2 = await response2.json();
+            const result2 = await response2.json();
           if(!isNaN (result2.estimatedAmount)){
             changenow_floating_price = parseFloat(result2.estimatedAmount);
           }
@@ -277,63 +278,56 @@ class offerController {
 
       //********************* Changenow Fixed Response Handeling **********************//
       try {
-          const result3 = await response3.json();
+            const result3 = await response3.json();
           if(!isNaN (result3.estimatedAmount)){
             changenow_fixed_price = parseFloat(result3.estimatedAmount);
             changenow_fixed_rateId=result3.rateId
           }
       } catch (error) {
-        
         console.log("Changenow Fixed Response Handeling", error)
       }
 
       //*************** Changehero Minimum and Maximum Floating Response Handeling ******************//
       try {
-        const result1 = await response4.json();
-        const result2 = await response21.json();
-        if(!isNaN(result1.result)&&!isNaN(result2.result[0].minFrom)&&!isNaN(result2.result[0].maxFrom)){
+          const result1 = await response4.json();
+          const result2 = await response21.json();
+          if(!isNaN(result1.result)&&!isNaN(result2.result[0].minFrom)&&!isNaN(result2.result[0].maxFrom)){
           changehero_floating_minimum_amount=parseFloat(result1.result);
           changehero_fixed_minimum_amount=parseFloat(result2.result[0].minFrom);
           changehero_fixed_maximum_amount=parseFloat(result2.result[0].maxFrom);
           changehero_floating_visibility=1;
           changehero_fixed_visibility=1;
         }
-    } catch (error) {
-      
+    } catch (error) {  
       console.log("Changehero Minimum and Maximum Floating Response Handeling", error)
     }
 
       //*************** Changehero Floating Response Handeling ******************//
       try {
-        const result = await response5.json();
-
+          const result = await response5.json();
         if(!isNaN(result.result)){
           changehero_floating_price=parseFloat(result.result);
         }
-    } catch (error) {
-      
+    } catch (error) {   
       console.log("Changehero Floating Response Handeling", error)
     }
 
 
       //*************** Changehero Fixed Response Handeling ******************//
       try {
-        const result = await response6.json();
-        // return res.json(result)
+          const result = await response6.json();
         if(!isNaN(result.result[0].result)){
           changehero_fixed_price=sendingamount*parseFloat(result.result[0].result);
           changehero_fixed_rateId=result.result[0].id;
         }
-    } catch (error) {
-      
+    } catch (error) { 
       console.log("Changehero Fixed Response Handeling", error)
     }
 
 
       //*************** Exolix Floating Response Handeling ******************//
       try {
-        const result = await response7.json();
-        // return res.json(result);
+          const result = await response7.json();
         if(!isNaN(result.toAmount)){
           exolix_floating_price=parseFloat(result.toAmount);
           exolix_floating_minimum_amount=parseFloat(result.minAmount);
@@ -348,14 +342,13 @@ class offerController {
             exolix_floating_visibility=1;
           }
         }
-    } catch (error) {
-      
+    } catch (error) {   
       console.log("Exolix Floating Response Handeling",error)
     }
 
       //*************** Exolix Fixed Response Handeling ******************//
       try {
-        const result = await response8.json();
+          const result = await response8.json();
         if(!isNaN(result.toAmount)){
           exolix_fixed_price=parseFloat(result.toAmount);
           exolix_fixed_minimum_amount=parseFloat(result.minAmount);
@@ -366,19 +359,18 @@ class offerController {
             exolix_fixed_minimum_amount=parseFloat(result.minAmount);
             exolix_fixed_visibility=1;
           }else if(parseFloat(result.maxAmount)<sendingamount){
-            exolix_fixed_maximum_amount=rparseFloat(esult.maxAmount);
+            exolix_fixed_maximum_amount=rparseFloat(result.maxAmount);
             exolix_fixed_visibility=1;
           }
         }
-    } catch (error) {
-      
+    } catch (error) {    
         console.log("Exolix Fixed Response Handeling",error)
     }
 
 
       //*************** Godex Floating Response Handeling ******************//
       try {
-        const result = await response9.json();
+          const result = await response9.json();
         if(!isNaN(result.amount)){
           godex_floating_minimum_amount=parseFloat(result.min_amount);
           godex_floating_maximum_amount=parseFloat(result.max_amount);
@@ -388,14 +380,13 @@ class offerController {
             godex_floating_price=parseFloat(result.amount);
           }
         }
-    } catch (error) {
-      
+    } catch (error) {   
       console.log("Godex Floating Response Handeling",error)
     }
 
       //*************** Letsexchange Floating Response Handeling ******************//
       try {
-        const result = await response10.json();
+          const result = await response10.json();
         if(!isNaN(result.amount)){
           letsexchange_floating_minimum_amount=parseFloat(result.deposit_min_amount);
           letsexchange_floating_maximum_amount=parseFloat(result.deposit_max_amount);
@@ -406,13 +397,12 @@ class offerController {
           }
         }
     } catch (error) {
-      
       console.log(" Letsexchange Floating Response Handeling ", error)
     }
 
       //*************** Letsexchange Fixed Response Handeling ******************//
       try {
-        const result = await response11.json();
+          const result = await response11.json();
         if(!isNaN(result.amount)){
           letsexchange_fixed_minimum_amount=parseFloat(result.deposit_min_amount);
           letsexchange_fixed_maximum_amount=parseFloat(result.deposit_max_amount);
@@ -424,110 +414,101 @@ class offerController {
           }
         }
     } catch (error) {
-      
       console.log("Letsexchange Fixed Response Handeling",error)
     }
     
       //*************** Stealthex Minmum Maximum Floating Api Response Handeling ******************//
       try {
-        const result = await response12.json();
         // return res.json(result)
+          const result = await response12.json();
         if(!isNaN(result.min_amount)){
           stealthex_floating_minimum_amount=parseFloat(result.min_amount);
           stealthex_floating_visibility=1;
         }
-    } catch (error) {
-      
+    } catch (error) {   
       console.log("Stealthex Minmum Maximum Floating Api Response Handeling",error)
     }
 
       //*************** Stealthex Minmum Maximum Fixed Api Response Handeling ******************//
       try {
-        const result = await response13.json();
+          const result = await response13.json();
         if(!isNaN(result.min_amount)){
           stealthex_fixed_minimum_amount=parseFloat(result.min_amount);
           stealthex_fixed_maximum_amount=parseFloat(result.max_amount);
           stealthex_fixed_visibility=1;
         }
-    } catch (error) {
-      
+    } catch (error) {   
       console.log("Stealthex Minmum Maximum Fixed Api Response Handeling",error)
     }
 
       //*************** Stealthex Floating Response Handeling ******************//
       try {
-        const result = await response14.json();
         // return res.json(result)
+          const result = await response14.json();
         if(!isNaN(result.estimated_amount)){
             stealthex_floating_price=parseFloat(result.estimated_amount);
         }
-    } catch (error) {
-      
+    } catch (error) {  
       console.log("Stealthex Floating Response Handeling",error);
       
     }
 
       //*************** Stealthex Fixed Response Handeling ******************//
       try {
-        const result = await response15.json();
         // return res.json(result)
+          const result = await response15.json();
         if(!isNaN(result.estimated_amount)){
             stealthex_fixed_price=parseFloat(result.estimated_amount);
             stealthex_fixed_rateId=result.rate_id;
         }
     } catch (error) {
-      
       console.log("Stealthex Fixed Response Handeling",error)
     }
 
       //*************** Simpleswap Minimum Maximum Floating Response Handeling ******************//
       try {
-        const result = await response16.json();
         // return res.json(result)
+          const result = await response16.json();
         if(!isNaN(result.min)){
             simpleswap_floating_minimum_amount=parseFloat(result.min);
             simpleswap_floating_visibility=1;
         }
     } catch (error) {
-      
       console.log("Simpleswap Minimum Maximum Floating Response Handeling",error)
     }
 
       //*************** Simpleswap Minimum Maximum Fixed Response Handeling ******************//
       try {
-        const result = await response17.json();
         // return res.json(result)
+          const result = await response17.json();
         if(!isNaN(result.min)&&!isNaN(result.max)){
             simpleswap_fixed_minimum_amount=parseFloat(result.min);
             simpleswap_fixed_maximum_amount=parseFloat(result.max);
             simpleswap_fixed_visibility=1;
         }
     } catch (error) {
-      
       console.log("Simpleswap Minimum Maximum Fixed Response Handeling",error)
     }
 
       //*************** Simpleswap Floating Response Handeling ******************//
       try {
-        const result = await response18.json();
+          const result = await response18.json();
         if(!isNaN(parseFloat(result))){
             simpleswap_floating_price=parseFloat(result);
         }
     } catch (error) {
-      
       console.log("Simpleswap Floating Response Handeling",error);
     }
 
 
       //*************** Simpleswap Fixed Response Handeling ******************//
       try {
-        const result = await response19.json();
         // return res.json(result)
+          const result = await response19.json();
         if(!isNaN(parseFloat(result))){
             simpleswap_fixed_price=parseFloat(result);
         }
-    } catch (error) {
-      
+    } catch (error) {   
       console.log("Simpleswap Fixed Response Handeling",error);      
     }
 
@@ -603,6 +584,7 @@ class offerController {
       function sortArrayDescending(offerarray) {
         if(offerstype=="bestprices")
         {
+          console.log("best prices");
           // Filter objects with offer value "enable" and sort them based on rate in descending order
           let enabledObjects = offerarray.filter(obj => obj.offerED === "enable" && obj.visibility==1).sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate));
 
@@ -613,7 +595,7 @@ class offerController {
           let sortedArray = enabledObjects.concat(disabledObjects);
           
           sortedArray=fixed=="Floating"?sortedArray.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):sortedArray.filter(obj => obj.transaction_type ==="Fixed");
-
+          // console.log(sortedArray);
           return sortedArray;
 
         }else if(offerstype=="fastestswap"){
@@ -624,7 +606,7 @@ class offerController {
               fastestswap_array = fastestswap_array.filter(obj => obj.visibility !== 0);
               
               fastestswap_array=fixed=="Floating"?fastestswap_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):fastestswap_array.filter(obj => obj.transaction_type ==="Fixed");
-              
+              // console.log(fastestswap_array);
               return fastestswap_array;
 
         }else if(offerstype=="bestrating"){
@@ -635,14 +617,14 @@ class offerController {
               bestrating_array = bestrating_array.filter(obj => obj.visibility !== 0);
 
               bestrating_array=fixed=="Floating"?bestrating_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):bestrating_array.filter(obj => obj.transaction_type ==="Fixed");
-
+              // console.log(bestrating_array);
               return bestrating_array;
         }
       }
 
       const sortedArray = sortArrayDescending(offerarray, "rate");
-      console.log(sortedArray);
-      return res.json({bestoffer:sortedArray[0].rate, offersarray:sortedArray});
+      
+      return res.json({bestoffer:sortedArray.length>0?sortedArray[0].rate:0, offersarray:sortedArray});
       },responsecalldelay);
 
 
@@ -1179,94 +1161,64 @@ class offerController {
   static homeprice = async (req, res) => {
     const { sel, get, amount } = req.body;
         const stealthex_api_key=process.env.STEALTHEX;
-    if (amount != "0" && amount != "0." && amount != 0 && amount != "") {
-
-      const response1 = await fetch(
-        `https://api.stealthex.io/api/v2/range/${sel}/${get}?api_key=${stealthex_api_key}&fixed=false`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+        
+      try {
+        const response1 = await fetch(
+          `https://api.stealthex.io/api/v2/range/${sel}/${get}?api_key=${stealthex_api_key}&fixed=false`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+    
+        const data=await response1.json();
+        console.log(data)
+        const minamount =parseFloat(data.min_amount);
+        const amt=parseFloat(amount);
+        if(minamount<=amt){
+  
+          const response2 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${amt}&api_key=${stealthex_api_key}&fixed=false`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+    
+          // const response2=await fetch(url2,options2);
+          const data2=await response2.json();
+  
+          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${1}&api_key=${stealthex_api_key}&fixed=false`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+  
+          const data3=await response3.json();
+  
+          console.log(data3)
+  
+          return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount}})
+        }else{
+  
+          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${1}&api_key=${stealthex_api_key}&fixed=false`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+  
+          const data3=await response3.json();
+          console.log(data3)
+          return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimated_amount}})
         }
-      )
-  
-      // const url=`https://api.changenow.io/v1/min-amount/${sel}_${get}?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
-      // const options={
-      //   method:"GET",
-      //   header:{
-      //     "Content-Type":"application/json"
-      //   },
-      // }
-      // const response=await fetch(url,options);
-      const data=await response1.json();
-      const minamount =data.min_amount;
-      if(minamount<=amount){
-        // const url2=`https://api.changenow.io/v1/exchange-amount/${amount}/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
-        // const options2={
-        //   method:"GET",
-        //   header:{
-        //     "Content-Type":"application/json"         
-        //   }
-        // }
-
-        const response2 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${amount}&api_key=${stealthex_api_key}&fixed=false`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-  
-        // const response2=await fetch(url2,options2);
-        const data2=await response2.json();
-  
-        // const url3=`https://api.changenow.io/v1/exchange-amount/1/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
-        // const options3={
-        //   method:"GET",
-        //   header:{
-        //     "Content-Type":"application/json"         
-        //   }
-        // }
-  
-        // const response3=await fetch(url3,options3);
-
-        const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${1}&api_key=${stealthex_api_key}&fixed=false`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-
-        const data3=await response3.json();
-
-        console.log(data3)
-
-        return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount}})
-      }else{
-        // const url3=`https://api.changenow.io/v1/exchange-amount/1/${sel}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`;
-        // const options3={
-        //   method:"GET",
-        //   header:{
-        //     "Content-Type":"application/json"         
-        //   }
-        // }
-
-        const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${1}&api_key=${stealthex_api_key}&fixed=false`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-  
-        // const response3=await fetch(url3,options3);
-        const data3=await response3.json();
-        console.log(data3)
-        return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimated_amount}})
+      } catch (error) {
+        console.log(error)
+        return res.json({to:{amount:0, from:{min:0}, onesel:0}});
       }
-    } else {
-      
-      return res.json({to:{amount:0, from:{min:0}, onesel:0}})
-    }
+     
   };
 
   static currencies = async (req, res) =>{
