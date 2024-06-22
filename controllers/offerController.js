@@ -285,7 +285,7 @@ class offerController {
             changenow_fixed_rateId=result3.rateId
           }
       } catch (error) {
-        console.log("Changenow Fixed Response Handeling", error)
+        console.log("Changenow Fixed Response Handelings", error)
       }
 
       //*************** Changehero Minimum and Maximum Floating Response Handeling ******************//
