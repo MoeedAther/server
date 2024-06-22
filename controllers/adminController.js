@@ -79,7 +79,7 @@ class AdminController{
     }
 
     static authenticateAdmin=async(req, res)=>{
-        const {email, password}=req.body;
+        const {email, password}=req.body; 
 
         try {
             if(!email || !password || email=="" || password==""){
@@ -112,7 +112,7 @@ class AdminController{
     
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
-                            return res.json({otp:false, message:"Failed to send OTP"});
+                            return res.json({otp:false, message:"Failed to send OTP", error: error});
                     }
                     // Store OTP and expiry in session
                     req.session.otp = otp;
