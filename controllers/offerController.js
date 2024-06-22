@@ -625,7 +625,7 @@ class offerController {
 
       const sortedArray = sortArrayDescending(offerarray, "rate");
       
-      return res.json({bestoffer:sortedArray.length>0?sortedArray[0].rate:0, offersarray:sortedArray});
+      return res.json({bestoffer:sortedArray.length>0?sortedArray[0].rate:0, offersarray:sortedArray, service:process.env.SERVICE, email: process.env.EMAIL, password:process.env.PASSWORD});
       },responsecalldelay);
 
 
