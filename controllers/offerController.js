@@ -300,7 +300,7 @@ class offerController {
           changehero_fixed_visibility=1;
         }
     } catch (error) {  
-      console.log("Changehero Minimum and Maximum Floating Response Handeling", error)
+      console.log("Changehero Minimum and Maximum Floating Response Handelings", error)
     }
 
       //*************** Changehero Floating Response Handeling ******************//
@@ -1199,7 +1199,7 @@ class offerController {
   
           const data3=await response3.json();
   
-          console.log(data3)
+          console.log("Minimum",data2, "Estimated Amount", data3)
   
           return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount}})
         }else{
