@@ -132,7 +132,10 @@ class AdminController{
     
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
+<<<<<<< HEAD
                             logger.error(`Error: ${error}`);
+=======
+>>>>>>> origin/main
                             return res.json({otp:false, message:"Failed to send OTP"});
                     }
                     // Store OTP and expiry in session
