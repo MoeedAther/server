@@ -86,7 +86,9 @@ app.use('/api', router)
 
 // Configure Nodemailer transporter
 const transporter = nodemailer.createTransport({
-    service: process.env.SERVICE,
+    host: process.env.SERVICE,
+    port: process.env.PORT, // Port for SSL
+    secure: process.env.SECURE, // Use SSL
     auth: {
       user: process.env.EMAIL,
       pass: process.env.PASSWORD

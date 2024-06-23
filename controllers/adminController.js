@@ -39,7 +39,9 @@ app.use(bodyParser.json());
 
 // Configure Nodemailer transporter
 const transporter = nodemailer.createTransport({
-    service: process.env.SERVICE,
+    host: process.env.SERVICE,
+    port: process.env.PORT, // Port for SSL
+    secure: process.env.SECURE, // Use SSL
     auth: {
       user: process.env.EMAIL,
       pass: process.env.PASSWORD
@@ -130,7 +132,7 @@ class AdminController{
                   };
     
                 transporter.sendMail(mailOptions, (error, info) => {
-                    
+
                     if (error) {
                             logger.error(`Error: ${error}`);
                             return res.json({otp:false, message:"Failed to send OTP"});
