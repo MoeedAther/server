@@ -8,6 +8,26 @@ import {db} from '../database/connectdb.js';
 import nodemailer from 'nodemailer';
 import bodyParser from 'body-parser';
 
+import {createLogger, format, transports} from 'winston';
+const { combine, timestamp, printf } = format;
+
+// Define custom log format
+const logFormat = printf(({ level, message, timestamp }) => {
+    return `${timestamp} ${level}: ${message}`;
+});
+
+// Create the logger
+const logger = createLogger({
+    format: combine(
+        timestamp(),
+        logFormat
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: 'app.log' })
+    ]
+});
+
 
 dotenv.config();
 
@@ -112,6 +132,10 @@ class AdminController{
     
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
+<<<<<<< HEAD
+                            logger.error(`Error: ${error}`);
+=======
+>>>>>>> origin/main
                             return res.json({otp:false, message:"Failed to send OTP"});
                     }
                     // Store OTP and expiry in session
