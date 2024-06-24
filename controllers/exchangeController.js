@@ -77,8 +77,8 @@ class exchangeController{
             const data = await JSON.parse(response.body);
             try {
               if(data.result.id){
-                var sql="INSERT INTO changelly_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address], function(error, result){
+                var sql="INSERT INTO changelly_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, email], function(error, result){
                   if (error) throw error;
                 })
               }
@@ -475,8 +475,8 @@ class exchangeController{
             const data = await JSON.parse(response.body);
             try {
               if(data.result.id){
-                var sql="INSERT INTO changelly_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, transaction_type, recipient_address, refund_address	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, "Fixed", recieving_Address, refund_Address], function(error, result){
+                var sql="INSERT INTO changelly_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, email, "Fixed"], function(error, result){
                   if (error) throw error;
                 })
               }
