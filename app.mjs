@@ -120,7 +120,7 @@ function sendFailedEmail(email){
         from: process.env.EMAIL,
         to: email,
         subject: 'Swap Status',
-        text: `Exchange was unsuccessfull successful`
+        text: `Exchange was unsuccessfull`
       };
 
     transporter.sendMail(mailOptions, (error, info) => {
