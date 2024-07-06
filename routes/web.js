@@ -3,6 +3,7 @@ import offerController from '../controllers/offerController.js';
 import exchangeController from '../controllers/exchangeController.js';
 import AdminController from '../controllers/adminController.js';
 import CronController from '../controllers/cronController.js';
+import SupportController from '../controllers/supportController.js';
 
 
 const router=express.Router();
@@ -77,28 +78,28 @@ router.post('/validate/wallet_address', exchangeController.validateWalletAddress
 //.................................. GET Transaction APIs ......................................./
 
 //**************************************** Changelly Transactions ************************* */
-router.get('/get/changelly/transactions', exchangeController.getChangellyTransactions)
+router.post('/get/changelly/transactions', exchangeController.getChangellyTransactions)
 
 //**************************************** Changenow Transactions ************************* */
-router.get('/get/changenow/transactions', exchangeController.getChangenowTransactions)
+router.post('/get/changenow/transactions', exchangeController.getChangenowTransactions)
 
 //**************************************** Changehero Transactions ************************* */
-router.get('/get/changehero/transactions', exchangeController.getChangeheroTransactions)
+router.post('/get/changehero/transactions', exchangeController.getChangeheroTransactions)
 
 //**************************************** Exolix Transactions ************************* */
-router.get('/get/exolix/transactions', exchangeController.getExolixTransactions)
+router.post('/get/exolix/transactions', exchangeController.getExolixTransactions)
 
 //**************************************** Godex Transactions ************************* */
-router.get('/get/godex/transactions', exchangeController.getGodexTransactions)
+router.post('/get/godex/transactions', exchangeController.getGodexTransactions)
 
 //**************************************** Letsexchange Transactions ************************* */
-router.get('/get/letsexchange/transactions', exchangeController.getLetsexchangeTransactions)
+router.post('/get/letsexchange/transactions', exchangeController.getLetsexchangeTransactions)
 
 //**************************************** Simpleswap Transactions ************************* */
-router.get('/get/simpleswap/transactions', exchangeController.getSimpleswapTransactions)
+router.post('/get/simpleswap/transactions', exchangeController.getSimpleswapTransactions)
 
 //**************************************** Stealthex Transactions ************************* */
-router.get('/get/stealthex/transactions', exchangeController.getStealthexTransactions)
+router.post('/get/stealthex/transactions', exchangeController.getStealthexTransactions)
 
 
 //.................................. Admin APIs ......................................./
@@ -124,6 +125,20 @@ router.post('/get/cron/status', CronController.getStatusCronData);
 
 //Set cron type data
 router.post('/set/cron/status', CronController.setStatusCronData);
+
+
+//.................................. Support Links Apis ......................................./
+
+router.get('/support_links/changelly', SupportController.changellySupportLinks);
+router.get('/support_links/changenow', SupportController.changenowSupportLinks);
+router.get('/support_links/changehero', SupportController.changeheroSupportLinks);
+router.get('/support_links/exolix', SupportController.exolixSupportLinks);
+router.get('/support_links/godex', SupportController.godexSupportLinks);
+router.get('/support_links/letsexchange', SupportController.letsexchangeSupportLinks);
+router.get('/support_links/stealthex', SupportController.stealthexSupportLinks);
+router.get('/support_links/simpleswap', SupportController.simpleswapSupportLinks);
+
+
 
 
 export default router

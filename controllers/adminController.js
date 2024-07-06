@@ -1,7 +1,4 @@
 import express from 'express';
-import crypto from 'crypto';
-import request from "request";
-import fetch from "node-fetch";
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import {db} from '../database/connectdb.js';
@@ -40,8 +37,8 @@ app.use(bodyParser.json());
 // Configure Nodemailer transporter
 const transporter = nodemailer.createTransport({
     host: process.env.SERVICE,
-    port: process.env.PORT, // Port for SSL
-    secure: process.env.SECURE, // Use SSL
+    port: process.env.SMTP_SERVER_PORT, // Port for SSL
+    secure: true, // Use SSL
     auth: {
       user: process.env.EMAIL,
       pass: process.env.PASSWORD

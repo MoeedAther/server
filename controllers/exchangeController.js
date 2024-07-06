@@ -225,6 +225,7 @@ class exchangeController{
     }
 
     static exolixFloatingTransaction = async (req, res)=>{
+      console.log(req.body);
         const { sell, get, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid } = req.body
 
         const url = "https://exolix.com/api/v2/transactions";
@@ -757,26 +758,147 @@ class exchangeController{
 
     static getChangellyTransactions = async (req, res)=>{
 
-          var sql="Select * FROM changelly_transactions ORDER BY id DESC";
-          db.query(sql, function(error, result){
-            if (error) throw error;
-            return res.json(result);
-          })
+      const { period, status } = req.body; // Get the period from query parameters
+      let sql = "SELECT * FROM changelly_transactions";
+    const currentTime = new Date();
+    let startTime;
+    let statusCondition = "";
+
+    switch (period) {
+        case 'current_hour':
+            startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentTime.getHours());
+            break;
+        case 'current_day':
+            startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+            break;
+        case 'current_week':
+            startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() - currentTime.getDay());
+            break;
+        case 'current_month':
+            startTime = new Date(currentTime.getFullYear(), currentTime.getMonth());
+            break;
+        case 'current_year':
+            startTime = new Date(currentTime.getFullYear(), 0);
+            break;
+        case 'all':
+        default:
+            startTime = null;
+    }
+
+    if (status === 'finished') {
+        statusCondition = "status = 'finished'";
+    } else if (status === 'pending') {
+        statusCondition = "status != 'finished'";
+    }
+
+    if (startTime) {
+        sql += ` WHERE time >= ?${statusCondition ? ' AND ' + statusCondition : ''}`;
+    } else if (statusCondition) {
+        sql += ` WHERE ${statusCondition}`;
+    }
+
+    sql += " ORDER BY id DESC";
+
+    db.query(sql, startTime ? [startTime] : [], function (error, result) {
+        if (error) throw error;
+        return res.json(result);
+    });
         }
     
     static getChangenowTransactions = async (req, res)=>{
+      const { period, status } = req.body; // Get the period from query parameters
+          var sql="Select * FROM changenow_transactions";
 
-          var sql="Select * FROM changenow_transactions ORDER BY id DESC";
-          db.query(sql, function(error, result){
+          const currentTime = new Date();
+          let startTime;
+          let statusCondition = "";
+      
+          switch (period) {
+              case 'current_hour':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentTime.getHours());
+                  break;
+              case 'current_day':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+                  break;
+              case 'current_week':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() - currentTime.getDay());
+                  break;
+              case 'current_month':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth());
+                  break;
+              case 'current_year':
+                  startTime = new Date(currentTime.getFullYear(), 0);
+                  break;
+              case 'all':
+              default:
+                  startTime = null;
+          }
+      
+          if (status === 'finished') {
+              statusCondition = "status = 'finished'";
+          } else if (status === 'pending') {
+              statusCondition = "status != 'finished'";
+          }
+      
+          if (startTime) {
+              sql += ` WHERE time >= ?${statusCondition ? ' AND ' + statusCondition : ''}`;
+          } else if (statusCondition) {
+              sql += ` WHERE ${statusCondition}`;
+          }
+      
+          sql += " ORDER BY id DESC";
+
+          db.query(sql, startTime ? [startTime] : [], function(error, result){
             if (error) throw error;
             return res.json(result);
           })
         }
 
     static getChangeheroTransactions = async (req, res)=>{
+      const { period, status } = req.body; // Get the period from query parameters
 
-          var sql="Select * FROM changehero_transactions ORDER BY id DESC";
-          db.query(sql, function(error, result){
+          var sql="Select * FROM changehero_transactions";
+
+          const currentTime = new Date();
+          let startTime;
+          let statusCondition = "";
+      
+          switch (period) {
+              case 'current_hour':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentTime.getHours());
+                  break;
+              case 'current_day':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+                  break;
+              case 'current_week':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() - currentTime.getDay());
+                  break;
+              case 'current_month':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth());
+                  break;
+              case 'current_year':
+                  startTime = new Date(currentTime.getFullYear(), 0);
+                  break;
+              case 'all':
+              default:
+                  startTime = null;
+          }
+      
+          if (status === 'finished') {
+              statusCondition = "status = 'finished'";
+          } else if (status === 'pending') {
+              statusCondition = "status != 'finished'";
+          }
+      
+          if (startTime) {
+              sql += ` WHERE time >= ?${statusCondition ? ' AND ' + statusCondition : ''}`;
+          } else if (statusCondition) {
+              sql += ` WHERE ${statusCondition}`;
+          }
+      
+          sql += " ORDER BY id DESC";
+
+          db.query(sql, startTime ? [startTime] : [], function(error, result){
             if (error) throw error;
             return res.json(result);
           })
@@ -784,8 +906,50 @@ class exchangeController{
 
     static getExolixTransactions = async (req, res)=>{
 
-          var sql="Select * FROM exolix_transactions ORDER BY id DESC";
-          db.query(sql, function(error, result){
+      const { period, status } = req.body; // Get the period from query parameters
+
+          var sql="Select * FROM exolix_transactions";
+
+          const currentTime = new Date();
+          let startTime;
+          let statusCondition = "";
+      
+          switch (period) {
+              case 'current_hour':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentTime.getHours());
+                  break;
+              case 'current_day':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+                  break;
+              case 'current_week':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() - currentTime.getDay());
+                  break;
+              case 'current_month':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth());
+                  break;
+              case 'current_year':
+                  startTime = new Date(currentTime.getFullYear(), 0);
+                  break;
+              case 'all':
+              default:
+                  startTime = null;
+          }
+      
+          if (status === 'success') {
+              statusCondition = "status = 'success'";
+          } else if (status === 'pending') {
+              statusCondition = "status != 'success'";
+          }
+      
+          if (startTime) {
+              sql += ` WHERE time >= ?${statusCondition ? ' AND ' + statusCondition : ''}`;
+          } else if (statusCondition) {
+              sql += ` WHERE ${statusCondition}`;
+          }
+      
+          sql += " ORDER BY id DESC";
+
+          db.query(sql, startTime ? [startTime] : [], function(error, result){
             if (error) throw error;
             return res.json(result);
           })
@@ -793,8 +957,50 @@ class exchangeController{
 
     static getLetsexchangeTransactions = async (req, res)=>{
 
-          var sql="Select * FROM letsexchange_transactions ORDER BY id DESC";
-          db.query(sql, function(error, result){
+      const { period, status } = req.body; // Get the period from query parameters
+
+          var sql="Select * FROM letsexchange_transactions";
+
+          const currentTime = new Date();
+          let startTime;
+          let statusCondition = "";
+      
+          switch (period) {
+              case 'current_hour':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentTime.getHours());
+                  break;
+              case 'current_day':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+                  break;
+              case 'current_week':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() - currentTime.getDay());
+                  break;
+              case 'current_month':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth());
+                  break;
+              case 'current_year':
+                  startTime = new Date(currentTime.getFullYear(), 0);
+                  break;
+              case 'all':
+              default:
+                  startTime = null;
+          }
+      
+          if (status === 'success') {
+              statusCondition = "status = 'success'";
+          } else if (status === 'pending') {
+              statusCondition = "status != 'success'";
+          }
+      
+          if (startTime) {
+              sql += ` WHERE time >= ?${statusCondition ? ' AND ' + statusCondition : ''}`;
+          } else if (statusCondition) {
+              sql += ` WHERE ${statusCondition}`;
+          }
+      
+          sql += " ORDER BY id DESC";
+
+          db.query(sql, startTime ? [startTime] : [], function(error, result){
             if (error) throw error;
             return res.json(result);
           })
@@ -802,8 +1008,50 @@ class exchangeController{
 
     static getSimpleswapTransactions = async (req, res)=>{
 
-          var sql="Select * FROM simpleswap_transactions ORDER BY id DESC";
-          db.query(sql, function(error, result){
+      const { period, status } = req.body; // Get the period from query parameters
+
+          var sql="Select * FROM simpleswap_transactions";
+
+          const currentTime = new Date();
+          let startTime;
+          let statusCondition = "";
+      
+          switch (period) {
+              case 'current_hour':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentTime.getHours());
+                  break;
+              case 'current_day':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+                  break;
+              case 'current_week':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() - currentTime.getDay());
+                  break;
+              case 'current_month':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth());
+                  break;
+              case 'current_year':
+                  startTime = new Date(currentTime.getFullYear(), 0);
+                  break;
+              case 'all':
+              default:
+                  startTime = null;
+          }
+      
+          if (status === 'finished') {
+              statusCondition = "status = 'finished'";
+          } else if (status === 'pending') {
+              statusCondition = "status != 'finished'";
+          }
+      
+          if (startTime) {
+              sql += ` WHERE time >= ?${statusCondition ? ' AND ' + statusCondition : ''}`;
+          } else if (statusCondition) {
+              sql += ` WHERE ${statusCondition}`;
+          }
+      
+          sql += " ORDER BY id DESC";
+
+          db.query(sql, startTime ? [startTime] : [], function(error, result){
             if (error) throw error;
             return res.json(result);
           })
@@ -811,8 +1059,50 @@ class exchangeController{
 
     static getGodexTransactions = async (req, res)=>{
 
-          var sql="Select * FROM godex_transactions ORDER BY id DESC";
-          db.query(sql, function(error, result){
+      const { period, status } = req.body; // Get the period from query parameters
+
+          var sql="Select * FROM godex_transactions";
+
+          const currentTime = new Date();
+          let startTime;
+          let statusCondition = "";
+      
+          switch (period) {
+              case 'current_hour':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentTime.getHours());
+                  break;
+              case 'current_day':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+                  break;
+              case 'current_week':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() - currentTime.getDay());
+                  break;
+              case 'current_month':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth());
+                  break;
+              case 'current_year':
+                  startTime = new Date(currentTime.getFullYear(), 0);
+                  break;
+              case 'all':
+              default:
+                  startTime = null;
+          }
+      
+          if (status === 'finished') {
+              statusCondition = "status = 'finished'";
+          } else if (status === 'pending') {
+              statusCondition = "status != 'finished'";
+          }
+      
+          if (startTime) {
+              sql += ` WHERE time >= ?${statusCondition ? ' AND ' + statusCondition : ''}`;
+          } else if (statusCondition) {
+              sql += ` WHERE ${statusCondition}`;
+          }
+      
+          sql += " ORDER BY id DESC";
+
+          db.query(sql, startTime ? [startTime] : [], function(error, result){
             if (error) throw error;
             return res.json(result);
           })
@@ -820,8 +1110,50 @@ class exchangeController{
 
     static getStealthexTransactions = async (req, res)=>{
 
-          var sql="Select * FROM stealthex_transactions ORDER BY id DESC";
-          db.query(sql, function(error, result){
+      const { period, status } = req.body; // Get the period from query parameters
+
+          var sql="Select * FROM stealthex_transactions";
+
+          const currentTime = new Date();
+          let startTime;
+          let statusCondition = "";
+      
+          switch (period) {
+              case 'current_hour':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentTime.getHours());
+                  break;
+              case 'current_day':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+                  break;
+              case 'current_week':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() - currentTime.getDay());
+                  break;
+              case 'current_month':
+                  startTime = new Date(currentTime.getFullYear(), currentTime.getMonth());
+                  break;
+              case 'current_year':
+                  startTime = new Date(currentTime.getFullYear(), 0);
+                  break;
+              case 'all':
+              default:
+                  startTime = null;
+          }
+      
+          if (status === 'finished') {
+              statusCondition = "status = 'finished'";
+          } else if (status === 'pending') {
+              statusCondition = "status != 'finished'";
+          }
+      
+          if (startTime) {
+              sql += ` WHERE time >= ?${statusCondition ? ' AND ' + statusCondition : ''}`;
+          } else if (statusCondition) {
+              sql += ` WHERE ${statusCondition}`;
+          }
+      
+          sql += " ORDER BY id DESC";
+
+          db.query(sql, startTime ? [startTime] : [], function(error, result){
             if (error) throw error;
             return res.json(result);
           })
@@ -843,7 +1175,6 @@ class exchangeController{
         const data=await response.json();
         res.json(data)
     }
-
 
 }
 

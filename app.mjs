@@ -7,7 +7,6 @@ import session from 'express-session';
 import expressMySQLSession from 'express-mysql-session';
 import nodemailer from 'nodemailer';
 import cron from 'node-cron';
-import shell from 'shelljs';
 import crypto from 'crypto';
 import request from "request";
 import fetch from "node-fetch";
@@ -31,9 +30,6 @@ const logger = createLogger({
         new transports.File({ filename: 'app.log' })
     ]
 });
-
-
-
 
 
 dotenv.config();
@@ -73,7 +69,7 @@ app.use(session({
     resave:false,
     saveUninitialized: false, // Only create session when something is stored
     cookie: {
-        maxAge: 24 * 60 * 60 * 1000 // 24 hourss
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
 
@@ -87,7 +83,7 @@ app.use('/api', router)
 // Configure Nodemailer transporter
 const transporter = nodemailer.createTransport({
     host: process.env.SERVICE,
-    port: process.env.PORT, // Port for SSL
+    port: process.env.SMTP_SERVER_PORT, // Port for SSL
     secure: process.env.SECURE, // Use SSL
     auth: {
       user: process.env.EMAIL,
