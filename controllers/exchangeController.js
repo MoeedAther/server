@@ -77,19 +77,30 @@ class exchangeController{
             const data = await JSON.parse(response.body);
             try {
               if(data.result.id){
-                var sql="INSERT INTO changelly_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, email], function(error, result){
+                var sql="INSERT INTO changelly_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email	) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email], function(error, result){
                   if (error) throw error;
                 })
               }
-              res.json(data);
+              res.json({
+                transaction_id:data.result.id,	
+                sell_coin:sell,	
+                get_coin:get,	
+                sell_amount:amount,	
+                get_amount:data.result.amountExpectedTo,	
+                recipient_extraid:extraid,	
+                refund_extraid:refextraid,	
+                status:data.result.status, 
+                recipient_address:recieving_Address, 
+                refund_address:refund_Address, 
+                deposit_address:data.result.payinAddress, 
+                email:email,
+                transaction_type:"Floating"
+              });
             } catch (error) {
               res.json(data);              
             }
           })
-
-
-
     }
 
     static changenowFloatingTransaction = async (req, res)=>{
@@ -122,12 +133,26 @@ class exchangeController{
         const data = await response.json();
         try {
           if(data.id){
-            var sql="INSERT INTO changenow_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, sell, get, amount, data.amount, extraid, refextraid, data.status, recieving_Address, refund_Address, email ], function(error, result){
+            var sql="INSERT INTO changenow_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, sell, get, amount, data.amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.payinAddress, email ], function(error, result){
               if (error) throw error;
             })
           }
-          res.json(data);
+          res.json({
+            transaction_id:data.id,	
+            sell_coin:sell,	
+            get_coin:get,	
+            sell_amount:amount,	
+            get_amount:data.amount,	
+            recipient_extraid:extraid,	
+            refund_extraid:refextraid,	
+            status:data.status, 
+            recipient_address:recieving_Address, 
+            refund_address:refund_Address, 
+            deposit_address:data.payinAddress, 
+            email:email	,
+            transaction_type:"Floating"
+          });
         } catch (error) {
           res.json(data);
         }
@@ -170,12 +195,34 @@ class exchangeController{
         const data = await response.json()
         try {
           if(data.result.id){
-            var sql="INSERT INTO changehero_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, email ], function(error, result){
+            var sql="INSERT INTO changehero_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email ], function(error, result){
               if (error) throw error;
             })
           }
-          res.json(data);
+          res.json({
+            transaction_id:data.result.id,	
+
+            sell_coin:sell,	
+            get_coin:get,	
+            sell_amount:amount,
+
+            get_amount:data.result.amountExpectedTo,	
+
+            recipient_extraid:extraid,	
+            refund_extraid:refextraid,
+
+            status:data.result.status, 
+
+            recipient_address:recieving_Address, 
+            refund_address:refund_Address,
+
+            deposit_address:data.result.payinAddress,
+
+            email:email,
+            
+            transaction_type:"Floating"
+          });
         } catch (error) {
           res.json(data);
         }      
@@ -213,14 +260,36 @@ class exchangeController{
         
         try {
           if(data.id){
-            var sql="INSERT INTO stealthex_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, sell, get, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, email ], function(error, result){
+            var sql="INSERT INTO stealthex_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, sell, get, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email ], function(error, result){
               if (error) throw error;
             })
           }
-          res.json(data)
+          res.json({
+            transaction_id:data.id,	
+
+            sell_coin:sell,	
+            get_coin:get,	
+            sell_amount:amount,
+
+            get_amount:data.amount_to,	
+
+            recipient_extraid:extraid,	
+            refund_extraid:refextraid,
+
+            status:data.status, 
+
+            recipient_address:recieving_Address, 
+            refund_address:refund_Address,
+
+            deposit_address:data.address_from,
+
+            email:email,
+            
+            transaction_type:"Floating"
+          });
         } catch (error) {
-          res.json(data)
+          res.json(data);
         }
     }
 
@@ -255,12 +324,34 @@ class exchangeController{
         const data = await response.json()
         try {
           if(data.id){
-            var sql="INSERT INTO exolix_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, sell, get, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, email ], function(error, result){
+            var sql="INSERT INTO exolix_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, sell, get, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email ], function(error, result){
               if (error) throw error;
             })
           }
-          res.json(data)
+          res.json({
+            transaction_id:data.id,	
+
+            sell_coin:sell,	
+            get_coin:get,	
+            sell_amount:amount,
+
+            get_amount:data.amountTo,	
+
+            recipient_extraid:extraid,	
+            refund_extraid:refextraid,
+
+            status:data.status, 
+
+            recipient_address:recieving_Address, 
+            refund_address:refund_Address,
+
+            deposit_address:data.depositAddress,
+
+            email:email,
+            
+            transaction_type:"Floating"
+          });
         } catch (error) {
           res.json(data)
         }
@@ -283,7 +374,6 @@ class exchangeController{
           extra_id_to: extraid,
           user_refund_address: refund_Address,
           user_refund_extra_id: refextraid
-      
         }
       
         const options = {
@@ -301,21 +391,41 @@ class exchangeController{
       
         try {
           if(data.id){
-            var sql="INSERT INTO simpleswap_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, sell, get, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, email ], function(error, result){
+            var sql="INSERT INTO simpleswap_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, sell, get, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email ], function(error, result){
               if (error) throw error;
             })
           }
-          res.json(data)
+          res.json({
+            transaction_id:data.id,	
+
+            sell_coin:sell,	
+            get_coin:get,	
+            sell_amount:amount,
+
+            get_amount:data.amount_to,	
+
+            recipient_extraid:extraid,	
+            refund_extraid:refextraid,
+
+            status:data.status, 
+
+            recipient_address:recieving_Address, 
+            refund_address:refund_Address,
+
+            deposit_address:data.address_from,
+
+            email:email,
+            
+            transaction_type:"Floating"
+          });
         } catch (error) {
-          res.json(data)
+          res.json(data);
         }
     }
 
     static godexFloatingTransaction = async (req, res)=>{
         const { sell, get, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid } = req.body
-
-        console.log(req.body)
       
         const url = "https://api.godex.io/api/v1/transaction?affiliate_id=sZnGAGyVu";
       
@@ -343,17 +453,38 @@ class exchangeController{
       
         const response = await fetch(url, options)
       
-      
         const data = await response.json()
       
         try {
           if(data.transaction_id){
-            var sql="INSERT INTO godex_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.transaction_id, sell, get, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, email ], function(error, result){
+            var sql="INSERT INTO godex_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.transaction_id, sell, get, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email ], function(error, result){
               if (error) throw error;
             })
           }
-          res.json(data)
+          res.json({
+            transaction_id:data.transaction_id,	
+
+            sell_coin:sell,	
+            get_coin:get,	
+            sell_amount:amount,
+
+            get_amount:data.withdrawal_amount,	
+
+            recipient_extraid:extraid,	
+            refund_extraid:refextraid,
+
+            status:data.status, 
+
+            recipient_address:recieving_Address, 
+            refund_address:refund_Address,
+
+            deposit_address:data.deposit,
+
+            email:email,
+            
+            transaction_type:"Floating"
+          });
         } catch (error) {
           res.json(data)
         }
@@ -394,14 +525,37 @@ class exchangeController{
 
   try {
     if(data.transaction_id){
-      var sql="INSERT INTO letsexchange_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.transaction_id, sell, get, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, email ], function(error, result){
+      var sql="INSERT INTO letsexchange_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.transaction_id, sell, get, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email ], function(error, result){
         if (error) throw error;
       })
     }
-    res.json(data)
+    res.json({
+      transaction_id:data.transaction_id,	
+
+      sell_coin:sell,	
+      get_coin:get,	
+      sell_amount:amount,
+
+      get_amount:data.withdrawal_amount,	
+
+      recipient_extraid:extraid,	
+      refund_extraid:refextraid,
+
+      status:data.status, 
+
+      recipient_address:recieving_Address, 
+      refund_address:refund_Address,
+
+      deposit_address:data.deposit,
+
+      email:email,
+      
+      transaction_type:"Floating"
+    });
+    
   } catch (error) {
-    res.json(data)
+    res.json(data);
   }
     }
 
@@ -476,12 +630,34 @@ class exchangeController{
             const data = await JSON.parse(response.body);
             try {
               if(data.result.id){
-                var sql="INSERT INTO changelly_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, email, "Fixed"], function(error, result){
+                var sql="INSERT INTO changelly_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed"], function(error, result){
                   if (error) throw error;
                 })
               }
-              res.json(data);
+              res.json({
+                transaction_id:data.result.id,	
+          
+                sell_coin:sell,	
+                get_coin:get,	
+                sell_amount:amount,
+          
+                get_amount:data.result.amountExpectedTo,	
+          
+                recipient_extraid:extraid,	
+                refund_extraid:refextraid,
+          
+                status: data.result.status, 
+          
+                recipient_address:recieving_Address, 
+                refund_address:refund_Address,
+          
+                deposit_address:data.result.payinAddress,
+          
+                email:email,
+
+                transaction_type:"Fixed"
+              });
             } catch (error) {
               res.json(data);
             }
@@ -520,12 +696,36 @@ class exchangeController{
 
   try {
     if(data.id){
-      var sql="INSERT INTO changenow_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, sell, get, amount, data.amount, extraid, refextraid, data.status, recieving_Address, refund_Address, email, "Fixed" ], function(error, result){
+      var sql="INSERT INTO changenow_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, sell, get, amount, data.amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.payinAddress, email, "Fixed" ], function(error, result){
         if (error) throw error;
       })
     }
-    res.json(data);
+
+    res.json({
+      transaction_id:data.id,	
+
+      sell_coin:sell,	
+      get_coin:get,	
+      sell_amount:amount,
+
+      get_amount:data.amount,	
+
+      recipient_extraid:extraid,	
+      refund_extraid:refextraid,
+
+      status: data.status, 
+
+      recipient_address:recieving_Address, 
+      refund_address:refund_Address,
+
+      deposit_address:data.payinAddress,
+
+      email:email,
+
+      transaction_type:"Fixed"
+    });
+
   } catch (error) {
     res.json(data);
   }
@@ -569,12 +769,34 @@ class exchangeController{
 
   try {
     if(data.result.id){
-      var sql="INSERT INTO changehero_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, email, "Fixed" ], function(error, result){
+      var sql="INSERT INTO changehero_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.result.id, sell, get, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed" ], function(error, result){
         if (error) throw error;
       })
     }
-    res.json(data);
+      res.json({
+      transaction_id:data.result.id,	
+
+      sell_coin:sell,	
+      get_coin:get,	
+      sell_amount:amount,
+
+      get_amount:data.result.amountExpectedTo,	
+
+      recipient_extraid:extraid,	
+      refund_extraid:refextraid,
+
+      status: data.result.status, 
+
+      recipient_address:recieving_Address, 
+      refund_address:refund_Address,
+
+      deposit_address:data.result.payinAddress,
+
+      email:email,
+
+      transaction_type:"Fixed"
+    });
   } catch (error) {
     res.json(data);
   }   
@@ -610,14 +832,36 @@ class exchangeController{
   const data = await response.json()
   try {
     if(data.id){
-      var sql="INSERT INTO stealthex_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, sell, get, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, email, "Fixed" ], function(error, result){
+      var sql="INSERT INTO stealthex_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, sell, get, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed" ], function(error, result){
         if (error) throw error;
       })
     }
-    res.json(data)
+    res.json({
+      transaction_id:data.id,	
+
+      sell_coin:sell,	
+      get_coin:get,	
+      sell_amount:amount,
+
+      get_amount:data.amount_to,	
+
+      recipient_extraid:extraid,	
+      refund_extraid:refextraid,
+
+      status: data.status, 
+
+      recipient_address:recieving_Address, 
+      refund_address:refund_Address,
+
+      deposit_address: data.address_from,
+
+      email:email,
+
+      transaction_type:"Fixed"
+    });
   } catch (error) {
-    res.json(data)
+    res.json(data);
   }
 }
 
@@ -652,14 +896,36 @@ class exchangeController{
         const data = await response.json()
         try {
           if(data.id){
-            var sql="INSERT INTO exolix_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, sell, get, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, email, "Fixed" ], function(error, result){
+            var sql="INSERT INTO exolix_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, sell, get, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, "Fixed" ], function(error, result){
               if (error) throw error;
             })
           }
-          res.json(data)
+          res.json({
+            transaction_id:data.id,	
+      
+            sell_coin:sell,	
+            get_coin:get,	
+            sell_amount:amount,
+      
+            get_amount:data.amountTo,	
+      
+            recipient_extraid:extraid,	
+            refund_extraid:refextraid,
+      
+            status: data.status, 
+      
+            recipient_address:recieving_Address, 
+            refund_address:refund_Address,
+      
+            deposit_address: data.depositAddress,
+      
+            email:email,
+      
+            transaction_type:"Fixed"
+          });
         } catch (error) {
-          res.json(data)
+          res.json(data);
         }
     }
 
@@ -696,14 +962,36 @@ class exchangeController{
   const data = await response.json()
   try {
     if(data.id){
-      var sql="INSERT INTO simpleswap_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, sell, get, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, email, "Fixed" ], function(error, result){
+      var sql="INSERT INTO simpleswap_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, sell, get, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed" ], function(error, result){
         if (error) throw error;
       })
     }
-    res.json(data)
+    res.json({
+      transaction_id:data.id,	
+
+      sell_coin:sell,	
+      get_coin:get,	
+      sell_amount:amount,
+
+      get_amount: data.amount_to,	
+
+      recipient_extraid:extraid,	
+      refund_extraid:refextraid,
+
+      status: data.status, 
+
+      recipient_address:recieving_Address, 
+      refund_address:refund_Address,
+
+      deposit_address:  data.address_from,
+
+      email:email,
+
+      transaction_type:"Fixed"
+    });
   } catch (error) {
-    res.json(data)
+    res.json(data);
   }
 
     }
@@ -743,14 +1031,36 @@ class exchangeController{
       
         try {
           if(data.transaction_id){
-            var sql="INSERT INTO letsexchange_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.transaction_id, sell, get, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, email, "Fixed" ], function(error, result){
+            var sql="INSERT INTO letsexchange_transactions(transaction_id,	sell_coin,	get_coin,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.transaction_id, sell, get, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address,  data.deposit, email, "Fixed" ], function(error, result){
               if (error) throw error;
             })
           }
-          res.json(data)
+          res.json({
+            transaction_id:data.transaction_id,	
+      
+            sell_coin:sell,	
+            get_coin:get,	
+            sell_amount:amount,
+      
+            get_amount: data.withdrawal_amount,	
+      
+            recipient_extraid:extraid,	
+            refund_extraid:refextraid,
+      
+            status: data.status, 
+      
+            recipient_address:recieving_Address, 
+            refund_address:refund_Address,
+      
+            deposit_address:  data.deposit,
+      
+            email:email,
+      
+            transaction_type:"Fixed"
+          });
         } catch (error) {
-          res.json(data)
+          res.json(data);
         }
     }
 
@@ -1159,6 +1469,96 @@ class exchangeController{
           })
         }
 
+    // *********************** Check Transaction Status ************************* //
+    static checkChangellyTransactionStatus=async (req, res)=>{ 
+      const {id}=req.body;
+      var sql="SELECT * FROM changelly_transactions WHERE transaction_id=?";
+      db.query(sql,[id], function(error, result){
+        if (error){
+         return res.json({tx:[], message:"This transaction does't exist"})
+        }else{
+          return res.json({tx:result[0], message:"Transaction found"})
+        }
+      })
+    }
+
+    static checkChangenowTransactionStatus=async (req, res)=>{
+      const {id}=req.body;
+      var sql="SELECT * FROM changenow_transactions WHERE transaction_id=?";
+      db.query(sql,[id], function(error, result){
+        if (error){
+         return res.json({tx:[], message:"This transaction does't exist"})
+        }else{
+          return res.json({tx:result[0], message:"Transaction found"})
+        }
+      })
+    }
+    static checkChangeheroTransactionStatus=async (req, res)=>{
+      const {id}=req.body;
+      var sql="SELECT * FROM changehero_transactions WHERE transaction_id=?";
+      db.query(sql,[id], function(error, result){
+        if (error){
+         return res.json({tx:[], message:"This transaction does't exist"})
+        }else{
+          return res.json({tx:result[0], message:"Transaction found"})
+        }
+      })
+    }
+    static checkExolixTransactionStatus=async (req, res)=>{
+      const {id}=req.body;
+      var sql="SELECT * FROM exolix_transactions WHERE transaction_id=?";
+      db.query(sql,[id], function(error, result){
+        if (error){
+         return res.json({tx:[], message:"This transaction does't exist"})
+        }else{
+          return res.json({tx:result[0], message:"Transaction found"})
+        }
+      })
+    }
+    static checkLetsexchangeTransactionStatus=async (req, res)=>{
+      const {id}=req.body;
+      var sql="SELECT * FROM letsexchange_transactions WHERE transaction_id=?";
+      db.query(sql,[id], function(error, result){
+        if (error){
+         return res.json({tx:[], message:"This transaction does't exist"})
+        }else{
+          return res.json({tx:result[0], message:"Transaction found"})
+        }
+      })
+    }
+    static checkSimpleswapTransactionStatus=async (req, res)=>{
+      const {id}=req.body;
+      var sql="SELECT * FROM simpleswap_transactions WHERE transaction_id=?";
+      db.query(sql,[id], function(error, result){
+        if (error){
+         return res.json({tx:[], message:"This transaction does't exist"})
+        }else{
+          return res.json({tx:result[0], message:"Transaction found"})
+        }
+      })
+    }
+    static checkGodexTransactionStatus=async (req, res)=>{
+      const {id}=req.body;
+      var sql="SELECT * FROM godex_transactions WHERE transaction_id=?";
+      db.query(sql,[id], function(error, result){
+        if (error){
+         return res.json({tx:[], message:"This transaction does't exist"})
+        }else{
+         return res.json({tx:result[0], message:"Transaction found"})
+        }
+      })
+    }
+    static checkStealthexTransactionStatus=async (req, res)=>{
+      const {id}=req.body;
+      var sql="SELECT * FROM stealthex_transactions WHERE transaction_id=?";
+      db.query(sql,[id], function(error, result){
+        if (error){
+         return res.json({tx:[], message:"This transaction does't exist"})
+        }else{
+         return res.json({tx:result[0], message:"Transaction found"})
+        }
+      })
+    }
 
     // *********************** Validating Wallet Address ************************* //
     static validateWalletAddress = async (req, res)=>{

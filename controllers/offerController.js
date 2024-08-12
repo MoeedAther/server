@@ -1190,7 +1190,7 @@ class offerController {
           // const response2=await fetch(url2,options2);
           const data2=await response2.json();
   
-          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${1}&api_key=${stealthex_api_key}&fixed=false`, {
+          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${minamount}&api_key=${stealthex_api_key}&fixed=false`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -1201,10 +1201,10 @@ class offerController {
   
           console.log("Minimum",data2, "Estimated Amount", data3)
   
-          return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount}})
+          return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount/minamount}})
         }else{
   
-          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${1}&api_key=${stealthex_api_key}&fixed=false`, {
+          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${minamount}&api_key=${stealthex_api_key}&fixed=false`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -1213,7 +1213,7 @@ class offerController {
   
           const data3=await response3.json();
           console.log(data3)
-          return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimated_amount}})
+          return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimated_amount/minamount}})
         }
       } catch (error) {
         console.log(error)

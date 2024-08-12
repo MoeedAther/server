@@ -126,6 +126,15 @@ router.post('/get/cron/status', CronController.getStatusCronData);
 //Set cron type data
 router.post('/set/cron/status', CronController.setStatusCronData);
 
+//.................................. Transaction Status Apis ......................................./
+router.post('/tx/changelly/status', exchangeController.checkChangellyTransactionStatus);
+router.post('/tx/changenow/status', exchangeController.checkChangenowTransactionStatus);
+router.post('/tx/changehero/status', exchangeController.checkChangeheroTransactionStatus);
+router.post('/tx/exolix/status', exchangeController.checkExolixTransactionStatus);
+router.post('/tx/letsexchange/status', exchangeController.checkLetsexchangeTransactionStatus);
+router.post('/tx/simpleswap/status', exchangeController.checkSimpleswapTransactionStatus);
+router.post('/tx/godex/status', exchangeController.checkGodexTransactionStatus);
+router.post('/tx/stealthex/status', exchangeController.checkStealthexTransactionStatus);
 
 //.................................. Support Links Apis ......................................./
 
