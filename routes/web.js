@@ -136,6 +136,10 @@ router.post('/tx/simpleswap/status', exchangeController.checkSimpleswapTransacti
 router.post('/tx/godex/status', exchangeController.checkGodexTransactionStatus);
 router.post('/tx/stealthex/status', exchangeController.checkStealthexTransactionStatus);
 
+//.......................... Transaction Status Check Using Order ID .............................../
+router.post('/tx/status', exchangeController.checkTransactionStatus);
+
+
 //.................................. Support Links Apis ......................................./
 
 router.get('/support_links/changelly', SupportController.changellySupportLinks);
