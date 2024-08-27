@@ -15,6 +15,17 @@ router.get('/currencies', offerController.currencies)
 //Home Page Price Controller
 router.post('/pricecheck', offerController.homeprice)
 
+//**************************************** Price Check Apis ************************* */
+router.post('/changelly/price', offerController.changellyprice);
+router.post('/changenow/price', offerController.changenowprice);
+router.post('/stealthex/price', offerController.stealthexprice);
+router.post('/exolix/price', offerController.exolixprice);
+router.post('/simpleswap/price', offerController.simpleswapprice);
+router.post('/changehero/price', offerController.changeheroprice);
+router.post('/godex/price', offerController.godexprice);
+router.post('/letsexchange/price', offerController.letsexchangeprice);
+
+
 //Offer Controller
 router.post('/offers', offerController.offers)
 

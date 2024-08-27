@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import request from "request";
 import fetch from "node-fetch";
 import dotenv from 'dotenv';
+import { error } from 'console';
 dotenv.config();
 
 
@@ -1159,69 +1160,6 @@ class offerController {
     }
   }
 
-  static homeprice = async (req, res) => {
-    const { sel, get, amount } = req.body;
-        const stealthex_api_key=process.env.STEALTHEX;
-        
-      try {
-        const response1 = await fetch(
-          `https://api.stealthex.io/api/v2/range/${sel}/${get}?api_key=${stealthex_api_key}&fixed=false`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-    
-        const data=await response1.json();
-        console.log(data)
-        const minamount =parseFloat(data.min_amount);
-        const amt=parseFloat(amount);
-        if(minamount<=amt){
-  
-          const response2 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${amt}&api_key=${stealthex_api_key}&fixed=false`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-    
-          // const response2=await fetch(url2,options2);
-          const data2=await response2.json();
-  
-          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${minamount}&api_key=${stealthex_api_key}&fixed=false`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-  
-          const data3=await response3.json();
-  
-          console.log("Minimum",data2, "Estimated Amount", data3)
-  
-          return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount/minamount}})
-        }else{
-  
-          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${minamount}&api_key=${stealthex_api_key}&fixed=false`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-  
-          const data3=await response3.json();
-          console.log(data3)
-          return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimated_amount/minamount}})
-        }
-      } catch (error) {
-        console.log(error)
-        return res.json({to:{amount:0, from:{min:0}, onesel:0}});
-      }
-     
-  };
-
   static currencies = async (req, res) =>{
     const url="https://api.changenow.io/v2/exchange/currencies?active=&flow=standard&buy=&sell=";
     const response = await fetch(url);
@@ -1357,20 +1295,333 @@ class offerController {
 
 return res.json(array);
   };
+
+  static homeprice = async (req, res) => {
+    const { sel, get, amount } = req.body;
+        const stealthex_api_key=process.env.STEALTHEX;
+        
+      try {
+        const response1 = await fetch(
+          `https://api.stealthex.io/api/v2/range/${sel}/${get}?api_key=${stealthex_api_key}&fixed=false`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+    
+        const data=await response1.json();
+        console.log(data)
+        const minamount =parseFloat(data.min_amount);
+        const amt=parseFloat(amount);
+        if(minamount<=amt){
+  
+          const response2 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${amt}&api_key=${stealthex_api_key}&fixed=false`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+    
+          // const response2=await fetch(url2,options2);
+          const data2=await response2.json();
+  
+          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${minamount}&api_key=${stealthex_api_key}&fixed=false`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+  
+          const data3=await response3.json();
+  
+          console.log("Minimum",data2, "Estimated Amount", data3)
+  
+          return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount/minamount}})
+        }else{
+  
+          const response3 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sel}/${get}?amount=${minamount}&api_key=${stealthex_api_key}&fixed=false`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+  
+          const data3=await response3.json();
+          console.log(data3)
+          return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimated_amount/minamount}})
+        }
+      } catch (error) {
+        console.log(error)
+        return res.json({to:{amount:0, from:{min:0}, onesel:0}});
+      }
+     
+  };
+
+  static changellyprice=async (req, res)=>{
+    const {sell,get,amount,exchangetype}=req.body
+    const typeidentifier=exchangetype=="Floating"?"getExchangeAmount":"getFixRateForAmount";
+    const privateKey = crypto.createPrivateKey({
+      key: process.env.CHANGELLY_PRIVATE_KEY,
+      format: "der",
+      type: "pkcs8",
+      encoding: "hex",
+    });
+  
+    //Common Variables for Changelly
+    const publicKey = crypto.createPublicKey(privateKey).export({
+      type: "pkcs1",
+      format: "der",
+    });
+  
+    const message1 = {
+      jsonrpc: "2.0",
+      id: "test",
+      method: typeidentifier,
+      params: {
+        from: sell,
+        to: get,
+        amountFrom: amount,
+      },
+    };
+  
+    const signature1 = crypto.sign(
+      "sha256",
+      Buffer.from(JSON.stringify(message1)),
+      {
+        key: privateKey,
+        type: "pkcs8",
+        format: "der",
+      }
+    );
+  
+    const param1 = {
+      method: "POST",
+      url: "https://api.changelly.com/v2",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Api-Key": crypto
+          .createHash("sha256")
+          .update(publicKey)
+          .digest("base64"),
+        "X-Api-Signature": signature1.toString("base64"),
+      },
+      body: JSON.stringify(message1),
+    };
+  
+  
+      request(param1, async function (error, response) {
+        try {
+          const data = await JSON.parse(response.body);
+          let price = data.result[0].amountTo;
+          return res.json({price:price})
+        } catch (error) {
+          return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+        }
+      })
+  }
+
+  static changenowprice=async (req, res)=>{
+    const {sell,get,amount, exchangetype}=req.body
+    const typeidentifier=exchangetype=="Floating"?"":"/fixed-rate";
+    try {
+      const response = await fetch(
+        `https://api.changenow.io/v1/exchange-amount${typeidentifier}/${amount}/${sell}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      const data=await response.json()
+      const price=data.estimatedAmount;
+      if(data.estimatedAmount){
+        return res.json({price:price});
+      }else{
+        throw new Error();
+      }
+    } catch (error) {
+      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+    }
+  }
+
+  static stealthexprice=async (req, res)=>{
+    const {sell,get,amount, exchangetype}=req.body;
+    const typeidentifier=exchangetype=="Floating"?"false":"true";
+    try {
+
+      const response = await fetch(`https://api.stealthex.io/api/v2/estimate/${sell}/${get}?amount=${amount}&api_key=6cbd846e-a085-4505-afeb-8fca0d650c58&fixed=${typeidentifier}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+    
+      const data=await response.json()
+      if(data.estimated_amount){
+        const price=data.estimated_amount;
+        return res.json({price:price});
+      }else{
+        throw new Error();
+      }
+
+    } catch (error) {
+      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+    }
+  }
+
+  static exolixprice=async (req, res)=>{
+    const {sell,get,amount, exchangetype}=req.body;
+    const typeidentifier=exchangetype=="Floating"?"float":"fixed";
+    try {
+      const response = await fetch(
+        `https://exolix.com/api/v2/rate?coinFrom=${sell}&coinTo=${get}&amount=${amount}&rateType=${typeidentifier}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+    
+      const data=await response.json()
+      if(data.toAmount){
+        const price=data.toAmount
+        return res.json({price:price});
+      }else{
+        throw new Error();
+      }
+    } catch (error) {
+      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+    }
+
+  }
+
+  static simpleswapprice=async (req, res)=>{
+    const {sell,get,amount, exchangetype}=req.body;
+    const typeidentifier=exchangetype=="Floating"?"false":"true";
+    try {
+      const response =  await fetch(`http://api.simpleswap.io/get_estimated?api_key=ae57f22d-7a23-4dbe-9881-624b2e147759&fixed=${typeidentifier}&currency_from=${sell}&currency_to=${get}&amount=${amount}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+    
+      const data=await response.json();
+      if(data.error){
+        throw new Error();
+      }else{
+        const price=data
+        return res.json({price:price}); 
+      }
+    } catch (error) {
+        return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."});
+    }
+  }
+
+  static changeheroprice=async (req, res)=>{
+    const {sell,get,amount, exchangetype}=req.body;
+    const typeidentifier=exchangetype=="Floating"?"getExchangeAmount":"getFixRate";
+    try {
+      const param = {
+        jsonrpc: "2.0",
+        method: typeidentifier,
+        params: {
+          from: sell,
+          to: get,
+          amount: amount,
+        },
+      };
+    
+      const response =  await fetch(`https://api.changehero.io/v2/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": "46799cd819854116907d2a6f54926157",
+        },
+        body: JSON.stringify(param),
+      })
+    
+      const data=await response.json();
+      if(data.result){
+        const price=data.result;
+        return res.json({price:price});
+      }else{
+        throw new Error();
+      }
+    } catch (error) {
+      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."});
+    }
+  }
+
+  static godexprice=async (req, res)=>{
+    const {sell,get,amount}=req.body
+    try {
+      const param = {
+        from: sell.toUpperCase(),
+        to: get.toUpperCase(),
+        amount: amount,
+      };
+    
+      const response =  await fetch(`https://api.godex.io/api/v1/info`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(param),
+      })
+    
+      const data=await response.json();
+      if(data.amount){
+        const price=data.amount;
+        return res.json({price:price});
+      }else{
+        throw new Error();
+      }
+    } catch (error) {
+      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."});
+    }
+  }
+
+  static letsexchangeprice=async (req, res)=>{
+    const {sell,get,amount, exchangetype}=req.body;
+    const typeidentifier=exchangetype=="Floating"?true:false;
+
+    try {
+      const param = {
+        from: sell,
+        to: get,
+        amount: amount,
+        float: typeidentifier
+      };
+    
+      const response =  await fetch(`https://api.letsexchange.io/api/v1/info`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0b2tlbiIsImRhdGEiOnsiaWQiOjkwLCJoYXNoIjoiZXlKcGRpSTZJa2wzYmxFNE1VeHVOMU5DU25aamFEbExWVE5rYW1jOVBTSXNJblpoYkhWbElqb2lUV1ZhWWs5dGNXY3dWSEZMYm1wWGRuVjJjMXBzV0RaU1ZpdFphamxJYWtrM1EzQkhTRlpsVFdGS1JXZHVXV1pxUTJRNU9WUXlaSHBEVDJWd2NVeEdRVTFOYjBVelJIaEdSRzlwWjBsaEt6UjJWR0UxVjI1TmQweEROamRCUmxCWFdISTJRMGRpUm1Kb1ltTTlJaXdpYldGaklqb2labU0xTnpNMU0yRXlaRFJqWmpSalpXWTFZV1ZqWVRkalptSTBZall4WmpVNFpqZGtNak0wTXpVNU1XRmtaRGRrWm1Sak5HWXhaamt6TldFM01tVXlOaUo5In0sImlzcyI6Imh0dHBzOlwvXC9sZXRzLW5naW54LXN2Y1wvYXBpXC92MVwvYXBpLWtleSIsImlhdCI6MTY2ODUxNjUzNywiZXhwIjoxOTg5OTI0NTM3LCJuYmYiOjE2Njg1MTY1MzcsImp0aSI6IkRCelpBVjdBRDhMMzZTZ1IifQ.tP5L6xDINQSmWVJsmin2vrjrYFopk-cDNWGkBOlKARg"
+        },
+        body: JSON.stringify(param),
+      })
+    
+      const data=await response.json();
+
+      if(data.amount){
+        const price=data.amount;
+        return res.json({price:price});
+      }else{
+        throw new Error();
+      }
+
+    } catch (error) {
+      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."});
+    }
+
+  }
+
 }
 export default offerController;
-
-
-// {"ticker":"usdt",
-// "name":"Tether (ERC20)",
-// "image":"https://content-api.changenow.io/uploads/usdterc20_5ae21618aa.svg",
-// "hasExternalId":false,
-// "isFiat":false,
-// "featured":true,
-// "isStable":true,
-// "supportsFixedRate":true,
-// "network":"eth",
-// "tokenContract":"0xdAC17F958D2ee523a2206206994597C13D831ec7",
-// "buy":true,
-// "sell":true,
-// "legacyTicker":"usdterc20"}

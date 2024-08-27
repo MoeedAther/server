@@ -111,7 +111,7 @@ function sendSuccessEmail(email){
 
 //Email sending failed function
 function sendFailedEmail(email){
-    console.log("failed email function called");
+    console.log("failed email function called"); 
     const mailOptions = {
         from: process.env.EMAIL,
         to: email,
@@ -125,6 +125,23 @@ function sendFailedEmail(email){
         }
     });
 
+}
+
+//Transaction Explorer URL processing function
+function processUrl(url, transactionHash) {
+    // Check if the URL contains curly braces
+    if (url.includes("{}")) {
+        // Replace curly braces with the transaction hash
+        return url.replace("{}", transactionHash);
+    } else {
+        // Check if the URL ends with a slash
+        if (!url.endsWith("/")) {
+            // If not, add a slash at the end
+            url += "/";
+        }
+        // Add the transaction hash at the end of the URL
+        return url + transactionHash;
+    }
 }
 
 // *********************** Running Cron Job for updating exchange statuses in database ************************* //
@@ -171,7 +188,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                   const message = {
                                     jsonrpc: "2.0",
                                     id: "test",
-                                    method: "getStatus",
+                                    method: "getTransactions",
                                     params: {
                                     id: swap.transaction_id
                                     }
@@ -214,7 +231,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         }else{
                                         const data = await JSON.parse(response.body);
                                         // console.log(`Index: ${index}`, data)
-                                        if(data.result.status=="finished" && swap.status_email==0 && swap.email){
+                                        if(data.result[0].status=="finished" && swap.status_email==0 && swap.email){
                                             console.log("1");
                                             sendSuccessEmail(swap.email);
                                             db.query("UPDATE changelly_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -222,7 +239,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                                     console.log("Email send status update in database unsuccessful");
                                                 }
                                             })
-                                        }else if(data.result.status=="failed" || data.result.status=="refunded" || data.result=="overdue" || data.result=="expired" || data.result.status=="expired"){
+                                        }else if(data.result[0].status=="failed" || data.result[0].status=="refunded" || data.result[0].status=="overdue" || data.result[0].status=="expired"){
                                             if( swap.status_email==0 && swap.email!=null){
                                                 console.log("2", swap.email);
                                             sendFailedEmail(swap.email);
@@ -236,23 +253,17 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                             console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
                                             
                                         }
-                                        if(data.result.status && data.result.payoutHash){
-                                        db.query(`UPDATE changelly_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.result.status, data.result.payoutHash, swap.transaction_id],(error, result)=>{
+                                        if(data.result[0].status && data.result[0].payoutHash){
+                                        const tx_explorer=processUrl(data.result[0].payoutHashLink, data.result[0].payoutHash);
+                                        db.query(`UPDATE changelly_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, tx_explorer, swap.transaction_id],(error, result)=>{
                                             if(error){
                                                 // console.log("Error 1 Loop:", index)
                                                 // console.log("Transaction ID:", swap.transaction_id)
                                             }
-                                        })}else if(data.result.status){
-                                            db.query(`UPDATE changelly_transactions SET status=? WHERE transaction_id=?`,[data.result.status, swap.transaction_id],(error, result)=>{
+                                        })}else if(data.result[0].status){
+                                            db.query(`UPDATE changelly_transactions SET status=? WHERE transaction_id=?`,[data.result[0].status, swap.transaction_id],(error, result)=>{
                                                 if(error){
                                                     // console.log("Error 2 Loop:", index)
-                                                    // console.log("Transaction ID:", swap.transaction_id)
-                                                }
-                                            })
-                                        }else{
-                                            db.query(`UPDATE changelly_transactions SET status=? WHERE transaction_id=?`, [data.result, swap.transaction_id],(error, result)=>{
-                                                if(error){
-                                                    // console.log("Error 3 Loop:", index, data, error)
                                                     // console.log("Transaction ID:", swap.transaction_id)
                                                 }
                                             })
@@ -311,7 +322,6 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             const response = await fetch(url, options);
                           
                             const data = await response.json();
-
                             if(data.status=="finished" && swap.status_email==0 && swap.email){
                                 console.log("1");
                                 sendSuccessEmail(swap.email);
@@ -336,8 +346,8 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             }
         
                             // console.log(`Index: ${index}`, data)
-                            if(data.status && data.tx_to && data.tx_to!=""){
-                                db.query(`UPDATE changenow_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.tx_to, swap.transaction_id],(error, result)=>{
+                            if(data.status && data.payoutHash && data.payoutHash!=""){
+                                db.query(`UPDATE changenow_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.payoutHash, swap.transaction_id],(error, result)=>{
                                     if(error){
                                         // console.log("Error 1 Loop:", index)
                                         // console.log("Transaction ID:", swap.transaction_id)
@@ -393,7 +403,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                         const params = {
                       
                           jsonrpc: "2.0",
-                          method: "getStatus",
+                          method: "getTransactions",
                           params:{
                           id: `${swap.transaction_id}`
                           }
@@ -408,12 +418,10 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                           body: JSON.stringify(params)
                       
                         }
-                        
                       
-                        const response = await fetch(url, options)
+                        const response = await fetch(url, options);
                         const data = await response.json();
-
-                        if(data.status=="finished" && swap.status_email==0 && swap.email){
+                        if(data.result[0].status=="finished" && swap.status_email==0 && swap.email){
                             console.log("1");
                             sendSuccessEmail(swap.email);
                             db.query("UPDATE changehero_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -421,7 +429,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     console.log("Email send status update in database unsuccessful");
                                 }
                             })
-                        }else if(data.status=="failed" || data.status=="refunded" || data.status=="expired" || data.result=="expired"){
+                        }else if(data.result[0].status=="failed" || data.result[0].status=="refunded" || data.result[0].status=="expired" || data.result[0].result=="expired"){
                             if( swap.status_email==0 && swap.email!=null){
                                 console.log("2", swap.email);
                             sendFailedEmail(swap.email);
@@ -435,24 +443,16 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
                             
                         }
-            
                                 // console.log(`Index: ${index}`, data)
-                                if(data.status && data.paoutHash){
-                                    db.query(`UPDATE changehero_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.payoutHash, swap.transaction_id],(error, result)=>{
+                                if(data.result[0].status && data.result[0].payoutHash && data.result[0].payoutHash!=null){
+                                    db.query(`UPDATE changehero_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, swap.transaction_id],(error, result)=>{
                                         if(error){
                                             // console.log("Error 1 Loop:", index)
                                             // console.log("Transaction ID:", swap.transaction_id)
                                         }
                                     })
-                                        }else if(data.status){
-                                            db.query(`UPDATE changehero_transactions SET status=? WHERE transaction_id=?`,[data.status, swap.transaction_id],(error, result)=>{
-                                                if(error){
-                                                    // console.log("Error 1 Loop:", index)
-                                                    // console.log("Transaction ID:", swap.transaction_id)
-                                                }
-                                            })
-                                        }else if(data.result){
-                                            db.query(`UPDATE changehero_transactions SET status=? WHERE transaction_id=?`,[data.result, swap.transaction_id],(error, result)=>{
+                                        }else if(data.result[0].status){
+                                            db.query(`UPDATE changehero_transactions SET status=? WHERE transaction_id=?`,[data.result[0].status, swap.transaction_id],(error, result)=>{
                                                 if(error){
                                                     // console.log("Error 1 Loop:", index)
                                                     // console.log("Transaction ID:", swap.transaction_id)
@@ -508,7 +508,6 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                         const response = await fetch(url, options)
                       
                         const data = await response.json();
-
                         if(data.status=="success" && swap.status_email==0 && swap.email){
                             console.log("1");
                             sendSuccessEmail(swap.email);
@@ -533,8 +532,9 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                         }
                       
                             // console.log(`Index: ${index}`, data)
-                            if(data.status && data.hashOut.hash){
-                                db.query(`UPDATE exolix_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.hashOut.hash, swap.transaction_id],(error, result)=>{
+                            if(data.status && data.hashOut.hash && data.hashOut.hash!=null){
+                                const tx_explorer=processUrl(data.hashOut.link, data.hashOut.hash);
+                                db.query(`UPDATE exolix_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.hashOut.hash, tx_explorer, swap.transaction_id],(error, result)=>{
                                     if(error){
                                         // console.log("Error 1 Loop:", index)
                                         // console.log("Transaction ID:", swap.transaction_id)
@@ -597,7 +597,6 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                         const response = await fetch(url, options)
                       
                         const data = await response.json();
-
                         if(data.status=="success" && swap.status_email==0 && swap.email){
                             console.log("1");
                             sendSuccessEmail(swap.email);
@@ -617,13 +616,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             })
                         }
                         }else{
-                            console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
-                            
+                            console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");    
                         }
                       
                             // console.log(`Index: ${index}`, data)
-                            if(data.status && data.hash_out){
-                                db.query(`UPDATE godex_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.hash_out, swap.transaction_id],(error, result)=>{
+                            if(data.status && data.hash_out && data.hash_out!==null){
+                                const tx_explorer=processUrl(data.coin_to_explorer_url, data.hash_out);
+                                db.query(`UPDATE godex_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, swap.transaction_id],(error, result)=>{
                                     if(error){
                                         // console.log("Error 1 Loop:", index)
                                         // console.log("Transaction ID:", swap.transaction_id)
@@ -688,7 +687,6 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             const response = await fetch(url, options)
                           
                             const data = await response.json();
-
                             if(data.status=="success" && swap.status_email==0 && swap.email){
                                 console.log("1");
                                 sendSuccessEmail(swap.email);
@@ -713,8 +711,9 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             }
                           
                                 // console.log(`Index: ${index}`, data)
-                                if(data.status && data.hash_out && data.hash_out!=""){
-                                    db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.hash_out, swap.transaction_id],(error, result)=>{
+                                if(data.status && data.hash_out && data.hash_out!=null){
+                                    const tx_explorer=processUrl(data.coin_to_explorer_url, data.hash_out);
+                                    db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer,  swap.transaction_id],(error, result)=>{
                                         if(error){
                                             // console.log("Error 1 Loop:", index)
                                             // console.log("Transaction ID:", swap.transaction_id)
@@ -775,8 +774,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                           
                             const response = await fetch(url, options)
                           
-                            const data = await response.json()
-
+                            const data = await response.json();
                             if(data.status=="finished" && swap.status_email==0 && swap.email){
                                 console.log("1");
                                 sendSuccessEmail(swap.email);
@@ -801,8 +799,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             }
                           
                                 // console.log(`Index: ${index}`, data)
+                                let keys = Object.keys(data.currencies); // Get the keys as an array
+                                let keyAtIndex = keys[1]; // Get the key at the specified index
+                                let innerObject = data.currencies[keyAtIndex]; // Access the inner object using the key
+
                                 if(data.status && data.tx_to && data.tx_to!=""){
-                                    db.query(`UPDATE stealthex_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.tx_to, swap.transaction_id],(error, result)=>{
+                                    const tx_explorer=processUrl(innerObject.tx_explorer, data.tx_to);
+                                    db.query(`UPDATE stealthex_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, swap.transaction_id],(error, result)=>{
                                         if(error){
                                             // console.log("Error 1 Loop:", index)
                                             // console.log("Transaction ID:", swap.transaction_id)
@@ -864,7 +867,6 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             }
         
                             const response = await fetch(url, options)
-                      
                             const data = await response.json();
 
                             if(data.status=="finished" && swap.status_email==0 && swap.email){
@@ -872,7 +874,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                 sendSuccessEmail(swap.email);
                                 db.query("UPDATE simpleswap_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                                     if(error){
-                                        console.log("Email send status update in database unsuccessful");
+                                        console.log("Email success status update in database unsuccessful");
                                     }
                                 })
                             }else if(data.status=="failed" || data.status=="error" || data.status=="refunded" || data.status=="blacklist" || data.result=="blacklist" || data.status=="expired" || data.result=="aml_check_failed" || data.status=="aml_check_failed" || data.result=="expired" || data.status=="overdue" || data.result=="overdue" || data.result=="error"){
@@ -891,14 +893,21 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             }
                           
                                 // console.log(`Index: ${index}`, data)
+                                let keys = Object.keys(data.currencies); // Get the keys as an array
+                                let keyAtIndex = keys[1]; // Get the key at the specified index
+                                let innerObject = data.currencies[keyAtIndex]; // Access the inner object using the key
+
                                 if(data.status && data.tx_to && data.tx_to!=""){
-                                    db.query(`UPDATE simpleswap_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.tx_to, swap.transaction_id],(error, result)=>{
+                                    const tx_explorer=processUrl(innerObject.tx_explorer, data.tx_to);
+                                    db.query(`UPDATE simpleswap_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, swap.transaction_id],(error, result)=>{
                                         if(error){
                                             // console.log("Error 1 Loop:", index)
                                             // console.log("Transaction ID:", swap.transaction_id)
+                                        }else{
                                         }
                                     })
                                         }else if(data.status){
+
                                             db.query(`UPDATE simpleswap_transactions SET status=? WHERE transaction_id=?`,[data.status, swap.transaction_id],(error, result)=>{
                                                 if(error){
                                                     // console.log("Error 1 Loop:", index)
