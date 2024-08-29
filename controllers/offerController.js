@@ -1336,8 +1336,8 @@ return res.json(array);
   
           const data3=await response3.json();
   
-          console.log("Minimum",data2, "Estimated Amount", data3)
-  
+          // console.log("Minimum",data2, "Estimated Amount", data3)
+
           return res.json({to:{amount:data2.estimated_amount, from:{min:minamount}, onesel:data3.estimated_amount/minamount}})
         }else{
   

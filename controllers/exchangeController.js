@@ -1485,23 +1485,23 @@ class exchangeController{
     static checkChangenowTransactionStatus=async (req, res)=>{
       const {id}=req.body;
       var sql="SELECT * FROM changenow_transactions WHERE transaction_id=?";
-      const url = `https://api.changenow.io/v2/exchange/by-id?id=${id}`;
-      const options = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "x-changenow-api-key": `${process.env.CHANGENOW}`,
-        },
-      } 
-      const response = await fetch(url, options);  
-      const data = await response.json();
+      // const url = `https://api.changenow.io/v2/exchange/by-id?id=${id}`;
+      // const options = {
+      //   method: "GET",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "x-changenow-api-key": `${process.env.CHANGENOW}`,
+      //   },
+      // } 
+      // const response = await fetch(url, options);  
+      // const data = await response.json();
       db.query(sql,[id], function(error, result){
         if (error){
          return res.json({tx:[], message:"This transaction does't exist"})
         }else{
           let transaction=result[0];
-          transaction.status=data.status;
-          transaction.tx_hash=data.payoutHash;
+          // transaction.status=data.status;
+          // transaction.tx_hash=data.payoutHash;
           return res.json({tx:transaction, message:"Transaction found"})
         }
       })
