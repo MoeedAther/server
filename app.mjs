@@ -127,22 +127,217 @@ function sendFailedEmail(email){
 
 }
 
-//Transaction Explorer URL processing function
-function processUrl(url, transactionHash) {
-    // Check if the URL contains curly braces
-    if (url.includes("{}")) {
-        // Replace curly braces with the transaction hash
-        return url.replace("{}", transactionHash);
-    } else {
-        // Check if the URL ends with a slash
-        if (!url.endsWith("/")) {
-            // If not, add a slash at the end
-            url += "/";
+//Two Days Difference Calculation
+function is48HoursDifference(timestamp1, timestamp2, exchange, id) {
+    // Calculate the difference in milliseconds
+    const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
+  
+    // Convert the difference to hours
+    const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
+    console.log(`Difference in hours of exchange ${exchange} and transaction ID ${id} = ${differenceInHours}`);
+    // Check if the difference is exactly 48 hours
+    return differenceInHours >= 48;
+  }
+
+cron.schedule(`10 * * * * *`, ()=>{
+
+
+    db.query('SELECT * FROM changelly_transactions', (error, result)=>{
+        if(result.length>0){
+                result.map((swap)=>{
+                    if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
+                        sendSuccessEmail(swap.email);
+                        db.query("UPDATE changelly_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                            if(error){
+                                console.log("Changelly email status update unsuccessful of transaction id: ", swap.transaction_id);
+                            }
+                        })
+                    }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                        if(swap.status_email==0 && swap.email!=null){
+                        sendFailedEmail(swap.email);
+                        db.query("UPDATE changelly_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                            if(error){
+                                console.log("Changelly email status update unsuccessful of transaction id: ", swap.transaction_id);
+                            }
+                        })
+                    }
+                    }            
+                })
         }
-        // Add the transaction hash at the end of the URL
-        return url + transactionHash;
+    })
+
+    db.query('SELECT * FROM changenow_transactions', async (error, result)=>{
+        if(result.length>0){
+            result.map((swap)=>{
+                if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
+                    sendSuccessEmail(swap.email);
+                    db.query("UPDATE changenow_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Changenow email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    if(swap.status_email==0 && swap.email!=null){
+                    sendFailedEmail(swap.email);
+                    db.query("UPDATE changenow_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Changenow email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }
+                }            
+            })
     }
-}
+
+    })
+
+    db.query('SELECT * FROM changehero_transactions', (error, result)=>{
+        if(result.length>0){
+            result.map((swap)=>{
+                if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
+                    sendSuccessEmail(swap.email);
+                    db.query("UPDATE changehero_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Changehero email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    if(swap.status_email==0 && swap.email!=null){
+                    sendFailedEmail(swap.email);
+                    db.query("UPDATE changehero_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Changehero email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }
+                }            
+            });  
+        }
+    })
+
+    db.query('SELECT * FROM exolix_transactions', (error, result)=>{
+        if(result.length>0){
+            result.map((swap)=>{
+                if(swap.status=="success" && swap.status_email==0 && swap.email!=null){
+                    sendSuccessEmail(swap.email);
+                    db.query("UPDATE exolix_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Exolix email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    if(swap.status_email==0 && swap.email!=null){
+                    sendFailedEmail(swap.email);
+                    db.query("UPDATE exolix_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Exolix email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }
+                }            
+            });  
+        }
+    })
+
+    db.query('SELECT * FROM godex_transactions', (error, result)=>{
+        if(result.length>0){
+            result.map((swap)=>{
+                if(swap.status=="success" && swap.status_email==0 && swap.email!=null){
+                    sendSuccessEmail(swap.email);
+                    db.query("UPDATE godex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Godex email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    if(swap.status_email==0 && swap.email!=null){
+                    sendFailedEmail(swap.email);
+                    db.query("UPDATE godex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Godex email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }
+                }            
+            });  
+        }
+    })
+
+    db.query('SELECT * FROM letsexchange_transactions', (error, result)=>{
+        if(result.length>0){
+            result.map((swap)=>{
+                if(swap.status=="success" && swap.status_email==0 && swap.email!=null){
+                    sendSuccessEmail(swap.email);
+                    db.query("UPDATE letsexchange_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Letsexchange email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    if(swap.status_email==0 && swap.email!=null){
+                    sendFailedEmail(swap.email);
+                    db.query("UPDATE letsexchange_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Letsexchange email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }
+                }            
+            });  
+        }
+    })
+
+    db.query('SELECT * FROM stealthex_transactions', (error, result)=>{
+        if(result.length>0){
+            result.map((swap)=>{
+                if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
+                    sendSuccessEmail(swap.email);
+                    db.query("UPDATE stealthex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Stealthex email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    if(swap.status_email==0 && swap.email!=null){
+                    sendFailedEmail(swap.email);
+                    db.query("UPDATE stealthex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Stealthex email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }
+                }            
+            });  
+        }
+
+    })
+
+    db.query('SELECT * FROM simpleswap_transactions', (error, result)=>{
+        if(result.length>0){
+            result.map((swap)=>{
+                if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
+                    sendSuccessEmail(swap.email);
+                    db.query("UPDATE simpleswap_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Simpleswap email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    if(swap.status_email==0 && swap.email!=null){
+                    sendFailedEmail(swap.email);
+                    db.query("UPDATE simpleswap_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
+                        if(error){
+                            console.log("Simpleswap email status update unsuccessful of transaction id: ", swap.transaction_id);
+                        }
+                    })
+                }
+                }            
+            });  
+        }
+
+    })
+
+    })
 
 // *********************** Running Cron Job for updating exchange statuses in database ************************* //
 
@@ -157,128 +352,96 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
 
             db.query('SELECT * FROM changelly_transactions', (error, result)=>{
                 if(result.length>0){
-
-                    function is48HoursDifference(timestamp1, timestamp2) {
-                        // Calculate the difference in milliseconds
-                        const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
-                      
-                        // Convert the difference to hours
-                        const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-                      
-                        // Check if the difference is exactly 48 hours
-                        return differenceInHours >= 48;
-                      }
-                      const currentTimestamp = Date.now(); // Current timestamp
-                        result.map((swap, index)=>{
-                            const isValid=is48HoursDifference(currentTimestamp, swap.time);
-
-                            try {
-                                const privateKey = crypto.createPrivateKey({
-                                    key: process.env.CHANGELLY_PRIVATE_KEY,
-                                    format: "der",
-                                    type: "pkcs8",
-                                    encoding: "hex",
-                                  });
-                                
-                                  const publicKey = crypto.createPublicKey(privateKey).export({
-                                    type: "pkcs1",
-                                    format: "der",
-                                  });
-                                
-                                  const message = {
-                                    jsonrpc: "2.0",
-                                    id: "test",
-                                    method: "getTransactions",
-                                    params: {
-                                    id: swap.transaction_id
-                                    }
-                                  };
-        
-                                  const signature = crypto.sign(
-                                    "sha256",
-                                    Buffer.from(JSON.stringify(message)),
-                                    {
-                                      key: privateKey,
-                                      type: "pkcs8",
-                                      format: "der",
-                                    }
-                                  );
-                                
-                                  const params = {
-                                    method: "POST",
-                                    url: "https://api.changelly.com/v2",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                      "X-Api-Key": crypto
-                                        .createHash("sha256")
-                                        .update(publicKey)
-                                        .digest("base64"),
-                                      "X-Api-Signature": signature.toString("base64"),
-                                    },
-                                    body: JSON.stringify(message),
-                                  };
-
-                                
-                                  request(params, async function (error, response) {
-                                    try {
-
-                                        if(isValid && (swap.status!="finished" || swap.status!="success")){
-                                            db.query("DELETE FROM changelly_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
-                                                if(error){
-                                                    console.log("Error deleting transaction");
-                                                }
-                                            })
-                                        }else{
-                                        const data = await JSON.parse(response.body);
-                                        // console.log(`Index: ${index}`, data)
-                                        if(data.result[0].status=="finished" && swap.status_email==0 && swap.email){
-                                            console.log("1");
-                                            sendSuccessEmail(swap.email);
-                                            db.query("UPDATE changelly_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                                if(error){
-                                                    console.log("Email send status update in database unsuccessful");
-                                                }
-                                            })
-                                        }else if(data.result[0].status=="failed" || data.result[0].status=="refunded" || data.result[0].status=="overdue" || data.result[0].status=="expired"){
-                                            if( swap.status_email==0 && swap.email!=null){
-                                                console.log("2", swap.email);
-                                            sendFailedEmail(swap.email);
-                                            db.query("UPDATE changelly_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                                if(error){
-                                                    console.log("Email send status update in database unsuccessful");
-                                                }
-                                            })
+                        result.map((swap)=>{
+                            // This condition checks if a transaction is successfull then it doesnot perform any logic
+                            if(swap.status!="finished" && swap.status !="success"){
+                                const currentTimestamp = Date.now(); // Current timestamp
+                                const isValid=is48HoursDifference(currentTimestamp, swap.time, "Changelly", swap.transaction_id);
+                                try {
+                                    const privateKey = crypto.createPrivateKey({
+                                        key: process.env.CHANGELLY_PRIVATE_KEY,
+                                        format: "der",
+                                        type: "pkcs8",
+                                        encoding: "hex",
+                                      });
+                                    
+                                      const publicKey = crypto.createPublicKey(privateKey).export({
+                                        type: "pkcs1",
+                                        format: "der",
+                                      });
+                                    
+                                      const message = {
+                                        jsonrpc: "2.0",
+                                        id: "test",
+                                        method: "getTransactions",
+                                        params: {
+                                        id: swap.transaction_id
                                         }
-                                        }else{
-                                            console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
-                                            
+                                      };
+            
+                                      const signature = crypto.sign(
+                                        "sha256",
+                                        Buffer.from(JSON.stringify(message)),
+                                        {
+                                          key: privateKey,
+                                          type: "pkcs8",
+                                          format: "der",
                                         }
-                                        if(data.result[0].status && data.result[0].payoutHash){
-                                        const tx_explorer=processUrl(data.result[0].payoutHashLink, data.result[0].payoutHash);
-                                        db.query(`UPDATE changelly_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, tx_explorer, swap.transaction_id],(error, result)=>{
-                                            if(error){
-                                                // console.log("Error 1 Loop:", index)
-                                                // console.log("Transaction ID:", swap.transaction_id)
-                                            }
-                                        })}else if(data.result[0].status){
-                                            db.query(`UPDATE changelly_transactions SET status=? WHERE transaction_id=?`,[data.result[0].status, swap.transaction_id],(error, result)=>{
+                                      );
+                                    
+                                      const params = {
+                                        method: "POST",
+                                        url: "https://api.changelly.com/v2",
+                                        headers: {
+                                          "Content-Type": "application/json",
+                                          "X-Api-Key": crypto
+                                            .createHash("sha256")
+                                            .update(publicKey)
+                                            .digest("base64"),
+                                          "X-Api-Signature": signature.toString("base64"),
+                                        },
+                                        body: JSON.stringify(message),
+                                      };
+    
+                                    
+                                      request(params, async function (error, response) {
+                                        try {
+
+                                            //This logic checks if time difference is greater than two days and status is not finished and successfull then delete transaction
+                                            if(isValid && swap.status!="finished"){
+                                                db.query("DELETE FROM changelly_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
+                                                    if(error){
+                                                        console.log("Error deleting transaction Changelly Transation");
+                                                    }
+                                                })
+                                            }else{
+                                            const data = await JSON.parse(response.body);
+                                            if(data.result[0].status && data.result[0].payoutHash){
+                                            db.query(`UPDATE changelly_transactions SET status=?, tx_hash=?, tx_hash_link=?, get_amount WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, data.result[0].payoutHashLink, data.result[0].amountTo, swap.transaction_id],(error, result)=>{
                                                 if(error){
-                                                    // console.log("Error 2 Loop:", index)
+                                                    // console.log("Error 1 Loop:", index)
                                                     // console.log("Transaction ID:", swap.transaction_id)
                                                 }
-                                            })
+                                            })}else if(data.result[0].status){
+                                                db.query(`UPDATE changelly_transactions SET status=? WHERE transaction_id=?`,[data.result[0].status, swap.transaction_id],(error, result)=>{
+                                                    if(error){
+                                                        // console.log("Error 2 Loop:", index)
+                                                        // console.log("Transaction ID:", swap.transaction_id)
+                                                    }
+                                                })
+                                            }
                                         }
-                                    }
-                                    } catch (error) {
-                                        // console.log("No data was stored in changelly Index:", index)
-        
-                                    }
-                                  })
-                                
-                            } catch (error) {
-                                // console.log("No data was stored in changelly Index:", index)
-                            }            
-                              
+                                        } catch (error) {
+                                            // console.log("No data was stored in changelly Index:", index)
+            
+                                        }
+                                      })
+                                    
+                                } catch (error) {
+                                    // console.log("No data was stored in changelly Index:", index)
+                                }     
+
+                            }       
                         })
         
                 }
@@ -287,21 +450,12 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
             db.query('SELECT * FROM changenow_transactions', async (error, result)=>{
         
                     if(result.length>0){
-                        function is48HoursDifference(timestamp1, timestamp2) {
-                            // Calculate the difference in milliseconds
-                            const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
-                          
-                            // Convert the difference to hours
-                            const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-                          
-                            // Check if the difference is exactly 48 hours
-                            return differenceInHours >= 48;
-                          }
-                          const currentTimestamp = Date.now(); // Current timestamp
-                        result.map(async(swap, index)=>{
-                            const isValid=is48HoursDifference(currentTimestamp, swap.time);
+                        const currentTimestamp = Date.now(); // Current timestamp
+                        result.map(async(swap)=>{
+                            if(swap.status!="finished" && swap.status !="success"){
+                            const isValid=is48HoursDifference(currentTimestamp, swap.time, "Changenow", swap.transaction_id);
                             try {
-                                if(isValid && (swap.status!="finished" || swap.status!="success")){
+                                if(isValid && swap.status!="finished"){
                                     db.query("DELETE FROM changenow_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
                                         if(error){
                                             console.log("Error deleting transaction");
@@ -309,7 +463,6 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     })
                                 }else{
                                 const url = `https://api.changenow.io/v2/exchange/by-id?id=${swap.transaction_id}`;
-            
             
                             const options = {
                               method: "GET",
@@ -322,32 +475,8 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             const response = await fetch(url, options);
                           
                             const data = await response.json();
-                            if(data.status=="finished" && swap.status_email==0 && swap.email){
-                                console.log("1");
-                                sendSuccessEmail(swap.email);
-                                db.query("UPDATE changenow_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Email send status update in database unsuccessful");
-                                    }
-                                })
-                            }else if(data.status=="failed" || data.status=="refunded"){
-                                if( swap.status_email==0 && swap.email!=null){
-                                    console.log("2", swap.email);
-                                sendFailedEmail(swap.email);
-                                db.query("UPDATE changenow_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Email send status update in database unsuccessful");
-                                    }
-                                })
-                            }
-                            }else{
-                                console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
-                                
-                            }
-        
-                            // console.log(`Index: ${index}`, data)
                             if(data.status && data.payoutHash && data.payoutHash!=""){
-                                db.query(`UPDATE changenow_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.status, data.payoutHash, swap.transaction_id],(error, result)=>{
+                                db.query(`UPDATE changenow_transactions SET status=?, tx_hash=?, get_amount WHERE transaction_id=?`,[data.status, data.payoutHash, data.amountTo, swap.transaction_id],(error, result)=>{
                                     if(error){
                                         // console.log("Error 1 Loop:", index)
                                         // console.log("Transaction ID:", swap.transaction_id)
@@ -366,32 +495,22 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                 }
                             } catch (error) {
                                     // console.log('No changes done: ', index)
-                            }
+                            }}
                             
                         })
-                    }
+                }
         
             })
         
             db.query('SELECT * FROM changehero_transactions', (error, result)=>{
         
                  if(result.length>0){
-                    function is48HoursDifference(timestamp1, timestamp2) {
-                        // Calculate the difference in milliseconds
-                        const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
-                      
-                        // Convert the difference to hours
-                        const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-                      
-                        // Check if the difference is exactly 48 hours
-                        return differenceInHours >= 48;
-                      }
                       const currentTimestamp = Date.now(); // Current timestamp
-        
                         result.map(async(swap, index)=>{
-                            const isValid=is48HoursDifference(currentTimestamp, swap.time);
+                            if(swap.status!="finished" && swap.status !="success"){
+                            const isValid=is48HoursDifference(currentTimestamp, swap.time, "Changehero", swap.transaction_id);
                         try {
-                            if(isValid && (swap.status!="finished" || swap.status!="success")){
+                            if(isValid && swap.status!="finished"){
                                 db.query("DELETE FROM changehero_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
                                     if(error){
                                         console.log("Error deleting transaction");
@@ -421,29 +540,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                       
                         const response = await fetch(url, options);
                         const data = await response.json();
-                        if(data.result[0].status=="finished" && swap.status_email==0 && swap.email){
-                            console.log("1");
-                            sendSuccessEmail(swap.email);
-                            db.query("UPDATE changehero_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                if(error){
-                                    console.log("Email send status update in database unsuccessful");
-                                }
-                            })
-                        }else if(data.result[0].status=="failed" || data.result[0].status=="refunded" || data.result[0].status=="expired" || data.result[0].result=="expired"){
-                            if( swap.status_email==0 && swap.email!=null){
-                                console.log("2", swap.email);
-                            sendFailedEmail(swap.email);
-                            db.query("UPDATE changehero_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                if(error){
-                                    console.log("Email send status update in database unsuccessful");
-                                }
-                            })
-                        }
-                        }else{
-                            console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
-                            
-                        }
-                                // console.log(`Index: ${index}`, data)
+
                                 if(data.result[0].status && data.result[0].payoutHash && data.result[0].payoutHash!=null){
                                     db.query(`UPDATE changehero_transactions SET status=?, tx_hash=? WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, swap.transaction_id],(error, result)=>{
                                         if(error){
@@ -464,36 +561,28 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     }
                         } catch (error) {
                             // console.log('No changes done changehero: ', index)
-                        }
+                        }}
                         
                     })             
             
-                    }
+                
+            }
                 
             })
         
             db.query('SELECT * FROM exolix_transactions', (error, result)=>{
                 if(result.length>0){
-                    function is48HoursDifference(timestamp1, timestamp2) {
-                        // Calculate the difference in milliseconds
-                        const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
-                      
-                        // Convert the difference to hours
-                        const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-                      
-                        // Check if the difference is exactly 48 hours
-                        return differenceInHours >= 48;
-                      }
-                      const currentTimestamp = Date.now(); // Current timestamp
+                    const currentTimestamp = Date.now(); // Current timestamp
                     result.map(async(swap, index)=>{
+                        if(swap.status!="finished" && swap.status !="success"){
                         try {
-                            const isValid=is48HoursDifference(currentTimestamp, swap.time);
-                            if(isValid && (swap.status!="finished" || swap.status!="success")){
-                                db.query("DELETE FROM exolix_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Error deleting transaction");
-                                    }
-                                })
+                            const isValid=is48HoursDifference(currentTimestamp, swap.time, "Exolix", swap.transaction_id);
+                            if(isValid && swap.status!=="success"){
+                                    db.query("DELETE FROM exolix_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
+                                        if(error){
+                                            console.log("Error deleting transaction");
+                                        }
+                                    })
                             }else{
 
                         const url = `https://exolix.com/api/v2/transactions/${swap.transaction_id}`;
@@ -508,33 +597,8 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                         const response = await fetch(url, options)
                       
                         const data = await response.json();
-                        if(data.status=="success" && swap.status_email==0 && swap.email){
-                            console.log("1");
-                            sendSuccessEmail(swap.email);
-                            db.query("UPDATE exolix_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                if(error){
-                                    console.log("Email send status update in database unsuccessful");
-                                }
-                            })
-                        }else if(data.status=="failed" || data.status=="refunded" || data.status=="expired" || data.result=="expired" || data.result=="expired" || data.status=="overdue"){
-                            if( swap.status_email==0 && swap.email!=null){
-                                console.log("2", swap.email);
-                            sendFailedEmail(swap.email);
-                            db.query("UPDATE exolix_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                if(error){
-                                    console.log("Email send status update in database unsuccessful");
-                                }
-                            })
-                        }
-                        }else{
-                            console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
-                            
-                        }
-                      
-                            // console.log(`Index: ${index}`, data)
                             if(data.status && data.hashOut.hash && data.hashOut.hash!=null){
-                                const tx_explorer=processUrl(data.hashOut.link, data.hashOut.hash);
-                                db.query(`UPDATE exolix_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.hashOut.hash, tx_explorer, swap.transaction_id],(error, result)=>{
+                                db.query(`UPDATE exolix_transactions SET status=?, tx_hash=?, tx_hash_link=?, get_amount WHERE transaction_id=?`,[data.status, data.hashOut.hash, data.hashOut.link, data.amountTo, swap.transaction_id],(error, result)=>{
                                     if(error){
                                         // console.log("Error 1 Loop:", index)
                                         // console.log("Transaction ID:", swap.transaction_id)
@@ -554,30 +618,20 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             }
                         } catch (error) {
                                 // console.log('No changes done exolix: ', index, data)
-                        }
+                        }}
                         
-                    })             
-        
+                    })
                 }
             })
         
             db.query('SELECT * FROM godex_transactions', (error, result)=>{
                 if(result.length>0){
-                    function is48HoursDifference(timestamp1, timestamp2) {
-                        // Calculate the difference in milliseconds
-                        const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
-                      
-                        // Convert the difference to hours
-                        const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-                      
-                        // Check if the difference is exactly 48 hours
-                        return differenceInHours >= 48;
-                      }
-                      const currentTimestamp = Date.now(); // Current timestamp
-                    result.map(async(swap, index)=>{
+                    const currentTimestamp = Date.now(); // Current timestamp
+                    result.map(async(swap)=>{
+                        if(swap.status!="finished" && swap.status !="success"){
                         try {
-                            const isValid=is48HoursDifference(currentTimestamp, swap.time);
-                            if(isValid && (swap.status!="finished" || swap.status!="success")){
+                            const isValid=is48HoursDifference(currentTimestamp, swap.time, "Godex", swap.transaction_id);
+                            if(isValid && swap.status!="success"){
                                 db.query("DELETE FROM godex_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
                                     if(error){
                                         console.log("Error deleting transaction");
@@ -597,32 +651,8 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                         const response = await fetch(url, options)
                       
                         const data = await response.json();
-                        if(data.status=="success" && swap.status_email==0 && swap.email){
-                            console.log("1");
-                            sendSuccessEmail(swap.email);
-                            db.query("UPDATE godex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                if(error){
-                                    console.log("Email send status update in database unsuccessful");
-                                }
-                            })
-                        }else if(data.status=="failed" || data.status=="error" || data.status=="refunded" || data.status=="expired" || data.result=="expired" || data.result=="expired" || data.status=="overdue" || data.result=="overdue" || data.result=="error"){
-                            if( swap.status_email==0 && swap.email!=null){
-                                console.log("2", swap.email);
-                            sendFailedEmail(swap.email);
-                            db.query("UPDATE godex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                if(error){
-                                    console.log("Email send status update in database unsuccessful");
-                                }
-                            })
-                        }
-                        }else{
-                            console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");    
-                        }
-                      
-                            // console.log(`Index: ${index}`, data)
                             if(data.status && data.hash_out && data.hash_out!==null){
-                                const tx_explorer=processUrl(data.coin_to_explorer_url, data.hash_out);
-                                db.query(`UPDATE godex_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, swap.transaction_id],(error, result)=>{
+                                db.query(`UPDATE godex_transactions SET status=?, tx_hash=?, tx_hash_link=?, get_amount WHERE transaction_id=?`,[data.status, data.hash_out, data.coin_to_explorer_url, data.real_withdrawal_amount, swap.transaction_id],(error, result)=>{
                                     if(error){
                                         // console.log("Error 1 Loop:", index)
                                         // console.log("Transaction ID:", swap.transaction_id)
@@ -642,30 +672,20 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             }
                         } catch (error) {
                                 // console.log('No changes done godex: ', index, data)
-                        }
+                        }}
                         
                     })             
-        
                 }
             })
         
             db.query('SELECT * FROM letsexchange_transactions', (error, result)=>{
                 if(result.length>0){
-                    function is48HoursDifference(timestamp1, timestamp2) {
-                        // Calculate the difference in milliseconds
-                        const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
-                      
-                        // Convert the difference to hours
-                        const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-                      
-                        // Check if the difference is exactly 48 hours
-                        return differenceInHours >= 48;
-                      }
-                      const currentTimestamp = Date.now(); // Current timestamp
-                    result.map(async(swap, index)=>{
+                    const currentTimestamp = Date.now(); // Current timestamp
+                    result.map(async(swap)=>{
+                        if(swap.status!="finished" && swap.status !="success"){
                         try {
-                            const isValid=is48HoursDifference(currentTimestamp, swap.time);
-                            if(isValid && (swap.status!="finished" || swap.status!="success")){
+                            const isValid=is48HoursDifference(currentTimestamp, swap.time, "Letsexchange", swap.transaction_id);
+                            if(isValid &&  swap.status!="success"){
                                 db.query("DELETE FROM letsexchange_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
                                     if(error){
                                         console.log("Error deleting transaction");
@@ -681,39 +701,14 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                 "Authorization": `${process.env.LETSEXCHANGE}`,
                                 "Accept": "application/json",
                               },
-                              // body:JSON.stringify(params)
                             }
                           
                             const response = await fetch(url, options)
                           
                             const data = await response.json();
-                            if(data.status=="success" && swap.status_email==0 && swap.email){
-                                console.log("1");
-                                sendSuccessEmail(swap.email);
-                                db.query("UPDATE letsexchange_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Email send status update in database unsuccessful");
-                                    }
-                                })
-                            }else if(data.status=="failed" || data.status=="error" || data.status=="refunded" || data.status=="expired" || data.result=="aml_check_failed" || data.status=="aml_check_failed" || data.result=="expired" || data.status=="overdue" || data.result=="overdue" || data.result=="error"){
-                                if( swap.status_email==0 && swap.email!=null){
-                                    console.log("2", swap.email);
-                                sendFailedEmail(swap.email);
-                                db.query("UPDATE letsexchange_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Email send status update in database unsuccessful");
-                                    }
-                                })
-                            }
-                            }else{
-                                console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
-                                
-                            }
-                          
-                                // console.log(`Index: ${index}`, data)
-                                if(data.status && data.hash_out && data.hash_out!=null){
-                                    const tx_explorer=processUrl(data.coin_to_explorer_url, data.hash_out);
-                                    db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer,  swap.transaction_id],(error, result)=>{
+
+                            if(data.status && data.hash_out && data.hash_out!=null){
+                                    db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.hash_out, data.coin_to_explorer_url,  swap.transaction_id],(error, result)=>{
                                         if(error){
                                             // console.log("Error 1 Loop:", index)
                                             // console.log("Transaction ID:", swap.transaction_id)
@@ -733,30 +728,21 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     }
                         } catch (error) {
                                 // console.log('No changes done letsexchange: ', index, data)
-                        }
+                        }}
                        
                     })             
-        
                 }
             })
         
             db.query('SELECT * FROM stealthex_transactions', (error, result)=>{
                     if(result.length>0){
-                        function is48HoursDifference(timestamp1, timestamp2) {
-                            // Calculate the difference in milliseconds
-                            const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
-                          
-                            // Convert the difference to hours
-                            const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-                          
-                            // Check if the difference is exactly 48 hours
-                            return differenceInHours >= 48;
-                          }
-                          const currentTimestamp = Date.now(); // Current timestamp
+                        const currentTimestamp = Date.now(); // Current timestamp
                         result.map(async(swap, index)=>{
+                            if(swap.status!="finished" && swap.status !="success"){
                             try {
-                                const isValid=is48HoursDifference(currentTimestamp, swap.time);
-                                if(isValid && (swap.status!="finished" || swap.status!="success")){
+                                
+                                const isValid=is48HoursDifference(currentTimestamp, swap.time, "Stealthex", swap.transaction_id);
+                                if(isValid && swap.status!="finished"){
                                     db.query("DELETE FROM stealthex_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
                                         if(error){
                                             console.log("Error deleting transaction");
@@ -775,37 +761,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             const response = await fetch(url, options)
                           
                             const data = await response.json();
-                            if(data.status=="finished" && swap.status_email==0 && swap.email){
-                                console.log("1");
-                                sendSuccessEmail(swap.email);
-                                db.query("UPDATE stealthex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Email send status update in database unsuccessful");
-                                    }
-                                })
-                            }else if(data.status=="failed" || data.status=="error" || data.status=="refunded" || data.status=="expired" || data.result=="aml_check_failed" || data.status=="aml_check_failed" || data.result=="expired" || data.status=="overdue" || data.result=="overdue" || data.result=="error"){
-                                if( swap.status_email==0 && swap.email!=null){
-                                    console.log("2", swap.email);
-                                sendFailedEmail(swap.email);
-                                db.query("UPDATE stealthex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Email send status update in database unsuccessful");
-                                    }
-                                })
-                            }
-                            }else{
-                                console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
-                                
-                            }
                           
-                                // console.log(`Index: ${index}`, data)
                                 let keys = Object.keys(data.currencies); // Get the keys as an array
                                 let keyAtIndex = keys[1]; // Get the key at the specified index
                                 let innerObject = data.currencies[keyAtIndex]; // Access the inner object using the key
 
                                 if(data.status && data.tx_to && data.tx_to!=""){
-                                    const tx_explorer=processUrl(innerObject.tx_explorer, data.tx_to);
-                                    db.query(`UPDATE stealthex_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, swap.transaction_id],(error, result)=>{
+                                    db.query(`UPDATE stealthex_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.tx_to, innerObject.tx_explorer, swap.transaction_id],(error, result)=>{
                                         if(error){
                                             // console.log("Error 1 Loop:", index)
                                             // console.log("Transaction ID:", swap.transaction_id)
@@ -825,31 +787,22 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                 }
                             } catch (error) {
                                 // console.log('No changes done stealthex: ', index, data)
-                            }
+                            }}
                             
                         })             
-            
+                        
                     }
         
             })
         
             db.query('SELECT * FROM simpleswap_transactions', (error, result)=>{
                 if(result.length>0){
-                    function is48HoursDifference(timestamp1, timestamp2) {
-                        // Calculate the difference in milliseconds
-                        const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
-                      
-                        // Convert the difference to hours
-                        const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
-                      
-                        // Check if the difference is exactly 48 hours
-                        return differenceInHours >= 48;
-                      }
-                      const currentTimestamp = Date.now(); // Current timestamp
+                    const currentTimestamp = Date.now(); // Current timestamp
                     result.map(async(swap, index)=>{
+                        if(swap.status!="finished" && swap.status !="success"){
                         try {
-                            const isValid=is48HoursDifference(currentTimestamp, swap.time);
-                            if(isValid && (swap.status!="finished" || swap.status!="success")){
+                            const isValid=is48HoursDifference(currentTimestamp, swap.time, "Simpleswap", swap.transaction_id);
+                            if(isValid && swap.status!="finished"){
                                 db.query("DELETE FROM simpleswap_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
                                     if(error){
                                         console.log("Error deleting transaction");
@@ -869,37 +822,12 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                             const response = await fetch(url, options)
                             const data = await response.json();
 
-                            if(data.status=="finished" && swap.status_email==0 && swap.email){
-                                console.log("1");
-                                sendSuccessEmail(swap.email);
-                                db.query("UPDATE simpleswap_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Email success status update in database unsuccessful");
-                                    }
-                                })
-                            }else if(data.status=="failed" || data.status=="error" || data.status=="refunded" || data.status=="blacklist" || data.result=="blacklist" || data.status=="expired" || data.result=="aml_check_failed" || data.status=="aml_check_failed" || data.result=="expired" || data.status=="overdue" || data.result=="overdue" || data.result=="error"){
-                                if( swap.status_email==0 && swap.email!=null){
-                                    console.log("2", swap.email);
-                                sendFailedEmail(swap.email);
-                                db.query("UPDATE simpleswap_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
-                                    if(error){
-                                        console.log("Email send status update in database unsuccessful");
-                                    }
-                                })
-                            }
-                            }else{
-                                console.log("Error calling email functions or there are emails are already sent or status is waiting or processing");
-                                
-                            }
-                          
-                                // console.log(`Index: ${index}`, data)
                                 let keys = Object.keys(data.currencies); // Get the keys as an array
                                 let keyAtIndex = keys[1]; // Get the key at the specified index
                                 let innerObject = data.currencies[keyAtIndex]; // Access the inner object using the key
 
                                 if(data.status && data.tx_to && data.tx_to!=""){
-                                    const tx_explorer=processUrl(innerObject.tx_explorer, data.tx_to);
-                                    db.query(`UPDATE simpleswap_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, swap.transaction_id],(error, result)=>{
+                                    db.query(`UPDATE simpleswap_transactions SET status=?, tx_hash=?, tx_hash_link=? WHERE transaction_id=?`,[data.status, data.tx_to, innerObject.tx_explorer, swap.transaction_id],(error, result)=>{
                                         if(error){
                                             // console.log("Error 1 Loop:", index)
                                             // console.log("Transaction ID:", swap.transaction_id)
@@ -921,7 +849,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     }
                         } catch (error) {
                                 // console.log('No changes done simpleswap: ', index, data)
-                        }
+                        }}
         
                     })             
         
