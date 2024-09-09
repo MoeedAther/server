@@ -1113,7 +1113,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         if(data.coin_to_explorer_url==null){
                                             tx_explorer=replaceOrAppendHash(matchCoinsTicker.tx_explorer, data.hash_out);
                                         }else{
-                                            tx_explorer=data.coin_to_explorer_url;
+                                            tx_explorer=replaceOrAppendHash(data.coin_to_explorer_url, data.hash_out);
                                         }
                                             db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.real_deposit_amount, data.real_withdrawal_amount,  swap.transaction_id],(error, result)=>{
                                                 if(error){
