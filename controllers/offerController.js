@@ -3,6 +3,8 @@ import request from "request";
 import fetch from "node-fetch";
 import dotenv from 'dotenv';
 import { error } from 'console';
+import { response } from 'express';
+import {db} from '../database/connectdb.js';
 dotenv.config();
 
 
@@ -17,6 +19,7 @@ class offerController {
     const stealthex_api_key=process.env.STEALTHEX;
     const simpleswap_api_key=process.env.SIMPLESWAP;
     const godex_private_key=process.env.GODEX_PRIVATE_KEY;
+    const letsexchange_private_key=process.env.LETSEXCHANGE;
 
     let changelly_floating_price=0;
     let changenow_floating_price=0;
@@ -967,7 +970,7 @@ class offerController {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": godex_private_key
+            "Authorization": letsexchange_private_key
           },
           body: JSON.stringify(param),
         })
@@ -1006,7 +1009,7 @@ class offerController {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": godex_private_key
+            "Authorization": letsexchange_private_key
           },
           body: JSON.stringify(param)
         })
@@ -1124,7 +1127,7 @@ class offerController {
           let sellcoin=sell=="toncoin"?"tonerc20":sell;
           let getcoin=get=="toncoin"?"tonerc20":get;
   
-          response18 = await fetch(`http://api.simpleswap.io/get_estimated?api_key=${simpleswap_api_key}&fixed=false&currency_from=${sellcoin}&currency_to=${getcoin}&amount=${amount}`, {
+          response18 = await fetch(`https://api.simpleswap.io/get_estimated?api_key=${simpleswap_api_key}&fixed=false&currency_from=${sellcoin}&currency_to=${getcoin}&amount=${amount}`, {
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json",
@@ -1142,7 +1145,7 @@ class offerController {
           let sellcoin=sell=="toncoin"?"tonerc20":sell;
           let getcoin=get=="toncoin"?"tonerc20":get;
   
-          response19 = await fetch(`http://api.simpleswap.io/get_estimated?api_key=${simpleswap_api_key}&fixed=true&currency_from=${sellcoin}&currency_to=${getcoin}&amount=${amount}`, {
+          response19 = await fetch(`https://api.simpleswap.io/get_estimated?api_key=${simpleswap_api_key}&fixed=true&currency_from=${sellcoin}&currency_to=${getcoin}&amount=${amount}`, {
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json",
@@ -1503,7 +1506,7 @@ return res.json(array);
     const {sell,get,amount, exchangetype}=req.body;
     const typeidentifier=exchangetype=="Floating"?"false":"true";
     try {
-      const response =  await fetch(`http://api.simpleswap.io/get_estimated?api_key=ae57f22d-7a23-4dbe-9881-624b2e147759&fixed=${typeidentifier}&currency_from=${sell}&currency_to=${get}&amount=${amount}`, {
+      const response =  await fetch(`https://api.simpleswap.io/get_estimated?api_key=ae57f22d-7a23-4dbe-9881-624b2e147759&fixed=${typeidentifier}&currency_from=${sell}&currency_to=${get}&amount=${amount}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -1603,7 +1606,7 @@ return res.json(array);
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0b2tlbiIsImRhdGEiOnsiaWQiOjkwLCJoYXNoIjoiZXlKcGRpSTZJa2wzYmxFNE1VeHVOMU5DU25aamFEbExWVE5rYW1jOVBTSXNJblpoYkhWbElqb2lUV1ZhWWs5dGNXY3dWSEZMYm1wWGRuVjJjMXBzV0RaU1ZpdFphamxJYWtrM1EzQkhTRlpsVFdGS1JXZHVXV1pxUTJRNU9WUXlaSHBEVDJWd2NVeEdRVTFOYjBVelJIaEdSRzlwWjBsaEt6UjJWR0UxVjI1TmQweEROamRCUmxCWFdISTJRMGRpUm1Kb1ltTTlJaXdpYldGaklqb2labU0xTnpNMU0yRXlaRFJqWmpSalpXWTFZV1ZqWVRkalptSTBZall4WmpVNFpqZGtNak0wTXpVNU1XRmtaRGRrWm1Sak5HWXhaamt6TldFM01tVXlOaUo5In0sImlzcyI6Imh0dHBzOlwvXC9sZXRzLW5naW54LXN2Y1wvYXBpXC92MVwvYXBpLWtleSIsImlhdCI6MTY2ODUxNjUzNywiZXhwIjoxOTg5OTI0NTM3LCJuYmYiOjE2Njg1MTY1MzcsImp0aSI6IkRCelpBVjdBRDhMMzZTZ1IifQ.tP5L6xDINQSmWVJsmin2vrjrYFopk-cDNWGkBOlKARg"
+          "Authorization": process.env.LETSEXCHANGE
         },
         body: JSON.stringify(param),
       })
@@ -1622,6 +1625,17 @@ return res.json(array);
     }
 
   }
+
+  static getCoinsTokens=async(req, res)=>{
+    console.log("I am called");
+    db.query('SELECT * FROM coins_data', async (error, coins)=>{
+      if(error){
+        return res.json({message:"An error occurend! Please refresh."})
+      }else{
+        return res.json({coins:coins, message:"Ok"});
+      }
+  })
+}
 
 }
 export default offerController;

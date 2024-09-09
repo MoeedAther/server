@@ -135,7 +135,7 @@ class exchangeController{
         try {
           if(data.id){
             var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "Waiting", recieving_Address, refund_Address, data.payinAddress, email ], function(error, result){
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email ], function(error, result){
               if (error) throw error;
             })
           }
@@ -437,7 +437,8 @@ class exchangeController{
           withdrawal: recieving_Address,
           withdrawal_extra_id: extraid!=undefined?extraid:"",
           return: refund_Address,
-          return_extra_id:refextraid!=undefined?refextraid:"" 
+          return_extra_id:refextraid!=undefined?refextraid:"",
+          affiliate_id:process.env.GODEX_AFFILIATE_ID
       
         }
       
@@ -491,9 +492,9 @@ class exchangeController{
     }
 
     static letsexchangeFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid,  refextraid, expirytime} = req.body
+        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid,  refextraid, expirytime} = req.body;
 
-  const url = "https://api.letsexchange.io/api/v1/transaction";
+        const url = "https://api.letsexchange.io/api/v1/transaction";
 
   const params = {
 
@@ -504,7 +505,8 @@ class exchangeController{
     withdrawal: recieving_Address,
     withdrawal_extra_id: extraid!=undefined?extraid:"",
     return: refund_Address,
-    return_extra_id:refextraid
+    return_extra_id:refextraid,
+    affiliate_id:process.env.LETSEXCHANGE_AFFILIATE_ID
 
   }
 
@@ -529,7 +531,7 @@ class exchangeController{
         if (error) throw error;
       })
     }
-    res.json({
+    return res.json({
       transaction_id:data.transaction_id,	
 
       sell_coin:sell,	
@@ -554,7 +556,7 @@ class exchangeController{
     });
     
   } catch (error) {
-    res.json(data);
+   return res.json(data);
   }
     }
 
@@ -692,11 +694,10 @@ class exchangeController{
 
   const response = await fetch(url, options)
   const data = await response.json()
-
   try {
     if(data.id){
       var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.payinAddress, email, "Fixed" ], function(error, result){
+      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, "Fixed" ], function(error, result){
         if (error) throw error;
       })
     }
@@ -997,7 +998,6 @@ class exchangeController{
 
     static letsexchangeFixedTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
-
         const url = "https://api.letsexchange.io/api/v1/transaction";
       
         const params = {
@@ -1010,7 +1010,8 @@ class exchangeController{
           withdrawal_extra_id: extraid!=undefined?extraid:"",
           return: refund_Address,
           return_extra_id:refextraid,
-          rate_id: rateId
+          rate_id: rateId,
+          affiliate_id:process.env.LETSEXCHANGE_AFFILIATE_ID
         }
       
         const options = {

@@ -162,6 +162,13 @@ router.get('/support_links/letsexchange', SupportController.letsexchangeSupportL
 router.get('/support_links/stealthex', SupportController.stealthexSupportLinks);
 router.get('/support_links/simpleswap', SupportController.simpleswapSupportLinks);
 
+//.................................. Coins Data......................................./
+router.get('/coins-tokens', offerController.getCoinsTokens);
+
+//....................................... Test Route ......................................./
+router.get('/test', SupportController.testApis);
+
+
 
 
 
