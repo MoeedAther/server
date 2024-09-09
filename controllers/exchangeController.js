@@ -427,7 +427,7 @@ class exchangeController{
     static godexFloatingTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
       
-        const url = "https://api.godex.io/api/v1/transaction?affiliate_id=sZnGAGyVu";
+        const url = "https://api.godex.io/api/v1/transaction";
       
         const params = {
       
@@ -498,7 +498,7 @@ class exchangeController{
 
   const params = {
 
-    float: "false",
+    float: true,
     coin_from: sell.toUpperCase(),
     coin_to: get.toUpperCase(),
     deposit_amount: amount,
@@ -1002,7 +1002,7 @@ class exchangeController{
       
         const params = {
       
-          float: "true",
+          float: false,
           coin_from: sell.toUpperCase(),
           coin_to: get.toUpperCase(),
           deposit_amount: amount,

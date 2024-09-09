@@ -7,7 +7,6 @@ import { response } from 'express';
 import {db} from '../database/connectdb.js';
 dotenv.config();
 
-
 class offerController {
 
   static offers = async (req, res) => {
@@ -1612,7 +1611,7 @@ return res.json(array);
       })
     
       const data=await response.json();
-
+      
       if(data.amount){
         const price=data.amount;
         return res.json({price:price});

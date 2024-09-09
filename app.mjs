@@ -1041,7 +1041,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                   },
                                 }
                               
-                                const response = await fetch(url, options)
+                                const response = await fetch(url, options);
                               
                                 const data = await response.json();
                                     if(data.status && data.hash_out && data.hash_out!==null){
@@ -1050,7 +1050,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         if(data.coin_to_explorer_url==null){
                                             tx_explorer=replaceOrAppendHash(matchCoinsTicker.tx_explorer, data.hash_out);
                                         }else{
-                                            tx_explorer=data.coin_to_explorer_url;
+                                            tx_explorer=replaceOrAppendHash(data.coin_to_explorer_url, data.hash_out);
                                         }
                                         db.query(`UPDATE godex_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.deposit_amount ,data.real_withdrawal_amount, swap.transaction_id],(error, result)=>{
                                             if(error){
@@ -1105,7 +1105,8 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                   
                                     const response = await fetch(url, options)
                                   
-                                    const data = await response.json()
+                                    const data = await response.json();
+                                    // console.log("Letsexchange",data);
                                     if(data.status && data.hash_out && data.hash_out!=null){
                                         let tx_explorer;
                                         const matchCoinsTicker = coins.find(coin => swap.get_coin === coin.ticker);
@@ -1114,8 +1115,9 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         }else{
                                             tx_explorer=data.coin_to_explorer_url;
                                         }
-                                            db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=? tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.real_deposit_amount, data.real_withdrawal_amount,  swap.transaction_id],(error, result)=>{
+                                            db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.real_deposit_amount, data.real_withdrawal_amount,  swap.transaction_id],(error, result)=>{
                                                 if(error){
+                                                    console.log(error);
                                                     // console.log("Error 1 Loop:", index)
                                                     // console.log("Transaction ID:", swap.transaction_id)
                                                 }
