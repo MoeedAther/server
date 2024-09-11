@@ -789,7 +789,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                                             tx_explorer=data.result[0].payoutHashLink;
                                                         }
 
-                                                    db.query(`UPDATE changelly_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, tx_explorer, data.result[0].amountFrom, data.result[0].amountTo, swap.transaction_id],(error, result)=>{
+                                                    db.query(`UPDATE changelly_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, tx_explorer, data.result[0].amountFrom, data.result[0].amountTo, swap.transaction_id],(error, result)=>{
                                                         if(error){
                                                             // console.log("Error 1 Loop:", index)
                                                             // console.log("Transaction ID:", swap.transaction_id)
@@ -856,7 +856,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     }else{
                                         tx_explorer=null;
                                     }
-                                        db.query(`UPDATE changenow_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.payoutHash, tx_explorer, data.amountFrom , data.amountTo, swap.transaction_id],(error, result)=>{
+                                        db.query(`UPDATE changenow_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.payoutHash, tx_explorer, data.amountFrom , data.amountTo, swap.transaction_id],(error, result)=>{
                                             if(error){
                                                 // console.log("Transaction ID:", swap.transaction_id)
                                             }
@@ -927,7 +927,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                             }else{
                                                 tx_explorer=null;
                                             }
-                                            db.query(`UPDATE changehero_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, tx_explorer, data.result[0].amountFrom && data.result[0].amountFrom, data.result[0].amountTo && data.result[0].amountTo,  swap.transaction_id],(error, result)=>{
+                                            db.query(`UPDATE changehero_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, tx_explorer, data.result[0].amountFrom && data.result[0].amountFrom, data.result[0].amountTo && data.result[0].amountTo,  swap.transaction_id],(error, result)=>{
                                                 if(error){
                                                     // console.log("Error 1 Loop:", index)
                                                     // console.log("Transaction ID:", swap.transaction_id);
@@ -991,7 +991,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         }else{
                                             tx_explorer=data.hashOut.link;
                                         }
-                                        db.query(`UPDATE exolix_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.hashOut.hash, tx_explorer, data.amount, data.amountTo, swap.transaction_id],(error, result)=>{
+                                        db.query(`UPDATE exolix_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.hashOut.hash, tx_explorer, data.amount, data.amountTo, swap.transaction_id],(error, result)=>{
                                             if(error){
                                                 // console.log("Error 1 Loop:", index)
                                                 // console.log("Transaction ID:", swap.transaction_id)
@@ -1052,7 +1052,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         }else{
                                             tx_explorer=replaceOrAppendHash(data.coin_to_explorer_url, data.hash_out);
                                         }
-                                        db.query(`UPDATE godex_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.deposit_amount ,data.real_withdrawal_amount, swap.transaction_id],(error, result)=>{
+                                        db.query(`UPDATE godex_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.deposit_amount ,data.real_withdrawal_amount, swap.transaction_id],(error, result)=>{
                                             if(error){
                                                 // console.log("Error 1 Loop:", index)
                                                 // console.log("Transaction ID:", swap.transaction_id)
@@ -1115,7 +1115,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         }else{
                                             tx_explorer=replaceOrAppendHash(data.coin_to_explorer_url, data.hash_out);
                                         }
-                                            db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.real_deposit_amount, data.real_withdrawal_amount,  swap.transaction_id],(error, result)=>{
+                                            db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.real_deposit_amount, data.real_withdrawal_amount,  swap.transaction_id],(error, result)=>{
                                                 if(error){
                                                     console.log(error);
                                                     // console.log("Error 1 Loop:", index)
@@ -1184,7 +1184,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                                 tx_explorer=replaceOrAppendHash(innerObject.tx_explorer, data.tx_to);
                                             }
 
-                                            db.query(`UPDATE stealthex_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, data.amount_from, data.amount_to, swap.transaction_id],(error, result)=>{
+                                            db.query(`UPDATE stealthex_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, data.amount_from, data.amount_to, swap.transaction_id],(error, result)=>{
                                                 if(error){
                                                     // console.log("Error 1 Loop:", index)
                                                     // console.log("Transaction ID:", swap.transaction_id)
@@ -1253,7 +1253,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                                 tx_explorer=replaceOrAppendHash(innerObject.tx_explorer, data.tx_to);
                                             }
 
-                                            db.query(`UPDATE simpleswap_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=? WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, data.amount_from, data.amount_to, swap.transaction_id],(error, result)=>{
+                                            db.query(`UPDATE simpleswap_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, data.amount_from, data.amount_to, swap.transaction_id],(error, result)=>{
                                                 if(error){
                                                     // console.log("Error 1 Loop:", index);
                                                     // console.log("Transaction ID:", swap.transaction_id);
