@@ -1186,6 +1186,10 @@ class offerController {
         color="rgb(180, 191, 206)";
       }else if (coin.network=="avaxx"){
         color="rgb(94, 23, 254)";
+      }else if (coin.network=="cchain"){
+        color="rgb(231, 34, 38)";
+      }else if (coin.network=="xchain"){
+        color="rgb(74, 0, 253)";
       }else if (coin.network=="chiliz"){
         color="rgb(225, 17, 86)";
       }else if (coin.network=="eth"){
