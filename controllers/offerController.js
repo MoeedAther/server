@@ -1166,11 +1166,36 @@ class offerController {
     const url="https://api.changenow.io/v2/exchange/currencies?active=&flow=standard&buy=&sell=";
     const response = await fetch(url);
     const data = await response.json(response);
-    const array = data.map((coin,index) => {
+
+    const array = data.filter(coin => coin.legacyTicker !== "bnbmainnet").map((coin,index) => {
 
       var string=coin.name
       var tick=coin.legacyTicker
       let color="";
+      switch(coin.legacyTicker){
+        case "sol":
+          coin.featured=true;
+          break;
+        case "bnbbsc":
+          coin.featured=true;
+          break;
+        case "ton":
+            coin.featured=true;
+            break;
+        case "usdttrc20":
+              coin.featured=true;
+              break;
+        case "vet":
+                coin.featured=false;
+                break;
+        case "zil":
+              coin.featured=false;
+              break;
+        case "dot":
+                coin.featured=false;
+                break;
+          
+      }
 
       if(coin.network=="matic" && coin.ticker!="eth"){
         color="rgb(218, 0, 80)";
@@ -1246,6 +1271,8 @@ class offerController {
         const substring1=string.substring(index1+1, index2);
         const substring2=string.substring( index1-1, index2+1);
         const substring3=string.substring( 0, index1);
+
+
        
         if(string==="Tether (STATEMINT(Polkadot))"){
      
