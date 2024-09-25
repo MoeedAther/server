@@ -780,6 +780,15 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                                         })
                                                     }else{
                                                     const data = await JSON.parse(response.body);
+
+                                                    //Logic for updating Exchange Start Time
+                                                    if(data.result[0].status && (data.result[0].status=="confirming" || data.result[0].status=="confirmation" || data.result[0].status=="confirmed")){
+                                                        db.query(`UPDATE changelly_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
+                                                            if(error){
+                                                                // console.log("Error 1 Loop:", index)
+                                                                // console.log("Transaction ID:", swap.transaction_id)
+                                                            }})
+                                                    }
                                                     if(data.result[0].status && data.result[0].payoutHash){
                                                         let tx_explorer;
                                                         const matchCoinsTicker = coins.find(coin => swap.get_coin === coin.ticker);
@@ -848,6 +857,16 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     const response = await fetch(url, options);
                                   
                                     const data = await response.json();
+
+                                    //Logic for updating Exchange Start Time
+                                    if(data.status && (data.status=="confirming" || data.status=="confirmation" || data.status=="confirmed")){
+                                        db.query(`UPDATE changenow_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
+                                                if(error){
+                                                    // console.log("Error 1 Loop:", index)
+                                                    // console.log("Transaction ID:", swap.transaction_id)
+                                                }})
+                                    }
+
                                     if(data.status && data.payoutHash && data.payoutHash!=""){
                                     let tx_explorer;
                                     const matchCoinsTicker = coins.find(coin => swap.get_coin === coin.ticker);
@@ -919,6 +938,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                               
                                 const response = await fetch(url, options);
                                 const data = await response.json();
+                                if(data.result[0].status && (data.result[0].status=="confirming" || data.result[0].status=="confirmation" || data.result[0].status=="confirmed")){
+                                    db.query(`UPDATE changehero_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
+                                            if(error){
+                                                // console.log("Error 1 Loop:", index)
+                                                // console.log("Transaction ID:", swap.transaction_id)
+                                            }})
+                                    }
                                         if(data.result[0].status && data.result[0].payoutHash && data.result[0].payoutHash!=null){
                                             let tx_explorer;
                                             const matchCoinsTicker = coins.find(coin => swap.get_coin === coin.ticker);
@@ -983,6 +1009,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                 const response = await fetch(url, options)
                               
                                 const data = await response.json();
+                                if(data.status && (data.status=="confirming" || data.status=="confirmation" || data.status=="confirmed")){
+                                    db.query(`UPDATE exolix_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
+                                            if(error){
+                                                // console.log("Error 1 Loop:", index)
+                                                // console.log("Transaction ID:", swap.transaction_id)
+                                            }})
+                                }
                                     if(data.status && data.hashOut.hash && data.hashOut.hash!=null){
                                         let tx_explorer;
                                         const matchCoinsTicker = coins.find(coin => swap.get_coin === coin.ticker);
@@ -1044,6 +1077,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                 const response = await fetch(url, options);
                               
                                 const data = await response.json();
+                                if(data.status && (data.status=="confirming" || data.status=="confirmation" || data.status=="confirmed")){
+                                    db.query(`UPDATE godex_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
+                                            if(error){
+                                                // console.log("Error 1 Loop:", index)
+                                                // console.log("Transaction ID:", swap.transaction_id)
+                                            }})
+                                }
                                     if(data.status && data.hash_out && data.hash_out!==null){
                                         let tx_explorer;
                                         const matchCoinsTicker = coins.find(coin => swap.get_coin === coin.ticker);
@@ -1106,7 +1146,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     const response = await fetch(url, options)
                                   
                                     const data = await response.json();
-                                    // console.log("Letsexchange",data);
+                                    if(data.status && (data.status=="confirming" || data.status=="confirmation" || data.status=="confirmed")){
+                                        db.query(`UPDATE letsexchange_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
+                                                if(error){
+                                                    // console.log("Error 1 Loop:", index)
+                                                    // console.log("Transaction ID:", swap.transaction_id)
+                                                }})
+                                    }
                                     if(data.status && data.hash_out && data.hash_out!=null){
                                         let tx_explorer;
                                         const matchCoinsTicker = coins.find(coin => swap.get_coin === coin.ticker);
@@ -1169,7 +1215,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     const response = await fetch(url, options)
                                   
                                     const data = await response.json();
-                                    // console.log("Stealthex",data)
+                                    if(data.status && (data.status=="confirming" || data.status=="confirmation" || data.status=="confirmed")){
+                                        db.query(`UPDATE stealthex_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
+                                                if(error){
+                                                    // console.log("Error 1 Loop:", index)
+                                                    // console.log("Transaction ID:", swap.transaction_id)
+                                                }})
+                                    }   
                                         let keys = Object.keys(data.currencies); // Get the keys as an array
                                         let keyAtIndex = keys[1]; // Get the key at the specified index
                                         let innerObject = data.currencies[keyAtIndex]; // Access the inner object using the key
@@ -1238,7 +1290,13 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                 
                                     const response = await fetch(url, options)
                                     const data = await response.json();
-                                    console.log("Simpleswap",data);
+                                    if(data.status && (data.status=="confirming" || data.status=="confirmation" || data.status=="confirmed")){
+                                        db.query(`UPDATE simpleswap_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
+                                                if(error){
+                                                    // console.log("Error 1 Loop:", index)
+                                                    // console.log("Transaction ID:", swap.transaction_id)
+                                                }})
+                                    }                                        
                                         let keys = Object.keys(data.currencies); // Get the keys as an array
                                         let keyAtIndex = keys[1]; // Get the key at the specified index
                                         let innerObject = data.currencies[keyAtIndex]; // Access the inner object using the key
