@@ -7,8 +7,24 @@ dotenv.config();
 
 //Function for calculating percentage;
 function calculatePercentage(Number, PercentageOf){
-  const figureAfterPercentage=(PercentageOf/100)*Number;
+  const divide=(PercentageOf/100);
+  const multiply=divide*Number
+  const figureAfterPercentage=multiply;
+  console.log("Divide Figure:", divide, "Multiply:", multiply, "Profit:", figureAfterPercentage);
   return figureAfterPercentage;
+}
+
+async function fetchProfitPercantage(sql, exchangeName){
+
+return new Promise((resolve, reject) => {
+            db.query(sql, [exchangeName], (error, result) => {
+                if (error) {
+                    reject(0);
+                } else {
+                    resolve(parseFloat(result[0].profit_percent));
+                }
+            });
+        });
 }
 
 // Function for calculating percentge of profit
@@ -19,14 +35,14 @@ async function calculateProfitInBTC(exchangeName, sellCoin, sendingAmount, excha
     let profitPercent;
     let amountInBTC;
     let profit=0;
-    db.query(sql,[exchangeName],async function(error, result){
-      if(error){
-        return profit;
-      }
-      profitPercent=parseFloat(result[0].profit_percent);
+
+    profitPercent=await fetchProfitPercantage(sql, exchangeName);
+    
       try {
         if(sellCoin=="btc"){
-          profit=calculatePercentage(sendAmount, profitPercent);        
+
+          profit=calculatePercentage(sendAmount, profitPercent);
+
         }else{
           switch (exchangeName) {
             case "changelly":
@@ -44,9 +60,7 @@ async function calculateProfitInBTC(exchangeName, sellCoin, sendingAmount, excha
                   format: "der",
                 });
               
-              if (exchangeType=="Floating") {
-                console.log("I am inside changelly floating case");
-          
+              if (exchangeType=="Floating") {          
                 const message = {
                   jsonrpc: "2.0",
                   id: "test",
@@ -431,7 +445,6 @@ async function calculateProfitInBTC(exchangeName, sellCoin, sendingAmount, excha
               });
     
              const data=await response.json();
-             console.log("Simpleswap rate response", data);
              amountInBTC=parseFloat(data);
              profit=calculatePercentage(amountInBTC, profitPercent);
             }
@@ -439,11 +452,11 @@ async function calculateProfitInBTC(exchangeName, sellCoin, sendingAmount, excha
               break;
           }
         }
+        return profit;
       } catch (error) {
         return profit;
       }
-    })
-    return profit;
+    
 }
 
 class exchangeController{
@@ -518,7 +531,7 @@ class exchangeController{
             const data = await JSON.parse(response.body);
             try {
               if(data.result.id){
-                const profit=await calculateProfitInBTC("changelly", get, amount, "Floating");
+                const profit=await calculateProfitInBTC("changelly", sell, amount, "Floating");
                 console.log("Changelly profit", profit);
                 var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit], function(error, result){
@@ -1079,7 +1092,7 @@ class exchangeController{
           request(paramy, async function (error, response) {
             const data = await JSON.parse(response.body);
             try {
-              const profit=await calculateProfitInBTC("changelly", get, amount, "Fixed");
+              const profit=await calculateProfitInBTC("changelly", sell, amount, "Fixed");
               if(data.result.id){
                 var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit], function(error, result){
