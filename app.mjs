@@ -227,7 +227,8 @@ function countTrueValues(obj) {
                     
                       request(params, async function (error, response) {
                         if(error){
-                            throw new Error();
+                            console.log("Error occured while fetching coins from Changelly api");
+                            return;
                         }
                         const data = await JSON.parse(response.body);
                         const apiCoins = data.result;
@@ -771,6 +772,11 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                             
                                               request(params, async function (error, response) {
                                                 try {
+                                                    if (error) {
+                                                        console.log("Changelly Status Api Call Error", error);          
+                                                        // Return here only stops further execution inside this callback, not the parent function
+                                                        return;
+                                                      }
                                                     //This logic checks if time difference is greater than two days and status is not finished and successfull then delete transaction
                                                     if(isValid && swap.status!="finished"){
                                                         db.query("DELETE FROM changelly_transactions WHERE transaction_id=?",[swap.transaction_id],(error,result)=>{
@@ -780,7 +786,6 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                                         })
                                                     }else{
                                                     const data = await JSON.parse(response.body);
-
                                                     //Logic for updating Exchange Start Time
                                                     if(data.result[0].status && (data.result[0].status=="confirming" || data.result[0].status=="confirmation" || data.result[0].status=="confirmed")){
                                                         db.query(`UPDATE changelly_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
@@ -798,7 +803,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                                             tx_explorer=data.result[0].payoutHashLink;
                                                         }
 
-                                                    db.query(`UPDATE changelly_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, tx_explorer, data.result[0].amountFrom, data.result[0].amountTo, swap.transaction_id],(error, result)=>{
+                                                    db.query(`UPDATE changelly_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW(), rate=? WHERE transaction_id=?`,[data.result[0].status, data.result[0].payoutHash, tx_explorer, data.result[0].amountFrom, data.result[0].amountTo, data.result[0].rate, swap.transaction_id],(error, result)=>{
                                                         if(error){
                                                             // console.log("Error 1 Loop:", index)
                                                             // console.log("Transaction ID:", swap.transaction_id)
@@ -857,7 +862,6 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                     const response = await fetch(url, options);
                                   
                                     const data = await response.json();
-
                                     //Logic for updating Exchange Start Time
                                     if(data.status && (data.status=="confirming" || data.status=="confirmation" || data.status=="confirmed")){
                                         db.query(`UPDATE changenow_transactions SET start_time=NOW() WHERE transaction_id=?`[swap.transaction_id],(error, result)=>{
@@ -1024,10 +1028,10 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         }else{
                                             tx_explorer=data.hashOut.link;
                                         }
-                                        db.query(`UPDATE exolix_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.hashOut.hash, tx_explorer, data.amount, data.amountTo, swap.transaction_id],(error, result)=>{
+                                        db.query(`UPDATE exolix_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW(), rate=? WHERE transaction_id=?`,[data.status, data.hashOut.hash, tx_explorer, data.amount, data.amountTo, data.rate, swap.transaction_id],(error, result)=>{
                                             if(error){
                                                 // console.log("Error 1 Loop:", index)
-                                                // console.log("Transaction ID:", swap.transaction_id)
+                                                console.log("Transaction ID:", error);
                                             }
                                         })
                                             }else if(data.status){
@@ -1092,7 +1096,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         }else{
                                             tx_explorer=replaceOrAppendHash(data.coin_to_explorer_url, data.hash_out);
                                         }
-                                        db.query(`UPDATE godex_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.deposit_amount ,data.real_withdrawal_amount, swap.transaction_id],(error, result)=>{
+                                        db.query(`UPDATE godex_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW(), rate=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.deposit_amount ,data.real_withdrawal_amount,data.rate, swap.transaction_id],(error, result)=>{
                                             if(error){
                                                 // console.log("Error 1 Loop:", index)
                                                 // console.log("Transaction ID:", swap.transaction_id)
@@ -1161,7 +1165,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         }else{
                                             tx_explorer=replaceOrAppendHash(data.coin_to_explorer_url, data.hash_out);
                                         }
-                                            db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.real_deposit_amount, data.real_withdrawal_amount,  swap.transaction_id],(error, result)=>{
+                                            db.query(`UPDATE letsexchange_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW(), rate=? WHERE transaction_id=?`,[data.status, data.hash_out, tx_explorer, data.real_deposit_amount, data.real_withdrawal_amount, data.rate,  swap.transaction_id],(error, result)=>{
                                                 if(error){
                                                     console.log(error);
                                                     // console.log("Error 1 Loop:", index)

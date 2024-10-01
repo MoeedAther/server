@@ -588,7 +588,6 @@ class offerController {
       function sortArrayDescending(offerarray) {
         if(offerstype=="bestprices")
         {
-          console.log("best prices");
           // Filter objects with offer value "enable" and sort them based on rate in descending order
           let enabledObjects = offerarray.filter(obj => obj.offerED === "enable" && obj.visibility==1).sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate));
 
@@ -604,7 +603,6 @@ class offerController {
 
         }else if(offerstype=="fastestswap"){
           let fastestswap_array=[offerarray[9], offerarray[10], offerarray[0], offerarray[1], offerarray[11], offerarray[12], offerarray[13], offerarray[14], offerarray[2], offerarray[3], offerarray[4], offerarray[5], offerarray[8], offerarray[6], offerarray[7] ];
-          console.log("Fastest Swap");
 
               // Filter out objects with visibility equal to 0
               fastestswap_array = fastestswap_array.filter(obj => obj.visibility !== 0);
@@ -615,7 +613,6 @@ class offerController {
 
         }else if(offerstype=="bestrating"){
           let bestrating_array=[offerarray[11], offerarray[12], offerarray[9], offerarray[10], offerarray[8], offerarray[2], offerarray[3], offerarray[13], offerarray[14], offerarray[6], offerarray[7], offerarray[0], offerarray[1], offerarray[4], offerarray[5] ];
-          console.log("Best Rating");
 
               // Filter out objects with visibility equal to 0
               bestrating_array = bestrating_array.filter(obj => obj.visibility !== 0);
@@ -638,6 +635,11 @@ class offerController {
       setTimeout(()=>{
         request(param3, async function (error, response) {
           try {
+            if (error) {
+              console.log("Changelly Minimum and Maximum Fixed and Floating Api Call", error);          
+              // Return here only stops further execution inside this callback, not the parent function
+              return; 
+            }
             const data = await JSON.parse(response.body);
             if(!isNaN(data.result[0].minAmountFloat)&&!isNaN(data.result[0].maxAmountFloat)&&!isNaN(data.result[0].minAmountFixed)&&!isNaN(data.result[0].maxAmountFixed)){
               changelly_floating_minimum_amount=parseFloat(data.result[0].minAmountFixed);
@@ -661,6 +663,11 @@ class offerController {
 
         request(param1, async function (error, response) {
           try {
+            if (error) {
+              console.log("Changelly Floating Api Call", error);          
+              // Return here only stops further execution inside this callback, not the parent function
+              return; 
+            }
             const data = await JSON.parse(response.body);
             if(!isNaN(data.result[0].amountTo)){
               changelly_floating_price = parseFloat(data.result[0].amountTo);
@@ -678,6 +685,11 @@ class offerController {
 
           request(param2, async function (error, response) {
             try {
+              if (error) {
+                console.log("Changelly Fixed Api Call", error);          
+                // Return here only stops further execution inside this callback, not the parent function
+                return; 
+              }
                 const data = await JSON.parse(response.body);
                 if(!isNaN(data.result[0].amountTo)){
                   changelly_fixed_price = parseFloat(data.result[0].amountTo);
@@ -859,6 +871,7 @@ class offerController {
             params: {
               from: sell,
               to: get,
+              amount:amount
             },
           };
           response6 = await fetch(`https://api.changehero.io/v2/`, {
@@ -934,7 +947,7 @@ class offerController {
             }
           )
         } catch (error) {
-          console.log("Exolix Floating Api Call", error);
+          console.log("Godex Floating Api Call", error);
         }
     
   }, apicalldelay)
@@ -1276,26 +1289,26 @@ class offerController {
        
         if(string==="Tether (STATEMINT(Polkadot))"){
      
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false,  shortname:coin.ticker, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1, chainname2:"(Polkadot)", symbol2:substring3 };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false,  shortname:coin.ticker, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1, chainname2:"(Polkadot)", symbol2:substring3 };
           
         }else if(tick.includes("bsc")===true){
 
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Binance Smart Chain)" };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Binance Smart Chain)" };
 
         }else if(tick.includes("erc20")===true){
 
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (ERC20)" };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (ERC20)" };
 
         }else if(tick.includes("mainnet")===true){
 
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Mainnet)" };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Mainnet)" };
 
         }else if(tick.includes("matic")===true){
 
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Polygon)" };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3, chainname3:" (Polygon)" };
 
         }else{
-            return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3 };
+            return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:substring3 };
           }
 
       }else{
@@ -1305,22 +1318,22 @@ class offerController {
 
         if(tick.includes("bsc")===true){
 
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Binance Smart Chain)" };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Binance Smart Chain)" };
 
         }else if(tick.includes("erc20")===true){
 
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (ERC20)" };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (ERC20)" };
 
         }else if(tick.includes("mainnet")===true){
 
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Mainnet)" };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Mainnet)" };
 
         }else if(tick.includes("matic")===true){
 
-          return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Polygon)" };
+          return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name, chainname3:" (Polygon)" };
 
         }else{
-            return { coinindex:index, symbol: coin.legacyTicker, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name };
+            return { coinindex:index, symbol: coin.legacyTicker, isExtraIdSupported:coin.isExtraIdSupported, popular: coin.featured, shortname:coin.ticker, isstable:coin.isStable, othercoin:coin.featured==false && coin.isStable==false?true:false, network:coin.network, networkcolor:color, name: coin.name, image: coin.image, chainname1:substring1,  chainname2:substring2, symbol2:coin.name };
           }                 
       }
 
@@ -1446,6 +1459,11 @@ return res.json(array);
   
       request(param1, async function (error, response) {
         try {
+          if (error) {
+            console.log("Changelly Floating Api Call", error);          
+            // Return here only stops further execution inside this callback, not the parent function
+            return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+          }
           const data = await JSON.parse(response.body);
           let price = data.result[0].amountTo;
           return res.json({price:price})

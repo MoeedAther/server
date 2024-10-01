@@ -34,8 +34,7 @@ class SupportController{
             if(error){
                 logger.error(`Error: ${error}`)
             }
-            console.log(result);
-            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram});
+            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram, profit:result[0].profit_percent});
         })
     }
 
@@ -45,7 +44,7 @@ class SupportController{
             if(error){
                 logger.error(`Error: ${error}`)
             }
-            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram});
+            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram, profit:result[0].profit_percent});
         })
     }
 
@@ -55,7 +54,7 @@ class SupportController{
             if(error){
                 logger.error(`Error: ${error}`)
             }
-            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram});
+            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram, profit:result[0].profit_percent});
         })
     }
 
@@ -65,7 +64,7 @@ class SupportController{
             if(error){
                 logger.error(`Error: ${error}`)
             }
-            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram});
+            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram, profit:result[0].profit_percent});
         })
     }
 
@@ -75,7 +74,7 @@ class SupportController{
             if(error){
                 logger.error(`Error: ${error}`)
             }
-            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram});
+            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram, profit:result[0].profit_percent});
         })
     }
 
@@ -85,7 +84,7 @@ class SupportController{
             if(error){
                 logger.error(`Error: ${error}`)
             }
-            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram});
+            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram, profit:result[0].profit_percent});
         })
     }
 
@@ -95,7 +94,7 @@ class SupportController{
             if(error){
                 logger.error(`Error: ${error}`)
             }
-            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram});
+            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram, profit:result[0].profit_percent});
         })
     }
 
@@ -105,9 +104,133 @@ class SupportController{
             if(error){
                 logger.error(`Error: ${error}`)
             }
-            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram});
+            res.json({exchange_name:result[0].exchange_name, slack:result[0].slack, gmail:result[0].gmail, telegram:result[0].telegram, profit:result[0].profit_percent});
         })
     }
+
+    //********************************** Exchange Profile Update Queries *********************** */
+    static changellyUpdateProfile = async (req, res) => {
+        const { exchange, slack, gmail, telegram, profit_percent } = req.body; // Extracting data from request body
+    
+        let sqlUpdate = `UPDATE exchange_links 
+                         SET slack = ?, gmail = ?, telegram = ?, profit_percent = ?
+                         WHERE exchange_name = ?`;
+    
+        db.query(sqlUpdate, [slack, gmail, telegram, profit_percent, exchange], (error, result) => {
+            if (error) {
+                return res.json({ message: 'Profile update unsuccessfull!' });
+            }
+    
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
+
+    static changenowUpdateProfile = async (req, res) => {
+        const { exchange, slack, gmail, telegram, profit_percent } = req.body; // Extracting data from request body
+    
+        let sqlUpdate = `UPDATE exchange_links 
+                         SET slack = ?, gmail = ?, telegram = ?, profit_percent = ?
+                         WHERE exchange_name = ?`;
+    
+        db.query(sqlUpdate, [slack, gmail, telegram, profit_percent, exchange], (error, result) => {
+            if (error) {
+                return res.json({ message: 'Profile update unsuccessfull!' });
+            }
+    
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
+    static changeheroUpdateProfile = async (req, res) => {
+        const { exchange, slack, gmail, telegram, profit_percent } = req.body; // Extracting data from request body
+    
+        let sqlUpdate = `UPDATE exchange_links 
+                         SET slack = ?, gmail = ?, telegram = ?, profit_percent = ?
+                         WHERE exchange_name = ?`;
+    
+        db.query(sqlUpdate, [slack, gmail, telegram, profit_percent, exchange], (error, result) => {
+            if (error) {
+                return res.json({ message: 'Profile update unsuccessfull!' });
+            }
+    
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
+    static exolixUpdateProfile = async (req, res) => {
+        const { exchange, slack, gmail, telegram, profit_percent } = req.body; // Extracting data from request body
+    
+        let sqlUpdate = `UPDATE exchange_links 
+                         SET slack = ?, gmail = ?, telegram = ?, profit_percent = ?
+                         WHERE exchange_name = ?`;
+    
+        db.query(sqlUpdate, [slack, gmail, telegram, profit_percent, exchange], (error, result) => {
+            if (error) {
+                return res.json({ message: 'Profile update unsuccessfull!' });
+            }
+    
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
+    static godexUpdateProfile = async (req, res) => {
+        const { exchange, slack, gmail, telegram, profit_percent } = req.body; // Extracting data from request body
+    
+        let sqlUpdate = `UPDATE exchange_links 
+                         SET slack = ?, gmail = ?, telegram = ?, profit_percent = ?
+                         WHERE exchange_name = ?`;
+    
+        db.query(sqlUpdate, [slack, gmail, telegram, profit_percent, exchange], (error, result) => {
+            if (error) {
+                return res.json({ message: 'Profile update unsuccessfull!' });
+            }
+    
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
+    static stealthexUpdateProfile = async (req, res) => {
+        const { exchange, slack, gmail, telegram, profit_percent } = req.body; // Extracting data from request body
+    
+        let sqlUpdate = `UPDATE exchange_links 
+                         SET slack = ?, gmail = ?, telegram = ?, profit_percent = ?
+                         WHERE exchange_name = ?`;
+    
+        db.query(sqlUpdate, [slack, gmail, telegram, profit_percent, exchange], (error, result) => {
+            if (error) {
+                return res.json({ message: 'Profile update unsuccessfull!' });
+            }
+    
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
+    static letsexchangeUpdateProfile = async (req, res) => {
+        const { exchange, slack, gmail, telegram, profit_percent } = req.body; // Extracting data from request body
+    
+        let sqlUpdate = `UPDATE exchange_links 
+                         SET slack = ?, gmail = ?, telegram = ?, profit_percent = ?
+                         WHERE exchange_name = ?`;
+    
+        db.query(sqlUpdate, [slack, gmail, telegram, profit_percent, exchange], (error, result) => {
+            if (error) {
+                return res.json({ message: 'Profile update unsuccessfull!' });
+            }
+    
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
+    static simpleswapUpdateProfile = async (req, res) => {
+        const { exchange, slack, gmail, telegram, profit_percent } = req.body; // Extracting data from request body
+    
+        let sqlUpdate = `UPDATE exchange_links 
+                         SET slack = ?, gmail = ?, telegram = ?, profit_percent = ?
+                         WHERE exchange_name = ?`;
+    
+        db.query(sqlUpdate, [slack, gmail, telegram, profit_percent, exchange], (error, result) => {
+            if (error) {
+                return res.json({ message: 'Profile update unsuccessfull!' });
+            }
+    
+            res.json({ message: 'Profile updated successfully' });
+        });
+    }
+    
 
     static testApis=async(req,res)=>{
         // const privateKey = crypto.createPrivateKey({

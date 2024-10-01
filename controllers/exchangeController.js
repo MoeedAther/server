@@ -5,6 +5,446 @@ import dotenv from 'dotenv';
 import {db} from '../database/connectdb.js';
 dotenv.config();
 
+//Function for calculating percentage;
+function calculatePercentage(Number, PercentageOf){
+  const figureAfterPercentage=(PercentageOf/100)*Number;
+  return figureAfterPercentage;
+}
+
+// Function for calculating percentge of profit
+async function calculateProfitInBTC(exchangeName, sellCoin, sendAmount, exchangeType){
+    // Fetching changelly profit percentage from database
+    const sql="SELECT * FROM exchange_links WHERE exchange_name=?";
+    let profitPercent;
+    let amountInBTC;
+    let profit=0;
+    db.query(sql,[exchangeName],async function(error, result){
+      if(error){
+        return profit;
+      }
+      profitPercent=parseFloat(result[0].profit_percent);
+      try {
+        if(sellCoin=="btc"){
+          profit=calculatePercentage(sendAmount, profitPercent);        
+        }else{
+          switch (exchangeName) {
+            case "changelly":
+              // Calling Changelly Api for converting sentding amount to BTC
+              const privateKeyString = process.env.CHANGELLY_PRIVATE_KEY;
+              const privateKey = crypto.createPrivateKey({
+                  key: privateKeyString,
+                  format: "der",
+                  type: "pkcs8",
+                  encoding: "hex",
+                });
+          
+              const publicKey = crypto.createPublicKey(privateKey).export({
+                  type: "pkcs1",
+                  format: "der",
+                });
+              
+              if (exchangeType=="Floating") {
+                console.log("I am inside changelly floating case");
+          
+                const message = {
+                  jsonrpc: "2.0",
+                  id: "test",
+                  method: "getExchangeAmount",
+                  params: {
+                    from: sellCoin,
+                    to: "btc",
+                    amountFrom: sendAmount,
+                  },
+                };
+          
+                const signature = crypto.sign(
+                  "sha256",
+                  Buffer.from(JSON.stringify(message)),
+                  {
+                    key: privateKey,
+                    type: "pkcs8",
+                    format: "der",
+                  }
+                );
+          
+                const param = {
+                  method: "POST",
+                  url: "https://api.changelly.com/v2",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-Api-Key": crypto
+                      .createHash("sha256")
+                      .update(publicKey)
+                      .digest("base64"),
+                    "X-Api-Signature": signature.toString("base64"),
+                  },
+                  body: JSON.stringify(message),
+                };
+          
+          
+                // Wrapping the request in a promise
+                const data = await new Promise((resolve, reject) => {
+                  request(param, (error, response) => {
+                    if (error) {
+                      return profit;
+                    } else {
+                      resolve(JSON.parse(response.body));
+                    }
+                  });
+                });
+          
+                    amountInBTC = parseFloat(data.result[0].amountTo);
+                    profit=calculatePercentage(amountInBTC, profitPercent);
+          
+              }else{
+          
+                const message = {
+              
+                  jsonrpc: "2.0",
+                  id: "test",
+                  method: "getFixRateForAmount",
+                  params: [
+                    {
+                      from: sellCoin,
+                      to: "btc",
+                      amountFrom: sendAmount
+                    }
+                  ]
+                }
+          
+                const signature = crypto.sign(
+                  "sha256",
+                  Buffer.from(JSON.stringify(message)),
+                  {
+                    key: privateKey,
+                    type: "pkcs8",
+                    format: "der",
+                  }
+                );
+          
+                const param = {
+                  method: "POST",
+                  url: "https://api.changelly.com/v2",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-Api-Key": crypto
+                      .createHash("sha256")
+                      .update(publicKey)
+                      .digest("base64"),
+                    "X-Api-Signature": signature.toString("base64"),
+                  },
+                  body: JSON.stringify(message),
+                };
+          
+                // Wrapping the request in a promise
+                const data = await new Promise((resolve, reject) => {
+                  request(param, (error, response) => {
+                    if (error) {
+                      return profit;
+                    } else {
+                      resolve(JSON.parse(response.body));
+                    }
+                  });
+                });
+          
+                    amountInBTC = parseFloat(data.result[0].amountTo);
+                    profit=calculatePercentage(amountInBTC, profitPercent);
+              }
+              break;
+            case "changenow":
+              if (exchangeType=="Floating") {
+                const response = await fetch(
+                  `https://api.changenow.io/v1/exchange-amount/${sendAmount}/${sellCoin}_btc/?api_key=${process.env.CHANGENOW}`,
+                  {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  })
+          
+                const data=await response.json();
+                amountInBTC=parseFloat(data.estimatedAmount);
+                 profit=calculatePercentage(amountInBTC, profitPercent);
+                
+              }else{
+                const response = await fetch(
+                  `https://api.changenow.io/v1/exchange-amount/fixed-rate/${sendAmount}/${sellCoin}_btc/?api_key=${process.env.CHANGENOW}`,
+                  {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  })
+          
+                const data=await response.json();
+                amountInBTC=parseFloat(data.estimatedAmount);
+                profit=calculatePercentage(amountInBTC, profitPercent);
+              }
+              break;
+            case "changehero":
+              if (exchangeType=="Floating") {
+    
+                  const param = {
+                    jsonrpc: "2.0",
+                    method: "getExchangeAmount",
+                    params: {
+                      from: sellCoin,
+                      to: "btc",
+                      amount:sendAmount
+                    },
+                  };
+          
+                  const response = await fetch(
+                    `https://api.changehero.io/v2/`,
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        "api-key": process.env.CHANGEHERO,
+                      },
+                      body: JSON.stringify(param),
+                    }
+                  )    
+          
+                const data=await response.json();
+                amountInBTC=parseFloat(data.result);
+                profit=calculatePercentage(amountInBTC, profitPercent);
+                
+              }else{
+                const param = {
+                  jsonrpc: "2.0",
+                  method: "getFixRate",
+                  params: {
+                    from: sellCoin,
+                    to: "btc",
+                    amount:sendAmount
+                  },
+                };
+    
+                const response = await fetch(
+                  `https://api.changehero.io/v2/`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "api-key": process.env.CHANGEHERO,
+                    },
+                    body: JSON.stringify(param),
+                  }
+                )    
+        
+              const data=await response.json();
+              amountInBTC=parseFloat(data.result[0].result);
+              profit=calculatePercentage(amountInBTC, profitPercent);
+              }
+              
+              break;
+            case "exolix":
+              if (exchangeType=="Floating") {
+        
+                const response =await fetch(
+                  `https://exolix.com/api/v2/rate?coinFrom=${sellCoin}&coinTo=btc&amount=${sendAmount}&rateType=float`,
+                  {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  }
+                )   
+        
+              const data=await response.json();
+              amountInBTC=parseFloat(data.toAmount);
+              profit=calculatePercentage(amountInBTC, profitPercent);
+              
+            }else{
+              const response =await fetch(
+                `https://exolix.com/api/v2/rate?coinFrom=${sellCoin}&coinTo=btc&amount=${sendAmount}&rateType=fixed`,
+                {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              )   
+      
+            const data=await response.json();
+            amountInBTC=parseFloat(data.toAmount);
+            profit=calculatePercentage(amountInBTC, profitPercent);
+            }
+              
+              break;
+            case "godex":
+              if (exchangeType=="Floating") {
+        
+                const param = {
+                  from: sellCoin.toUpperCase(),
+                  to: "BTC",
+                  amount: sendAmount,
+                };
+        
+                const response = await fetch(
+                  `https://api.godex.io/api/v1/info`,
+                  {
+                    method: "POST",
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(param),
+                  }
+                )
+    
+              const data=await response.json();
+              amountInBTC=parseFloat(data.amount);
+              profit=calculatePercentage(amountInBTC, profitPercent);
+              
+            }
+              
+              break;
+            case "stealthex":
+    
+              if (exchangeType=="Floating") {
+                const response = await fetch(`https://api.stealthex.io/api/v2/estimate/${sellCoin}/btc?amount=${sendAmount}&api_key=${process.env.STEALTHEX}&fixed=false`, {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  })
+        
+              const data=await response.json();
+              amountInBTC=parseFloat(data.estimated_amount);
+              profit=calculatePercentage(amountInBTC, profitPercent);
+              
+            }else{
+              const response = await fetch(`https://api.stealthex.io/api/v2/estimate/${sellCoin}/btc?amount=${sendAmount}&api_key=${process.env.STEALTHEX}&fixed=true`, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
+    
+             const data=await response.json();
+             amountInBTC=parseFloat(data.estimated_amount);
+             profit=calculatePercentage(amountInBTC, profitPercent);
+            }
+              
+              break;
+            case "letsexchange":
+              if (exchangeType=="Floating") {
+    
+                  let toncoinsell,param;
+                  if(sellCoin=="toncoin"){
+                    toncoinsell=sellCoin=="toncoin"?"TON-ERC20":sellCoin;            
+                     param = {
+                      from: toncoinsell,
+                      to: "btc",
+                      amount: sendAmount,
+                      float: false
+                    }
+                
+                
+                  }else{
+                    param = {
+                     from: sellCoin,
+                     to: "btc",
+                     amount: sendAmount,
+                     float: false
+                   };
+                 }
+                  
+                const response = await fetch(`https://api.letsexchange.io/api/v1/info`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": process.env.LETSEXCHANGE
+                    },
+                    body: JSON.stringify(param)
+                  })
+        
+                  const data=await response.json();
+                  amountInBTC=parseFloat(data.amount);
+                  profit=calculatePercentage(amountInBTC, profitPercent);
+              
+            }else{
+              let toncoinsell,param;
+              if(sellCoin=="toncoin"){
+                toncoinsell=sellCoin=="toncoin"?"TON-ERC20":sellCoin;            
+                 param = {
+                  from: toncoinsell,
+                  to: "btc",
+                  amount: sendAmount,
+                  float: true
+                }
+            
+            
+              }else{
+                param = {
+                 from: sellCoin,
+                 to: "btc",
+                 amount: sendAmount,
+                 float: true
+               };
+             }
+              
+            const response = await fetch(`https://api.letsexchange.io/api/v1/info`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": process.env.LETSEXCHANGE
+                },
+                body: JSON.stringify(param)
+              })
+    
+              const data=await response.json();
+              amountInBTC=parseFloat(data.amount);
+              profit=calculatePercentage(amountInBTC, profitPercent);
+            }
+              
+              break;
+            case "simpleswap":
+              if (exchangeType=="Floating") {
+    
+                  let sellcoin=sellCoin=="toncoin"?"tonerc20":sellCoin;
+          
+                  const response = await fetch(`https://api.simpleswap.io/get_estimated?api_key=${process.env.SIMPLESWAP}&fixed=false&currency_from=${sellcoin}&currency_to=btc&amount=${sendAmount}`, {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                    }
+                  });
+        
+                 const data=await response.json();
+                 console.log("Simpleswap rate response", data);
+                 amountInBTC=parseFloat(data);
+                 profit=calculatePercentage(amountInBTC, profitPercent);
+              
+            }else{
+    
+              let sellcoin=sellCoin=="toncoin"?"tonerc20":sellCoin;
+          
+              const response = await fetch(`https://api.simpleswap.io/get_estimated?api_key=${process.env.SIMPLESWAP}&fixed=true&currency_from=${sellcoin}&currency_to=btc&amount=${sendAmount}`, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                }
+              });
+    
+             const data=await response.json();
+             console.log("Simpleswap rate response", data);
+             amountInBTC=parseFloat(data);
+             profit=calculatePercentage(amountInBTC, profitPercent);
+            }
+              
+              break;
+          }
+        }
+      } catch (error) {
+        return profit;
+      }
+    })
+    return profit;
+}
+
 class exchangeController{
 
     // *********************** Floating Transactions ************************* //
@@ -59,7 +499,7 @@ class exchangeController{
             }
           );
         
-          const paramx = {
+          const paramCreateExchange = {
             method: "POST",
             url: "https://api.changelly.com/v2",
             headers: {
@@ -73,12 +513,14 @@ class exchangeController{
             body: JSON.stringify(message),
           };
         
-          request(paramx, async function (error, response) {
+          request(paramCreateExchange, async function (error, response) {
             const data = await JSON.parse(response.body);
             try {
               if(data.result.id){
-                var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email], function(error, result){
+                const profit=await calculateProfitInBTC("changelly", get, amount, "Floating");
+                console.log("Changelly profit", profit);
+                var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit], function(error, result){
                   if (error) throw error;
                 })
               }
@@ -131,11 +573,11 @@ class exchangeController{
       
         const response = await fetch(url, options)
         const data = await response.json();
-        console.log(data);
         try {
           if(data.id){
-            var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email ], function(error, result){
+            const profit=await calculateProfitInBTC("changenow", sell, amount, "Floating");
+            var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
           }
@@ -196,8 +638,9 @@ class exchangeController{
         const data = await response.json()
         try {
           if(data.result.id){
-            var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email ], function(error, result){
+            const profit=await calculateProfitInBTC("changehero", sell, amount, "Floating");
+            var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
           }
@@ -261,8 +704,9 @@ class exchangeController{
         
         try {
           if(data.id){
-            var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email ], function(error, result){
+            const profit=await calculateProfitInBTC("stealthex", sell, amount, "Floating");
+            var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
               if (error) throw error;
             })
           }
@@ -324,8 +768,9 @@ class exchangeController{
         const data = await response.json()
         try {
           if(data.id){
-            var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email ], function(error, result){
+            const profit=await calculateProfitInBTC("exolix", sell, amount, "Floating");
+            var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
           }
@@ -391,8 +836,9 @@ class exchangeController{
       
         try {
           if(data.id){
-            var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email ], function(error, result){
+            const profit=await calculateProfitInBTC("simpleswap", sell, amount, "Floating");
+            var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
               if (error) throw error;
             })
           }
@@ -458,8 +904,9 @@ class exchangeController{
       
         try {
           if(data.transaction_id){
-            var sql="INSERT INTO godex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email ], function(error, result){
+            const profit=await calculateProfitInBTC("godex", sell, amount, "Floating");
+            var sql="INSERT INTO godex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
               if (error) throw error;
             })
           }
@@ -526,8 +973,9 @@ class exchangeController{
 
   try {
     if(data.transaction_id){
-      var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email ], function(error, result){
+      const profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
+      var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
         if (error) throw error;
       })
     }
@@ -630,9 +1078,10 @@ class exchangeController{
           request(paramy, async function (error, response) {
             const data = await JSON.parse(response.body);
             try {
+              const profit=await calculateProfitInBTC("changelly", get, amount, "Fixed");
               if(data.result.id){
-                var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed"], function(error, result){
+                var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit], function(error, result){
                   if (error) throw error;
                 })
               }
@@ -696,8 +1145,9 @@ class exchangeController{
   const data = await response.json()
   try {
     if(data.id){
-      var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, "Fixed" ], function(error, result){
+      const profit=await calculateProfitInBTC("changenow", sell, amount, "Fixed");
+      var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
     }
@@ -769,8 +1219,9 @@ class exchangeController{
 
   try {
     if(data.result.id){
-      var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed" ], function(error, result){
+      const profit=await calculateProfitInBTC("changehero", sell, amount, "Fixed");
+      var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
     }
@@ -832,8 +1283,9 @@ class exchangeController{
   const data = await response.json()
   try {
     if(data.id){
-      var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed" ], function(error, result){
+      const profit=await calculateProfitInBTC("stealthex", sell, amount, "Fixed");
+      var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
     }
@@ -896,8 +1348,9 @@ class exchangeController{
         const data = await response.json()
         try {
           if(data.id){
-            var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, "Fixed" ], function(error, result){
+            const profit=await calculateProfitInBTC("exolix", sell, amount, "Fixed");
+            var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, "Fixed", profit ], function(error, result){
               if (error) throw error;
             })
           }
@@ -962,8 +1415,9 @@ class exchangeController{
   const data = await response.json()
   try {
     if(data.id){
-      var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed" ], function(error, result){
+      const profit=await calculateProfitInBTC("simpleswap", sell, amount, "Fixed");
+      var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
     }
@@ -1031,8 +1485,9 @@ class exchangeController{
       
         try {
           if(data.transaction_id){
-            var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address,  data.deposit, email, "Fixed" ], function(error, result){
+            const profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
+            var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address,  data.deposit, email, "Fixed", profit ], function(error, result){
               if (error) throw error;
             })
           }

@@ -162,6 +162,16 @@ router.get('/support_links/letsexchange', SupportController.letsexchangeSupportL
 router.get('/support_links/stealthex', SupportController.stealthexSupportLinks);
 router.get('/support_links/simpleswap', SupportController.simpleswapSupportLinks);
 
+//............................ Exchange Profiles Update Apis................................/
+router.post('/changelly_profile/update', SupportController.changellyUpdateProfile);
+router.post('/changenow_profile/update', SupportController.changenowUpdateProfile);
+router.post('/changehero_profile/update', SupportController.changeheroUpdateProfile);
+router.post('/exolix_profile/update', SupportController.exolixUpdateProfile);
+router.post('/godex_profile/update', SupportController.godexUpdateProfile);
+router.post('/stealthex_profile/update', SupportController.stealthexUpdateProfile);
+router.post('/letsexchange_profile/update', SupportController.letsexchangeUpdateProfile);
+router.post('/simpleswap_profile/update', SupportController.simpleswapUpdateProfile);
+
 //.................................. Coins Data......................................./
 router.get('/coins-tokens', offerController.getCoinsTokens);
 
