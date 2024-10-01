@@ -12,7 +12,8 @@ function calculatePercentage(Number, PercentageOf){
 }
 
 // Function for calculating percentge of profit
-async function calculateProfitInBTC(exchangeName, sellCoin, sendAmount, exchangeType){
+async function calculateProfitInBTC(exchangeName, sellCoin, sendingAmount, exchangeType){
+    let sendAmount=parseFloat(sendingAmount);
     // Fetching changelly profit percentage from database
     const sql="SELECT * FROM exchange_links WHERE exchange_name=?";
     let profitPercent;
