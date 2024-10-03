@@ -1276,7 +1276,16 @@ class offerController {
         color="rgb(180, 191, 206)";
       }else if (coin.network=="chz"){
         color="rgb(225, 18, 86)";
+      }else if (coin.network=="ton"){
+        color="rgb(39, 115, 192)";
+      }else if (coin.network=="celo"){
+        color="rgb(252, 255, 66)";
+      }else if (coin.network=="manta"){
+        color="rgb(44, 124, 249)";
+      }else if (coin.network=="btc"){
+        color="rgb(238, 128, 27)";
       }
+
       const index1 = string.indexOf("(");
       const index2 = string.indexOf(")");
 
@@ -1339,8 +1348,40 @@ class offerController {
 
 })
 
-return res.json(array);
-  };
+      // return res.json(      [{
+      //   coinindex: 0,
+      //   symbol: "btc",
+      //   isExtraIdSupported: false,
+      //   popular: true,
+      //   shortname: "btc",
+      //   isstable: false,
+      //   othercoin: false,
+      //   network: "btc",
+      //   networkcolor: "",
+      //   name: "Bitcoin",
+      //   image: "https://content-api.changenow.io/uploads/btc_1_527dc9ec3c.svg",
+      //   chainname1: "",
+      //   chainname2: "",
+      //   symbol2: "Bitcoin"
+      // },
+      // {
+      //   coinindex: 1,
+      //   symbol: "eth",
+      //   isExtraIdSupported: false,
+      //   popular: true,
+      //   shortname: "eth",
+      //   isstable: false,
+      //   othercoin: false,
+      //   network: "eth",
+      //   networkcolor: "rgb(79,173,208)",
+      //   name: "Ethereum",
+      //   image: "https://content-api.changenow.io/uploads/eth_f4ebb54ec0.svg",
+      //   chainname1: "",
+      //   chainname2: "",
+      //   symbol2: "Ethereum"
+      // }]);
+    return res.json(array);  
+    };
 
   static homeprice = async (req, res) => {
     const { sel, get, amount } = req.body;
@@ -1395,11 +1436,9 @@ return res.json(array);
           })
   
           const data3=await response3.json();
-          console.log(data3)
           return res.json({to:{amount:0, from:{min:minamount}, onesel:data3.estimated_amount/minamount}})
         }
       } catch (error) {
-        console.log(error)
         return res.json({to:{amount:0, from:{min:0}, onesel:0}});
       }
      
