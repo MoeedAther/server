@@ -1279,7 +1279,7 @@ class offerController {
       }else if (coin.network=="ton"){
         color="rgb(39, 115, 192)";
       }else if (coin.network=="celo"){
-        color="rgb(252, 255, 66)";
+        color="rgb(202 221 50)";
       }else if (coin.network=="manta"){
         color="rgb(44, 124, 249)";
       }else if (coin.network=="btc"){
