@@ -1284,6 +1284,8 @@ class offerController {
         color="rgb(44, 124, 249)";
       }else if (coin.network=="btc"){
         color="rgb(238, 128, 27)";
+      }else if(coin.network=="opbnb"){
+        color="#e8bb42"
       }
 
       const index1 = string.indexOf("(");
