@@ -174,6 +174,7 @@ router.post('/simpleswap_profile/update', SupportController.simpleswapUpdateProf
 
 //.................................. Coins Data......................................./
 router.get('/coins-tokens', offerController.getCoinsTokens);
+router.get('/coin_market_data', offerController.getcryptomarket);
 
 //....................................... Test Route ......................................./
 router.get('/test', SupportController.testApis);

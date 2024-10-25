@@ -1716,7 +1716,6 @@ class offerController {
   }
 
   static getCoinsTokens=async(req, res)=>{
-    console.log("I am called");
     db.query('SELECT * FROM coins_data', async (error, coins)=>{
       if(error){
         return res.json({message:"An error occurend! Please refresh."})
@@ -1724,6 +1723,19 @@ class offerController {
         return res.json({coins:coins, message:"Ok"});
       }
   })
+}
+
+static getcryptomarket=async(req, res)=>{
+  const options={
+    method:"GET",
+    headers:{
+      "Content-Type":"application/json",
+      "X-CMC_PRO_API_KEY":"b5f6b308-d128-48b2-8ec3-4f83d075f262"
+    }
+  }
+  const response=await fetch("https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=3000", options);
+  const data=await response.json();
+  return res.json(data);
 }
 
 }
