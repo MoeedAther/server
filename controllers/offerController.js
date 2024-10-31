@@ -1733,7 +1733,7 @@ static getcryptomarket=async(req, res)=>{
       "X-CMC_PRO_API_KEY":"b5f6b308-d128-48b2-8ec3-4f83d075f262"
     }
   }
-  const response=await fetch("https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=3000", options);
+  const response=await fetch("https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=1000", options);
   const data=await response.json();
   return res.json(data);
 }
