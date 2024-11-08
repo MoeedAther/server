@@ -59,29 +59,29 @@ const getCurrentTimestamp = () => {
 class AdminController{
 
     static createAdmin=async(req, res)=>{
-        const {username, email, password}=req.body;
+        const {firstname, lastname, email, password}=req.body;
         const saltRounds = 10;
   
         try {
-            if(!email || !password || !username || email=="" || password=="" || username=="" ){
+            if(!email || !password || !firstname || !lastname || email=="" || password=="" || firstname=="" || lastname==""){
                 return res.json({authorized:false, message:"Please fill all required fields"});
             }else{
             const sql1 =`SELECT * FROM admin WHERE email = ?;`
             db.query(sql1,[email],async function(error, result){
                 if (error){
-                    return res.json({signup:false, message:"User creation failed"});
+                    return res.json({signup:false, message:"User creation failed", err:error});
                 }else{
                     if(result.length>0){
                         return res.json({signup:false, message:"User already exists"});
                     }else{
                         const hashedPassword = await bcrypt.hash(password, saltRounds); 
           
-                        const sql2 = 'INSERT INTO admin (username, email, password) VALUES (?, ?, ?)';
-                        const values = [username, email, hashedPassword];
+                        const sql2 = 'INSERT INTO admin (first_name, last_name, email, password) VALUES (?, ?, ?, ?)';
+                        const values = [firstname, lastname, email, hashedPassword];
                         
                         db.query(sql2, values, (err, results) => {
                           if (err) {
-                            return res.json({signup:false, message:"User creation failed"});
+                            return res.json({signup:false, message:"User creation failed", err:err});
                           }else{
                               return res.json({signup:true, message:"User creation successful"});
                           }

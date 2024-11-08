@@ -1,0 +1,431 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+@font-face {
+    font-family: 'Basement Grotesque';
+    src: url('fonts/BasementGrotesque-Regular.woff2') format('woff2'),
+         url('fonts/BasementGrotesque-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.email_heading {
+    font-family: 'Basement Grotesque';
+}
+.email_para{
+    font-family: 'Inter', sans-serif;
+}
+table.email-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: url(./images/email_bg.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+}
+
+.coinoswap_logo img {
+    display: block;
+    margin: 0 auto;
+    width: 180px;
+    height: auto;
+    padding-bottom: 45px;
+    padding-top: 29px;
+}
+.congratulation_heading {
+    margin: 20px 0;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 48px;
+    color: #F4A70B;
+    padding-bottom: 19px;
+}
+.congratulation_subheading {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 24px;
+    padding-bottom: 95px;
+}
+.success-section {
+    background-color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+}
+.success-section img {
+    width: 120px;
+    height: 119px;
+    margin-top: 10px;
+}
+.success-container{
+    background-color: #fff;
+}
+.exchange_sucess {
+    margin: 20px 0;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 48px;
+    color: #F34900;
+    padding-top: 40px;
+    padding-bottom: 36px;
+}
+.dotted-box {
+    padding: 10px 30px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+    width: 360px;
+    height: 68px;
+    border-radius: 16px;
+    border: 1px dashed #A3A09E;
+    align-items: center;
+}
+.dotted-box .left {
+    text-align: left;
+}
+.dotted-box .left p {
+    margin: 0;
+    color: #A3A09E;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.36px;
+    text-align: left;
+}
+.dotted-box .left .bold {
+    color: #100F0E;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24.2px;
+    text-align: left;
+}
+.dotted-box .right {
+    display: flex;
+    align-items: center;
+}
+.dotted-box .right img {
+    width: 24px;
+    margin-right: 10px;
+    height: 24px;
+}
+.arrow {
+    text-align: center;
+    margin: 20px 0;
+}
+.info-text {
+    text-align: center;
+    margin: 5px 0;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14.52px;
+    color: #100F0E;
+}
+.info-text img {
+    width: 20px;
+    margin-right: 5px;
+}
+p.btc_text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 19.36px;
+    text-align: left;
+    color: #100F0E;
+    margin-top: 17px;
+}
+.eth_text{
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 19.36px;
+    text-align: left;
+    color: #100F0E;
+    margin-top: 17px;
+}
+td.arrow img {
+    width: 11px;
+    height: 40px;
+}
+.order_section {
+    background-color: #efeeed;
+    border-radius: 20px;
+    padding: 20px;
+    width: 760px;
+    margin: 0px 20px;
+}
+.completed_time {
+    margin-bottom: 50px;
+}
+p.order_track {
+    color: #100F0E;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: left;
+}
+.exchange_partner{
+    color: #100F0E;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: left;
+}
+img.Copy_black_icon {
+    width: 20px;
+    height: 20px;
+}
+img.changelly_offer {
+    width: 240px;
+    height: auto;
+}
+span.copy_text {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: center;
+    color: #100F0E;
+}
+.copt_text_sec {
+    border-radius: 1000px;
+    border: 1px solid #100F0E;
+    padding: 12px 40px;
+}
+p.exchange_type {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: left;
+    color: #100F0E;
+}
+img.Floating_black_icon {
+    width: 22px;
+    height: 22px;
+}
+span.floating {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 19.2px;
+    text-align: center;
+    color: #100F0E;
+    padding-left: 10px;
+}
+.floating.section {
+    padding: 12px 50px 12px 50px;
+    border-radius: 100px;
+    border: 1px solid #100F0E;
+    box-sizing: border-box;
+    width: 205px;
+}
+p.support_mail {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 19.2px;
+    text-align: left;
+    color: #100F0E;
+}
+span.deposit {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: center;
+    color: #100F0E;
+}
+.Deposit_address{
+font-size: 20px;
+font-weight: 800;
+line-height: 24px;
+text-align: left;
+color: #100F0E;
+}
+.deposit_section {
+    padding: 12px 20px;
+    border-radius: 100px;
+    border: 1px solid #100F0E;
+    margin-bottom: 10px;
+}
+span.deposit.email_heading{
+font-size: 16px;
+font-weight: 800;
+line-height: 19.2px;
+text-align: center;
+color: #100F0E;
+padding-left: 10px;
+}
+.ethereum_blockchain {
+    display: flex;
+    align-items: center;
+}
+img.arrow_btn {
+    width: 36px;
+    height: 36px;
+    margin: -18px 0px 0px 0px;
+}
+td.note {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 19.2px;
+    text-align: left;
+    color: #F34900;
+    padding: 20px 15px;
+}
+.trustpilot_btn{
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #00B67A;
+    border-radius: 25px;
+}
+a.trustpiolot_btn {
+    display: flex;
+    width: 300px;
+    height: 50px;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #00B67A;
+    border-radius: 12px;
+    line-height: 50px;
+    text-align: center;
+    padding: 12px 40px;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+span.rate_us {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 25.6px;
+    text-align: left;
+}
+a:hover {
+    color: #fff !important;
+}
+img.Trustpilot_logo {
+    height: auto;
+    width: 100px;
+}
+td.coinoswap_footer_logo img {
+    width: 180px;
+    height: auto;
+}
+p.coinoswap_makes {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: center;
+    color: #A3A09E;
+    width: 625px;
+    padding: 30px 0px 20px 0px;
+}
+td.buy_crypto img {
+    width: 160px;
+    height: auto;
+}
+td.trustpilot_footer_logo img {
+    width: 88px;
+    height: auto;
+}
+.pages_links{
+    display: flex;
+    justify-content: space-between;
+}
+p.link_heading {
+    font-family: Basement Grotesque;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 32px;
+    text-align: left;
+}
+p.footer_links a {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 32px;
+    text-align: left;
+    color: #A3A09E;
+}
+/*Follow us css*/
+.social-icons{
+    width: 100%;
+    margin:1%;
+    border-radius: 6px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+  }
+  i.fa-brands.fa-x-twitter {
+    font-size: 25px;
+}
+i.fa-brands.fa-linkedin-in {
+    font-size: 25px;
+}
+  h3.follow-us-on-social {
+    font-family: Basement Grotesque;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 32px;
+}
+.social-icon-div {
+    height: 60px;
+    width: 370px;
+    display: flex;
+}
+  .footer-links{
+    padding:4px 0px
+  }
+  .social-icons:hover >.fa-x-twitter{
+    color:white
+  }
+  .social-icons:hover >.fa-linkedin-in{
+    color:white
+  }
+  .social-icons:hover >.social-tiktok{
+    color:white
+  }
+  .social-icons:hover >.social-instagram{
+    color:white
+  }
+  
+  .social-icons:hover >.social-youtube{
+    color:white
+  }
+  
+  .social-icons:hover >.social-facebook{
+    color:white
+  }
+  
+  .social-icons:hover{
+    background: rgb(244,107,12);
+    background: linear-gradient(0deg, rgba(244,107,12,1) 27%, rgba(240,168,15,1) 97%);
+  }
+
+  /*End Footer*/
+  td.lower_footer {
+    padding: 20px 20px 10px 20px;
+    border-top: 1px solid #5E5C5B;
+}
+/* Footer Text and Links */
+.all_rights_footer{
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: left;
+    color: #A3A09E;
+}
+/* Hover Effect for Links */
+.lower_footer-links a {
+    color: #A3A09E;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: left;
+}
+.lower_footer-links a:hover {
+    color: #fff;
+}

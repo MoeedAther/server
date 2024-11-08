@@ -11,7 +11,10 @@ import crypto from 'crypto';
 import request from "request";
 import fetch from "node-fetch";
 import {createLogger, format, transports} from 'winston';
+import path from 'path';
+import { default as nodemailerExpressHandlebars } from 'nodemailer-express-handlebars';
 const { combine, timestamp, printf } = format;
+
 
 
 // Define custom log format
@@ -30,6 +33,8 @@ const logger = createLogger({
         new transports.File({ filename: 'app.log' })
     ]
 });
+
+
 
 
 dotenv.config();
@@ -91,14 +96,107 @@ const transporter = nodemailer.createTransport({
     }
   });
 
+  // Handle Bars
+const handlebarOptions = {
+    viewEngine: {
+    extName: ".handlebars",
+    partialsDir: path.resolve('./views'),
+    defaultLayout: false,
+    },
+    viewPath: path.resolve('./views'),
+    extName: ".handlebars",
+    }
+
+    transporter.use('compile', nodemailerExpressHandlebars(handlebarOptions));
+
 //Email sending success function
-function sendSuccessEmail(email){
-    console.log("success email function called");
+function sendSuccessEmail(email, transaction_id, exchange_logo_path, exchange_logo_file_name , tx_hash, tx_hash_link, sell_coin, get_coin, sell_coin_name, get_coin_name, transaction_type, sell_amount, get_amount, sell_coin_logo, get_coin_logo, completion_time, deposit_address, recipient_address){
     const mailOptions = {
         from: process.env.EMAIL,
         to: email,
         subject: 'Swap Status',
-        text: `Exchange was successful`
+        template: 'email',
+        context: {
+            transaction_id:transaction_id,
+            tx_hash:tx_hash,
+            tx_hash_link:tx_hash_link,
+            sell_coin:sell_coin,
+            get_coin:get_coin,
+            sell_coin_name:sell_coin_name,
+            get_coin_name:get_coin_name,
+            transaction_type:transaction_type,
+            sell_amount:sell_amount,
+            get_amount:get_amount,
+            sell_coin_logo:sell_coin_logo,
+            get_coin_logo:get_coin_logo,
+            completion_time:completion_time,
+            deposit_address:deposit_address,
+            recipient_address:recipient_address
+        },
+        attachments:[
+            {
+                filename: 'Coinoswap Logo.png',
+                path:'./views/images/Coinoswap Logo.png',
+                cid: 'coinoswaplogo@unique.cid'
+            },
+            {
+                filename: 'Success Illustration.png',
+                path:'./views/images/Success Illustration.png',
+                cid: 'successillustration@unique.cid'
+            },
+            {
+                filename: 'To_vertical Icon.png',
+                path:'./views/images/To_vertical Icon.png',
+                cid: 'To_verticalIcon@unique.cid'
+            },
+            {
+                filename: 'orange_Bullet Point Icon.png',
+                path:'./views/images/orange_Bullet Point Icon.png',
+                cid: 'orange_BulletPointIcon@unique.cid'
+            },
+            {
+                filename: 'Copy_black Icon.png',
+                path:'./views/images/Copy_black Icon.png',
+                cid: 'Copy_blackIcon@unique.cid'
+            },
+            {
+                filename: exchange_logo_file_name,
+                path:exchange_logo_path,
+                cid: 'exchangelogo@unique.cid'
+            },
+            {
+                filename: 'Floating_black Icon.png',
+                path:'./views/images/Floating_black Icon.png',
+                cid: 'Floating_blackIcon@unique.cid'
+            },            {
+                filename: 'Arrow Button.png',
+                path:'./views/images/Arrow Button.png',
+                cid: 'ArrowButton@unique.cid'
+            },            {
+                filename: 'Trustpilot Logo.png',
+                path:'./views/images/Trustpilot Logo.png',
+                cid: 'TrustpilotLogo@unique.cid'
+            },            {
+                filename: 'Buy Crypto With.png',
+                path:'./views/images/Buy Crypto With.png',
+                cid: 'BuyCryptoWith@unique.cid'
+            },            {
+                filename: 'Trustpilot Icon.png',
+                path:'./views/images/Trustpilot Icon.png',
+                cid: 'TrustpilotIcon@unique.cid'
+            },
+            {
+                filename: 'email_bg.jpeg',
+                path:'./views/images/email_bg.jpeg',
+                cid: 'email_bg@unique.cid'
+            },
+            {
+                filename: 'footer_bg.jpeg',
+                path:'./views/images/footer_bg.jpeg',
+                cid: 'footer_bg@unique.cid'
+            },
+
+        ]
       };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -110,13 +208,14 @@ function sendSuccessEmail(email){
 }
 
 //Email sending failed function
+//Email sending failed function
 function sendFailedEmail(email){
     console.log("failed email function called"); 
     const mailOptions = {
         from: process.env.EMAIL,
         to: email,
         subject: 'Swap Status',
-        text: `Exchange was unsuccessfull`
+        text: `Your swap was unfortunately unsuccessful. Please contact our support team with your Order ID so they can assist you with your transaction.`
       };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -719,6 +818,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                     db.query('SELECT * FROM changelly_transactions', (error, result)=>{
                         if(result.length>0){
                                 result.map((swap)=>{
+
                                     // This condition checks if a transaction is successfull then it doesnot perform any logic
                                     if(swap.status!="finished" && swap.status !="success"){
                                         const currentTimestamp = Date.now(); // Current timestamp
@@ -1359,13 +1459,14 @@ cron.schedule(`10 * * * * *`, ()=>{
                 result.map((swap)=>{
 
                     if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
-                        sendSuccessEmail(swap.email);
+                        sendSuccessEmail(swap.email, swap.transaction_id, "./views/images/Changelly Offer.png", "Changelly Offer.png", swap.tx_hash, swap.tx_hash_link, swap.sell_coin, swap.get_coin, swap.sell_coin_name, swap.get_coin_name, swap.transaction_type, swap.sell_amount, swap.get_amount, swap.sell_coin_logo, swap.get_coin_logo, swap.completion_time, swap.deposit_address, swap.recipient_address);
                         db.query("UPDATE changelly_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                             if(error){
                                 console.log("Changelly email status update unsuccessful of transaction id: ", swap.transaction_id);
                             }
                         })
-                    }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    // }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                    }else if(swap.status=="failed" || swap.status=="refunded"){
                         if(swap.status_email==0 && swap.email!=null){
                         sendFailedEmail(swap.email);
                         db.query("UPDATE changelly_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -1383,13 +1484,14 @@ cron.schedule(`10 * * * * *`, ()=>{
         if(result.length>0){
             result.map((swap)=>{
                 if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
-                    sendSuccessEmail(swap.email);
+                    sendSuccessEmail(swap.email, swap.transaction_id, "./views/images/ChangeNow Offer.png", "ChangeNow Offer.png", swap.tx_hash, swap.tx_hash_link, swap.sell_coin, swap.get_coin, swap.sell_coin_name, swap.get_coin_name, swap.transaction_type, swap.sell_amount, swap.get_amount, swap.sell_coin_logo, swap.get_coin_logo, swap.completion_time, swap.deposit_address, swap.recipient_address);
                     db.query("UPDATE changenow_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                         if(error){
                             console.log("Changenow email status update unsuccessful of transaction id: ", swap.transaction_id);
                         }
                     })
-                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                // }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                }else if(swap.status=="failed" || swap.status=="refunded"){
                     if(swap.status_email==0 && swap.email!=null){
                     sendFailedEmail(swap.email);
                     db.query("UPDATE changenow_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -1408,13 +1510,14 @@ cron.schedule(`10 * * * * *`, ()=>{
         if(result.length>0){
             result.map((swap)=>{
                 if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
-                    sendSuccessEmail(swap.email);
+                    sendSuccessEmail(swap.email, swap.transaction_id, "./views/images/Change Hero Offer.png", "Change Hero Offer.png", swap.tx_hash, swap.tx_hash_link, swap.sell_coin, swap.get_coin, swap.sell_coin_name, swap.get_coin_name, swap.transaction_type, swap.sell_amount, swap.get_amount, swap.sell_coin_logo, swap.get_coin_logo, swap.completion_time, swap.deposit_address, swap.recipient_address);
                     db.query("UPDATE changehero_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                         if(error){
                             console.log("Changehero email status update unsuccessful of transaction id: ", swap.transaction_id);
                         }
                     })
-                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                // }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                }else if(swap.status=="failed" || swap.status=="refunded"){
                     if(swap.status_email==0 && swap.email!=null){
                     sendFailedEmail(swap.email);
                     db.query("UPDATE changehero_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -1432,13 +1535,14 @@ cron.schedule(`10 * * * * *`, ()=>{
         if(result.length>0){
             result.map((swap)=>{
                 if(swap.status=="success" && swap.status_email==0 && swap.email!=null){
-                    sendSuccessEmail(swap.email);
+                    sendSuccessEmail(swap.email, swap.transaction_id, "./views/images/Exolix Offer.png", "Exolix Offer.png", swap.tx_hash, swap.tx_hash_link, swap.sell_coin, swap.get_coin, swap.sell_coin_name, swap.get_coin_name, swap.transaction_type, swap.sell_amount, swap.get_amount, swap.sell_coin_logo, swap.get_coin_logo, swap.completion_time, swap.deposit_address, swap.recipient_address);
                     db.query("UPDATE exolix_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                         if(error){
                             console.log("Exolix email status update unsuccessful of transaction id: ", swap.transaction_id);
                         }
                     })
-                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                // }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                }else if(swap.status=="failed" || swap.status=="refunded"){
                     if(swap.status_email==0 && swap.email!=null){
                     sendFailedEmail(swap.email);
                     db.query("UPDATE exolix_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -1456,13 +1560,14 @@ cron.schedule(`10 * * * * *`, ()=>{
         if(result.length>0){
             result.map((swap)=>{
                 if(swap.status=="success" && swap.status_email==0 && swap.email!=null){
-                    sendSuccessEmail(swap.email);
+                    sendSuccessEmail(swap.email, swap.transaction_id, "./views/images/Godex Offers.png", "Godex Offers.png", swap.tx_hash, swap.tx_hash_link, swap.sell_coin, swap.get_coin, swap.sell_coin_name, swap.get_coin_name, swap.transaction_type, swap.sell_amount, swap.get_amount, swap.sell_coin_logo, swap.get_coin_logo, swap.completion_time, swap.deposit_address, swap.recipient_address);
                     db.query("UPDATE godex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                         if(error){
                             console.log("Godex email status update unsuccessful of transaction id: ", swap.transaction_id);
                         }
                     })
-                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                // }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                }else if(swap.status=="failed" || swap.status=="refunded"){
                     if(swap.status_email==0 && swap.email!=null){
                     sendFailedEmail(swap.email);
                     db.query("UPDATE godex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -1480,13 +1585,14 @@ cron.schedule(`10 * * * * *`, ()=>{
         if(result.length>0){
             result.map((swap)=>{
                 if(swap.status=="success" && swap.status_email==0 && swap.email!=null){
-                    sendSuccessEmail(swap.email);
+                    sendSuccessEmail(swap.email, swap.transaction_id, "./views/images/LetsExchange Offer.png", "LetsExchange Offer.png", swap.tx_hash, swap.tx_hash_link, swap.sell_coin, swap.get_coin, swap.sell_coin_name, swap.get_coin_name, swap.transaction_type, swap.sell_amount, swap.get_amount, swap.sell_coin_logo, swap.get_coin_logo, swap.completion_time, swap.deposit_address, swap.recipient_address);
                     db.query("UPDATE letsexchange_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                         if(error){
                             console.log("Letsexchange email status update unsuccessful of transaction id: ", swap.transaction_id);
                         }
                     })
-                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                // }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                }else if(swap.status=="failed" || swap.status=="refunded"){
                     if(swap.status_email==0 && swap.email!=null){
                     sendFailedEmail(swap.email);
                     db.query("UPDATE letsexchange_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -1504,13 +1610,14 @@ cron.schedule(`10 * * * * *`, ()=>{
         if(result.length>0){
             result.map((swap)=>{
                 if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
-                    sendSuccessEmail(swap.email);
+                    sendSuccessEmail(swap.email, swap.transaction_id, "./views/images/Stealthex Offer.png", "Stealthex Offer.png", swap.tx_hash, swap.tx_hash_link, swap.sell_coin, swap.get_coin, swap.sell_coin_name, swap.get_coin_name, swap.transaction_type, swap.sell_amount, swap.get_amount, swap.sell_coin_logo, swap.get_coin_logo, swap.completion_time, swap.deposit_address, swap.recipient_address);
                     db.query("UPDATE stealthex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                         if(error){
                             console.log("Stealthex email status update unsuccessful of transaction id: ", swap.transaction_id);
                         }
                     })
-                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                // }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                }else if(swap.status=="failed" || swap.status=="refunded"){
                     if(swap.status_email==0 && swap.email!=null){
                     sendFailedEmail(swap.email);
                     db.query("UPDATE stealthex_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
@@ -1529,13 +1636,14 @@ cron.schedule(`10 * * * * *`, ()=>{
         if(result.length>0){
             result.map((swap)=>{
                 if(swap.status=="finished" && swap.status_email==0 && swap.email!=null){
-                    sendSuccessEmail(swap.email);
+                    sendSuccessEmail(swap.email, swap.transaction_id, "./views/images/SimpleSwap Offer.png", "SimpleSwap Offer.png", swap.tx_hash, swap.tx_hash_link, swap.sell_coin, swap.get_coin, swap.sell_coin_name, swap.get_coin_name, swap.transaction_type, swap.sell_amount, swap.get_amount, swap.sell_coin_logo, swap.get_coin_logo, swap.completion_time, swap.deposit_address, swap.recipient_address);
                     db.query("UPDATE simpleswap_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{
                         if(error){
                             console.log("Simpleswap email status update unsuccessful of transaction id: ", swap.transaction_id);
                         }
                     })
-                }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                // }else if(swap.status=="failed" || swap.status=="refunded" || swap.status=="overdue" || swap.status=="expired"){
+                }else if(swap.status=="failed" || swap.status=="refunded"){
                     if(swap.status_email==0 && swap.email!=null){
                     sendFailedEmail(swap.email);
                     db.query("UPDATE simpleswap_transactions SET status_email=? WHERE transaction_id=?",[1, swap.transaction_id],(error,result)=>{

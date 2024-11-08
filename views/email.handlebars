@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <!--Stylsheet-->
+    <link rel="stylesheet" href="css/email.css">
+    <!--Bootstrap css-->
+     <link rel="stylesheet" href="css/bootstrap.min.css">
+      <!--Bootstrap js-->
+      <script src="js/bootstrap.min.js"></script>
+      <!--inter font-->
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+      <!--Font awsome-->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">  
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+    <style>
+        *{
+    margin: 0px;
+    padding: 0px;
+}
+
+@font-face {
+    font-family: 'Basement Grotesque';
+    src: url('fonts/BasementGrotesque-Regular.woff2') format('woff2'),
+         url('fonts/BasementGrotesque-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.email_heading {
+    font-family: 'Basement Grotesque';
+}
+
+.social-icons:hover> .svg-icon {
+    fill: white; /* Change to white on hover */
+}
+
+.email_para{
+    font-family: 'Inter', sans-serif;
+}
+table.email-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: url('cid:email_bg@unique.cid');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+}
+
+.coinoswap_logo img {
+    display: block;
+    margin: 0 auto;
+    width: 180px;
+    height: auto;
+    padding-bottom: 45px;
+    padding-top: 29px;
+}
+.congratulation_heading {
+    margin: 20px 0;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 48px;
+    color: #F4A70B;
+    padding-bottom: 19px;
+}
+.congratulation_subheading {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 24px;
+    padding-bottom: 95px;
+}
+.success-section {
+    background-color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+}
+.success-section img {
+    width: 120px;
+    height: 119px;
+    margin-top: 10px;
+}
+.success-container{
+    background-color: #fff;
+}
+.exchange_sucess {
+    margin: 20px 0;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 48px;
+    color: #F34900;
+    padding-top: 40px;
+    padding-bottom: 36px;
+}
+.dotted-box {
+    padding: 10px 30px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+    width: 360px;
+    height: 68px;
+    border-radius: 16px;
+    border: 1px dashed #A3A09E;
+    align-items: center;
+}
+.dotted-box .left {
+    text-align: left;
+}
+.dotted-box .left p {
+    margin: 0;
+    color: #A3A09E;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.36px;
+    text-align: left;
+}
+.dotted-box .left .bold {
+    color: #100F0E;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24.2px;
+    text-align: left;
+}
+.dotted-box .right {
+    display: flex;
+    align-items: center;
+}
+.dotted-box .right img {
+    width: 24px;
+    margin-right: 10px;
+    height: 24px;
+}
+.arrow {
+    text-align: center;
+    margin: 20px 0;
+}
+.info-text {
+    text-align: center;
+    margin: 5px 0;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14.52px;
+    color: #100F0E;
+}
+.info-text img {
+    width: 20px;
+    margin-right: 5px;
+}
+p.btc_text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 19.36px;
+    text-align: left;
+    color: #100F0E;
+    margin-top: 17px;
+}
+.eth_text{
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 19.36px;
+    text-align: left;
+    color: #100F0E;
+    margin-top: 17px;
+}
+td.arrow img {
+    width: 11px;
+    height: 40px;
+}
+.order_section {
+    background-color: #efeeed;
+    border-radius: 20px;
+    padding: 20px;
+    width: 760px;
+    margin: 0px 20px;
+}
+.completed_time {
+    margin-bottom: 50px;
+}
+p.order_track {
+    color: #100F0E;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: left;
+}
+.exchange_partner{
+    color: #100F0E;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: left;
+}
+img.Copy_black_icon {
+    width: 20px;
+    height: 20px;
+}
+img.changelly_offer {
+    width: 240px;
+    height: auto;
+}
+span.copy_text {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: center;
+    color: #100F0E;
+}
+.copt_text_sec {
+    border-radius: 1000px;
+    border: 1px solid #100F0E;
+    padding: 12px 40px;
+}
+p.exchange_type {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: left;
+    color: #100F0E;
+}
+img.Floating_black_icon {
+    width: 22px;
+    height: 22px;
+}
+span.floating {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 19.2px;
+    text-align: center;
+    color: #100F0E;
+    padding-left: 10px;
+}
+.floating.section {
+    padding: 12px 50px 12px 50px;
+    border-radius: 100px;
+    border: 1px solid #100F0E;
+    box-sizing: border-box;
+    width: 205px;
+}
+p.support_mail {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 19.2px;
+    text-align: left;
+    color: #100F0E;
+}
+span.deposit {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: center;
+    color: #100F0E;
+}
+.Deposit_address{
+font-size: 20px;
+font-weight: 800;
+line-height: 24px;
+text-align: left;
+color: #100F0E;
+}
+.deposit_section {
+    padding: 12px 20px;
+    border-radius: 100px;
+    border: 1px solid #100F0E;
+    margin-bottom: 10px;
+}
+span.deposit.email_heading{
+font-size: 16px;
+font-weight: 800;
+line-height: 19.2px;
+text-align: center;
+color: #100F0E;
+padding-left: 10px;
+}
+.ethereum_blockchain {
+    display: flex;
+    align-items: center;
+}
+img.arrow_btn {
+    width: 36px;
+    height: 36px;
+    margin: -18px 0px 0px 0px;
+}
+td.note {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 19.2px;
+    text-align: left;
+    color: #F34900;
+    padding: 20px 15px;
+}
+.trustpilot_btn{
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #00B67A;
+    border-radius: 25px;
+}
+a.trustpiolot_btn {
+    display: flex;
+    width: 190px;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #00B67A;
+    border-radius: 12px;
+    line-height: 50px;
+    text-align: center;
+    padding: 12px 40px;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+span.rate_us {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 25.6px;
+    text-align: left;
+}
+a:hover {
+    color: #fff !important;
+}
+img.Trustpilot_logo {
+    height: auto;
+    width: 100px;
+}
+td.coinoswap_footer_logo img {
+    width: 180px;
+    height: auto;
+}
+p.coinoswap_makes {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: center;
+    color: #A3A09E;
+    width: 625px;
+    padding: 30px 0px 20px 0px;
+}
+td.buy_crypto img {
+    width: 160px;
+    height: auto;
+}
+td.trustpilot_footer_logo img {
+    width: 88px;
+    height: auto;
+}
+.pages_links{
+    display: flex;
+    justify-content: space-between;
+}
+p.link_heading {
+    font-family: Basement Grotesque;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 32px;
+    text-align: left;
+}
+p.footer_links a {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 32px;
+    text-align: left;
+    color: #A3A09E;
+}
+/*Follow us css*/
+.social-icons{
+    width: 100%;
+    margin:1%;
+    border-radius: 6px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+  }
+  i.fa-brands.fa-x-twitter {
+    font-size: 25px;
+}
+i.fa-brands.fa-linkedin-in {
+    font-size: 25px;
+}
+  h3.follow-us-on-social {
+    font-family: Basement Grotesque;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 32px;
+}
+.social-icon-div {
+    height: 60px;
+    width: 370px;
+    display: flex;
+}
+  .footer-links{
+    padding:4px 0px
+  }
+  .social-icons:hover >.fa-x-twitter{
+    color:white
+  }
+  .social-icons:hover >.fa-linkedin-in{
+    color:white
+  }
+  .social-icons:hover >.social-tiktok{
+    color:white
+  }
+  .social-icons:hover >.social-instagram{
+    color:white
+  }
+  
+  .social-icons:hover >.social-youtube{
+    color:white
+  }
+  
+  .social-icons:hover >.social-facebook{
+    color:white
+  }
+  
+  .social-icons:hover{
+    background: rgb(244,107,12);
+    background: linear-gradient(0deg, rgba(244,107,12,1) 27%, rgba(240,168,15,1) 97%);
+  }
+
+  /*End Footer*/
+  td.lower_footer {
+    padding: 20px 20px 10px 20px;
+    border-top: 1px solid #5E5C5B;
+}
+
+/* Footer Text and Links */
+.all_rights_footer{
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: left;
+    color: #A3A09E;
+}
+/* Hover Effect for Links */
+.lower_footer-links a {
+    color: #A3A09E;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.6px;
+    text-align: left;
+}
+.lower_footer-links a:hover {
+    color: #fff;
+}
+    </style>
+</head>
+<body>
+    <!-- Main Email Wrapper Table -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f2f2f2; padding: 20px;">
+        <tbody>
+            <tr>
+                <td align="center">
+                    <!-- Main Email Container -->
+                    <table class="email-container" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tbody>
+                            <!-- Separate Section with Custom Background Image -->
+                            <tr>
+                                <td>
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: url(cid:email_bg@unique.cid); background-repeat: no-repeat; background-size: cover; background-position: right;">
+                                        <tbody>
+                                            <!-- Logo Section -->
+                                            <tr>
+                                                <td align="center" class="coinoswap_logo">
+                                                    <img src="cid:coinoswaplogo@unique.cid" alt="CoinoSwap Logo" />
+                                                </td>
+                                            </tr>
+                                            <!-- Heading Section -->
+                                            <tr>
+                                                <td class="congratulation_heading email_heading" style="text-align: center;">
+                                                    Congratulations!
+                                                </td>
+                                            </tr>
+                                            <!-- Subheading Section -->
+                                            <tr>
+                                                <td class="congratulation_subheading email_heading" style="text-align: center;">
+                                                    Your Exchange Was a Success
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- New Image Section -->
+                            <tr>
+                                <td class="success-section" style="text-align: center;">
+                                    <img src="cid:successillustration@unique.cid" alt="Success Illustration" />
+                                </td>
+                            </tr>
+                            <!-- Exchange Details Section -->
+                            <tr>
+                                <td>
+                                    <table class="success-container" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                        <tbody>
+                                            <!-- Exchange Successful Heading -->
+                                            <tr>
+                                                <td class="exchange_sucess email_heading" style="text-align: center;">
+                                                    Exchange Successful!
+                                                </td>
+                                            </tr>
+                                            <!-- You Send Section -->
+                                            <tr>
+                                                <td>
+                                                    <div class="dotted-box">
+                                                        <div class="left">
+                                                            <p class='email_para'>You Send:</p>
+                                                            <p class="bold email_para">{{sell_amount}}</p>
+                                                        </div>
+                                                        <div class="right">
+                                                            <img src={{sell_coin_logo}} alt="SELL COIN" />
+                                                            <p class='btc_text email_para'>{{sell_coin_name}}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- Arrow Section -->
+                                            <tr>
+                                                <td class="arrow" style="text-align: center;">
+                                                    <img src="cid:To_verticalIcon@unique.cid" alt="Arrow" />
+                                                </td>
+                                            </tr>
+                                            <!-- You Receive Section -->
+                                            <tr>
+                                                <td>
+                                                    <div class="dotted-box">
+                                                        <div class="left">
+                                                            <p class='email_para'>You Receive:</p>
+                                                            <p class="bold email_para">{{get_amount}}</p>
+                                                        </div>
+                                                        <div class="right">
+                                                            <img src={{get_coin_logo}} alt="GET COIN" />
+                                                            <p class='email_para eth_text'>{{get_coin_name}}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- Info Section -->
+                                            <tr>
+                                                <td>
+
+                                                    {{!-- <div class="info-text">
+                                                        <img src="cid:orange_BulletPointIcon@unique.cid" alt="Info" />
+                                                        <span class='email_para'>Estimated: 1 BTC ~ 19.8812 ETH</span>
+                                                    </div> --}}
+
+                                                    <div class="info-text completed_time">
+                                                        <img src="cid:orange_BulletPointIcon@unique.cid" alt="Info" />
+                                                        <span class='email_para'>Completed Time: {{completion_time}}</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- New Gray Section -->
+                                            <tr>
+                                                <td>
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" class='order_section'>
+                                                        <tbody>
+                                                            <tr>
+                                                                <!-- Left Column -->
+                                                                <td width="50%" style="vertical-align: top; padding: 40px 10px 10px 15px;">
+                                                                    <div style="margin-bottom: 15px;">
+                                                                        <p class="email_heading order_track" style="font-weight: bold;">Order Tracker ID:</p>
+                                                                        <div class='copt_text_sec' style="display:inline-block;">
+                                                                            <span class='copy_text email_para'>{{transaction_id}}</span>
+                                                                            <img src="cid:Copy_blackIcon@unique.cid" class='Copy_black_icon' alt="Copy" style="margin-left: 10px; vertical-align: middle;" />
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <!-- Right Column -->
+                                                                <td width="50%" style="vertical-align: top; padding: 40px 10px 10px 10px;">
+                                                                    <p class="email_heading exchange_partner" style="font-weight: bold;">Exchange Partner:</p>
+                                                                    <div style="display: flex; align-items: center;">
+                                                                        <img src="cid:exchangelogo@unique.cid" class='changelly_offer' alt="Changelly Logo" style="margin-right: 10px;" />
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <!-- Left Column -->
+                                                                <td width="50%" style="vertical-align: top; padding: 10px 10px 40px 15px;">
+                                                                    <p class="email_heading exchange_type" style="font-weight: bold;">Exchange Type:</p>
+                                                                    <div class='floating section' style="display: flex;">
+                                                                        <img src="cid:Floating_blackIcon@unique.cid" class='Floating_black_icon' alt="Floating Icon" style="margin-right: 5px;" />
+                                                                        <span class='floating email_heading'>{{transaction_type}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <!-- Right Column -->
+                                                                <td width="50%" style="vertical-align: top; padding: 10px;">
+                                                                    <!-- Additional content can go here if needed -->
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2" style="padding: 10px 10px 35px 15px; text-align: left; width: 100%;">
+                                                                    <p class='email_para support_mail'>
+                                                                        Should You Have Any Queries, Please Do Not Hesitate To Reach Out To Your Support Team.<br />
+                                                                        <a class='support_coinoswap' href="mailto:support@coinoswap.com" style="color: #F34900; text-decoration: none;">
+                                                                            support@coinoswap.com
+                                                                        </a>
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <!-- Left Column -->
+                                                                <td colspan="2" style="vertical-align: top; padding: 10px 10px 0px 15px;">
+                                                                    <p class="email_heading Deposit_address" style="font-weight: bold;">Deposit Address:</p>
+                                                                    <div class='deposit_section' style="display: inline-block;">
+                                                                        <span class='deposit'>{{deposit_address}}</span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <!-- Left Column -->
+                                                                <td colspan="2" style="vertical-align: top; padding: 10px 10px 0px 15px;">
+                                                                    <p class="email_heading Deposit_address" style="font-weight: bold;">Recipient Address:</p>
+                                                                    <div class='deposit_section' style="display: inline-block;">
+                                                                        <span class='deposit'>{{recipient_address}}</span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <!-- Left Column -->
+                                                                <td colspan="2" style="vertical-align: top; padding: 10px 10px 0px 15px;">
+                                                                    <p class="email_heading Deposit_address" style="font-weight: bold;">{{get_coin_name}} Blockchain TX Hash:</p>
+                                                                     <div class="ethereum_blockchain">
+                                                                        <div class='deposit_section' style="display: flex;">
+                                                                                <span class='deposit'>{{tx_hash}}</span>
+                                                                            <img src="cid:Copy_blackIcon@unique.cid" class='Copy_black_icon' alt="Copy" style="margin-left: 10px; vertical-align: middle;" />
+                                                                        </div>
+                                                                        <a href={{tx_hash_link}}>
+                                                                            <img src="cid:ArrowButton@unique.cid" alt="" style="margin-left: 10px; vertical-align: middle;" class="arrow_btn">
+                                                                        </a>
+                                                                     </div>
+                                                                </td>
+                                                            </tr>
+                                                            <!-- Additional Note Row -->
+                                                            <tr>
+                                                                <td colspan="2" class="note">
+                                                                    * Please Note The Exchange Times Depend On How Fast The Network Confirms The Transaction And Generates A New Block On The Blockchain Network. Keep In Mind That Different Coins Have Different Confirmation Times.
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center" style="padding: 60px 20px 80px 20px;">
+                                                    {{!-- <a href="https://www.trustpilot.com/review/coinoswap.com" target="_blank"
+                                                        class="trustpiolot_btn">
+                                                        <span style="display: inline-block; vertical-align: middle; " class="rate_us email_heading">Rate Us On</span>
+                                                        <img src="cid:TrustpilotLogo@unique.cid" alt="Star" style="display: inline-block; vertical-align: middle; margin: 0 5px; height: 19px;" class="Trustpilot_logo" />
+                                                    </a> --}}
+                                                </td>
+                                            </tr>  
+                                             <!-- Footer Section -->
+                                            <tr>
+                                                <!-- Main Footer Section -->
+                                                <td align="center" style="padding: 10px 0px; background-image: url('cid:footer_bg@unique.cid'); background-size: cover; background-position: center;">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tbody>
+                                                            <!-- Upper Footer Content Section -->
+                                                            <tr>
+                                                                <td align="center" style="padding: 20px;">
+                                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                                        <!-- Footer Logo -->
+                                                                        <tr>
+                                                                            <td align="center" class="coinoswap_footer_logo">
+                                                                                <img src="cid:coinoswaplogo@unique.cid" alt="CoinoSwap Logo" width="120">
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!-- Footer Paragraph -->
+                                                                        <tr>
+                                                                            <td width="220px" align="center" style="padding: 10px 0;">
+                                                                                <p class="coinoswap_makes email_para">CoinoSwap Makes Swapping Crypto Fast And Easy With Options For Both Fixed And Floating Rates All Conveniently Available On A Single Platform</p>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!-- Payment Options and Trustpilot Rating -->
+                                                                        <tr>
+                                                                            <td align="center">
+                                                                                <table border="0" cellpadding="0" cellspacing="0">
+                                                                                    <tr>
+                                                                                        <td align="center" style="padding-right: 20px;" class="buy_crypto">
+                                                                                            <img src="cid:BuyCryptoWith@unique.cid" alt="Payment Options" style="vertical-align: middle;">
+                                                                                        </td>
+                                                                                        {{!-- <td align="center" style="padding-left: 20px;" class="trustpilot_footer_logo">
+                                                                                            <img src="cid:TrustpilotIcon@unique.cid" alt="Trustpilot Rating" style="vertical-align: middle;">
+                                                                                        </td> --}}
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!-- Link Sections -->
+                                                                        <tr>
+                                                                            <td align="center" style="padding-top: 50px;">
+                                                                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                                                    <tr class="pages_links">
+                                                                                        <td align="left" style="margin-right: 30%;">
+                                                                                            <p style="margin-bottom: 15px;" class="email_heading link_heading">Company</p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Home</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">About Us</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">How It Works</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">FAQ</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Our Blog</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Contact</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Track My Order</a></p>
+                                                                                        </td>
+                                                                                        <td align="left">
+                                                                                            <p style="margin-bottom: 15px;" class="email_heading link_heading">Supported Coins</p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Bitcoin</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Ethereum</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Ripple</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Litecoin</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Cardano</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Binance Coin</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">All Currencies</a></p>
+                                                                                        </td>
+                                                                                        <td align="left" style="margin-left: 20%;">
+                                                                                            <p style="margin-bottom: 15px;" class="email_heading link_heading">Our Partners</p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">Affiliate Program</a></p>
+                                                                                            <p class="email_para footer_links"><a href="#" style="text-decoration: none;">List Your Exchange</a></p>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td colspan="3" align="center" style="padding-top: 20px;">
+                                                                                            <h3 class="follow-us-on-social" style="margin-top: 35px;">Follow Us On Social</h3>
+                                                                                            <div class="social-icon-div mt-4" style="display: flex; justify-content: center; gap: 0px;">
+                                                                                                <div class="social-icons"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-icon" style="width: 25px;"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg></div>
+                                                                                                <div class="social-icons"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-icon" style="width: 25px;"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg></div>
+                                                                                                <div class="social-icons"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-icon" style="width: 25px;"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M448 209.9a210.1 210.1 0 0 1 -122.8-39.3V349.4A162.6 162.6 0 1 1 185 188.3V278.2a74.6 74.6 0 1 0 52.2 71.2V0l88 0a121.2 121.2 0 0 0 1.9 22.2h0A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z"/></svg></div>
+                                                                                                <div class="social-icons"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-icon" style="width: 25px;"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></div>
+                                                                                                <div class="social-icons"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="svg-icon" style="width: 30px;"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z"/></svg></div>
+                                                                                                <div class="social-icons"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="svg-icon" style="width: 17px;"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z"/></svg></div>
+                                                                                            </div>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            <!-- Lower Footer Row -->
+                                                            <tr>
+                                                                <td align="center" class="lower_footer">
+                                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                                        <tr>
+                                                                            <td align="left" class="all_rights_footer">
+                                                                                © 2024 CoinoSwap By Coinoisseurs. All Rights Reserved
+                                                                            </td>
+                                                                            <td align="right" class="lower_footer-links">
+                                                                                <a href="#" style="text-decoration: none; margin: 0 10px;">Terms Of Use</a> 
+                                                                                <a href="#" style="text-decoration: none; margin: 0 10px;">Privacy Policy</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            
+                                                                                     
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- End Email Container -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
