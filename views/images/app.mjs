@@ -154,6 +154,11 @@ function sendSuccessEmail(email, transaction_id, exchange_logo_path, exchange_lo
                 cid: 'orange_BulletPointIcon@unique.cid'
             },
             {
+                filename: 'Copy_black Icon.png',
+                path:'./views/images/Copy_black Icon.png',
+                cid: 'Copy_blackIcon@unique.cid'
+            },
+            {
                 filename: exchange_logo_file_name,
                 path:exchange_logo_path,
                 cid: 'exchangelogo@unique.cid'
@@ -166,10 +171,18 @@ function sendSuccessEmail(email, transaction_id, exchange_logo_path, exchange_lo
                 filename: 'Arrow Button.png',
                 path:'./views/images/Arrow Button.png',
                 cid: 'ArrowButton@unique.cid'
-            },             {
+            },            {
+                filename: 'Trustpilot Logo.png',
+                path:'./views/images/Trustpilot Logo.png',
+                cid: 'TrustpilotLogo@unique.cid'
+            },            {
                 filename: 'Buy Crypto With.png',
                 path:'./views/images/Buy Crypto With.png',
                 cid: 'BuyCryptoWith@unique.cid'
+            },            {
+                filename: 'Trustpilot Icon.png',
+                path:'./views/images/Trustpilot Icon.png',
+                cid: 'TrustpilotIcon@unique.cid'
             },
             {
                 filename: 'email_bg.jpeg',
@@ -180,36 +193,6 @@ function sendSuccessEmail(email, transaction_id, exchange_logo_path, exchange_lo
                 filename: 'footer_bg.jpeg',
                 path:'./views/images/footer_bg.jpeg',
                 cid: 'footer_bg@unique.cid'
-            },
-            {
-                filename: 'Facebook.png',
-                path:'./views/images/Facebook.png',
-                cid: 'Facebook@unique.cid'
-            },
-            {
-                filename: 'Instagram.png',
-                path:'./views/images/Instagram.png',
-                cid: 'Instagram@unique.cid'
-            },
-            {
-                filename: 'LinkedInLogo.png',
-                path:'./views/images/LinkedInLogo.png',
-                cid: 'LinkedIn@unique.cid'
-            },
-            {
-                filename: 'Tiktok.png',
-                path:'./views/images/Tiktok.png',
-                cid: 'Tiktok@unique.cid'
-            },
-            {
-                filename: 'X.png',
-                path:'./views/images/X.png',
-                cid: 'X@unique.cid'
-            },
-            {
-                filename: 'youtube.png',
-                path:'./views/images/youtube.png',
-                cid: 'youtube@unique.cid'
             },
 
         ]
@@ -286,6 +269,11 @@ function dummySuccessMail(email, transaction_id, exchange_logo_path, exchange_lo
                 cid: 'orange_BulletPointIcon@unique.cid'
             },
             {
+                filename: 'Copy_black Icon.png',
+                path:'./views/images/Copy_black Icon.png',
+                cid: 'Copy_blackIcon@unique.cid'
+            },
+            {
                 filename: exchange_logo_file_name,
                 path:exchange_logo_path,
                 cid: 'exchangelogo@unique.cid'
@@ -299,9 +287,17 @@ function dummySuccessMail(email, transaction_id, exchange_logo_path, exchange_lo
                 path:'./views/images/Arrow Button.png',
                 cid: 'ArrowButton@unique.cid'
             },            {
+                filename: 'Trustpilot Logo.png',
+                path:'./views/images/Trustpilot Logo.png',
+                cid: 'TrustpilotLogo@unique.cid'
+            },            {
                 filename: 'Buy Crypto With.png',
                 path:'./views/images/Buy Crypto With.png',
                 cid: 'BuyCryptoWith@unique.cid'
+            },            {
+                filename: 'Trustpilot Icon.png',
+                path:'./views/images/Trustpilot Icon.png',
+                cid: 'TrustpilotIcon@unique.cid'
             },
             {
                 filename: 'email_bg.jpeg',
@@ -324,8 +320,8 @@ function dummySuccessMail(email, transaction_id, exchange_logo_path, exchange_lo
                 cid: 'Instagram@unique.cid'
             },
             {
-                filename: 'LinkedInLogo.png',
-                path:'./views/images/LinkedInLogo.png',
+                filename: 'LinkedIn.png',
+                path:'./views/images/LinkedIn.png',
                 cid: 'LinkedIn@unique.cid'
             },
             {
@@ -337,11 +333,6 @@ function dummySuccessMail(email, transaction_id, exchange_logo_path, exchange_lo
                 filename: 'X.png',
                 path:'./views/images/X.png',
                 cid: 'X@unique.cid'
-            },
-            {
-                filename: 'youtube.png',
-                path:'./views/images/youtube.png',
-                cid: 'youtube@unique.cid'
             },
 
         ]

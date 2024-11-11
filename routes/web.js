@@ -138,7 +138,7 @@ router.post('/get/cron/status', CronController.getStatusCronData);
 router.post('/set/cron/status', CronController.setStatusCronData);
 
 //.................................. Transaction Status Apis ......................................./
-router.post('/tx/changelly/status', exchangeController.checkChangellyTransactionStatus);
+router.post('/tx/changelly/status', exchangeController.checkChangellyTransactionStatus); 
 router.post('/tx/changenow/status', exchangeController.checkChangenowTransactionStatus);
 router.post('/tx/changehero/status', exchangeController.checkChangeheroTransactionStatus);
 router.post('/tx/exolix/status', exchangeController.checkExolixTransactionStatus);
