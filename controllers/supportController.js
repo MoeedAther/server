@@ -248,10 +248,12 @@ class SupportController{
             from: process.env.CONTACT_EMAIL,
             to: subject=="support@coinoswap.com"?"support@coinoswap.com":subject,
             subject: subject,
-            text: `<b>ORDER ID:</b> <p> ${{orderid}} </p> <br> 
-            <b>USER NAME:</b> <p> ${{name}} </p> <br> 
-            <b>Email: </b> <p>${{email}}</p><br> 
-            <b>Message: </b> <p>${{message}}</p>`
+            html: `<div style="line-height: 1.5;">
+               <b>ORDER ID:</b> <span>${orderid}</span> <br>
+               <b>USER NAME:</b> <span>${name}</span> <br>
+               <b>Email:</b> <span>${email}</span> <br>
+               <b>Message:</b> <span>${message}</span>
+            </div>`
           };
     
         transporter.sendMail(mailOptions, (error, info) => {
