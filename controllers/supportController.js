@@ -256,6 +256,7 @@ class SupportController{
     
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
+                console.log(error);
                    return res.json({status:0});
             }else{
                 return res.json({status:1});
