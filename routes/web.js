@@ -172,13 +172,13 @@ router.post('/stealthex_profile/update', SupportController.stealthexUpdateProfil
 router.post('/letsexchange_profile/update', SupportController.letsexchangeUpdateProfile);
 router.post('/simpleswap_profile/update', SupportController.simpleswapUpdateProfile);
 
-//.................................. Coins Data......................................./
+//.................................. Coins Data ......................................./
 router.get('/coins-tokens', offerController.getCoinsTokens);
 router.get('/coin_market_data', offerController.getcryptomarket);
 
-//....................................... Test Route ......................................./
-router.get('/test', SupportController.testApis);
 
+//....................................... Contact Api Route ......................................./
+router.post('/contact_form', SupportController.contactMail);
 
 
 
