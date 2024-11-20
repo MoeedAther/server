@@ -84,6 +84,32 @@ app.use(cors({ credentials: true, origin: true }));
 //Loading Routes
 app.use('/api', router)
 
+//Date Formater
+function formatCustomDate(isoDateStr) {
+    const date = new Date(isoDateStr);
+  
+    // Get year, month, and day
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+  
+    // Get hours, minutes, and seconds
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    // Determine AM or PM
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    // Convert 24-hour time to 12-hour time
+    hours = hours % 12 || 12; // If hours is 0, make it 12 (for midnight)
+  
+    // Format final string as YYYY-MM-DD H:MM:SS AM/PM
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${ampm}`;
+  
+    return formattedDate;
+  }
+
 // Configure Nodemailer transporter
 const transporter = nodemailer.createTransport({
     host: process.env.SERVICE,
@@ -128,7 +154,7 @@ function sendSuccessEmail(email, transaction_id, exchange_logo_path, exchange_lo
             get_amount:get_amount,
             sell_coin_logo:sell_coin_logo,
             get_coin_logo:get_coin_logo,
-            completion_time:completion_time,
+            completion_time:formatCustomDate(completion_time),
             deposit_address:deposit_address,
             recipient_address:recipient_address
         },
