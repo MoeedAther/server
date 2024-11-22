@@ -532,7 +532,6 @@ class exchangeController{
             try {
               if(data.result.id){
                 const profit=await calculateProfitInBTC("changelly", sell, amount, "Floating");
-                console.log("Changelly profit", profit);
                 var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit], function(error, result){
                   if (error) throw error;
@@ -549,10 +548,12 @@ class exchangeController{
                 status:data.result.status, 
                 recipient_address:recieving_Address, 
                 refund_address:refund_Address, 
-                deposit_address:data.result.payinAddress, 
+                deposit_address:data.result.payinAddress,
+                deposit_extraid:data.result.payinExtraId?data.result.payinExtraId:null,
                 email:email,
                 transaction_type:"Floating"
               });
+
             } catch (error) {
               res.json(data);              
             }
@@ -606,7 +607,8 @@ class exchangeController{
             status:data.status, 
             recipient_address:recieving_Address, 
             refund_address:refund_Address, 
-            deposit_address:data.payinAddress, 
+            deposit_address:data.payinAddress,
+            deposit_extraid:data.payinExtraId?data.payinExtraId:null,
             email:email	,
             transaction_type:"Floating"
           });
@@ -617,8 +619,6 @@ class exchangeController{
 
     static changeheroFloatingTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
-
-        console.log(req.body)
       
         const url = "https://api.changehero.io/v2/";
       
@@ -676,11 +676,12 @@ class exchangeController{
             refund_address:refund_Address,
 
             deposit_address:data.result.payinAddress,
-
+            deposit_extraid:data.result.payinExtraId?data.result.payinExtraId:null,
             email:email,
             
             transaction_type:"Floating"
           });
+        
         } catch (error) {
           res.json(data);
         }      
@@ -742,6 +743,7 @@ class exchangeController{
             refund_address:refund_Address,
 
             deposit_address:data.address_from,
+            deposit_extraid:data.extra_id_from?data.extra_id_from:null,
 
             email:email,
             
@@ -806,11 +808,11 @@ class exchangeController{
             refund_address:refund_Address,
 
             deposit_address:data.depositAddress,
-
+            deposit_extraid:data.depositExtraId?data.depositExtraId:null,
             email:email,
-            
             transaction_type:"Floating"
           });
+
         } catch (error) {
           res.json(data)
         }
@@ -874,6 +876,7 @@ class exchangeController{
             refund_address:refund_Address,
 
             deposit_address:data.address_from,
+            deposit_extraid:data.extra_id_from?data.extra_id_from:null,
 
             email:email,
             
@@ -942,11 +945,13 @@ class exchangeController{
             refund_address:refund_Address,
 
             deposit_address:data.deposit,
+            deposit_extraid:data.deposit_extra_id?data.deposit_extra_id:null,
 
             email:email,
             
             transaction_type:"Floating"
           });
+
         } catch (error) {
           res.json(data)
         }
@@ -1011,6 +1016,7 @@ class exchangeController{
       refund_address:refund_Address,
 
       deposit_address:data.deposit,
+      deposit_extraid:data.deposit_extra_id?data.deposit_extra_id:null,
 
       email:email,
       
@@ -1117,7 +1123,8 @@ class exchangeController{
                 refund_address:refund_Address,
           
                 deposit_address:data.result.payinAddress,
-          
+                deposit_extraid:data.result.payinExtraId?data.result.payinExtraId:null,
+
                 email:email,
 
                 transaction_type:"Fixed"
@@ -1184,6 +1191,7 @@ class exchangeController{
       refund_address:refund_Address,
 
       deposit_address:data.payinAddress,
+      deposit_extraid:data.payinExtraId?data.payinExtraId:null,
 
       email:email,
 
@@ -1257,6 +1265,7 @@ class exchangeController{
       refund_address:refund_Address,
 
       deposit_address:data.result.payinAddress,
+      deposit_extraid:data.result.payinExtraId?data.result.payinExtraId:null,
 
       email:email,
 
@@ -1321,6 +1330,7 @@ class exchangeController{
       refund_address:refund_Address,
 
       deposit_address: data.address_from,
+      deposit_extraid:data.extra_id_from?data.extra_id_from:null,
 
       email:email,
 
@@ -1386,6 +1396,7 @@ class exchangeController{
             refund_address:refund_Address,
       
             deposit_address: data.depositAddress,
+            deposit_extraid:data.depositExtraId?data.depositExtraId:null,
       
             email:email,
       
@@ -1453,6 +1464,7 @@ class exchangeController{
       refund_address:refund_Address,
 
       deposit_address:  data.address_from,
+      deposit_extraid:data.extra_id_from?data.extra_id_from:null,
 
       email:email,
 
@@ -1523,6 +1535,7 @@ class exchangeController{
             refund_address:refund_Address,
       
             deposit_address:  data.deposit,
+            deposit_extraid:data.deposit_extra_id?data.deposit_extra_id:null,
       
             email:email,
       

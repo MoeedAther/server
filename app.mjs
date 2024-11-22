@@ -110,6 +110,17 @@ function formatCustomDate(isoDateStr) {
     return formattedDate;
   }
 
+//Figure Limitter
+function formatToChars(input, length) {
+    // Step 1: Convert to string if it's a number
+    let value = typeof input === 'number' ? input.toString() : input;
+  
+    // Step 2: Trim the string to a maximum of 15 characters (including decimal point)
+    value = value.slice(0, length);
+  
+    return value;
+  }
+
 // Configure Nodemailer transporter
 const transporter = nodemailer.createTransport({
     host: process.env.SERVICE,
@@ -150,8 +161,8 @@ function sendSuccessEmail(email, transaction_id, exchange_logo_path, exchange_lo
             sell_coin_name:sell_coin_name,
             get_coin_name:get_coin_name,
             transaction_type:transaction_type,
-            sell_amount:sell_amount,
-            get_amount:get_amount,
+            sell_amount:formatToChars(sell_amount, 10),
+            get_amount:formatToChars(get_amount, 10),
             sell_coin_logo:sell_coin_logo,
             get_coin_logo:get_coin_logo,
             completion_time:formatCustomDate(completion_time),

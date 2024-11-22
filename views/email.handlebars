@@ -185,6 +185,10 @@ td.arrow img {
 }
 .completed_time {
     margin-bottom: 50px;
+        display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
 }
 p.order_track {
     color: #100F0E;
@@ -305,15 +309,15 @@ td.note {
     font-weight: bold;
     text-decoration: none;
     color: #ffffff;
-    background-color: #00B67A;
+    background:linear-gradient(0deg, #f46b0c 27%, #f0a80f 97%);
     border-radius: 25px;
 }
 a.trustpiolot_btn {
     display: flex;
-    width: 190px;
+    width: fit-content;
     text-decoration: none;
     color: #ffffff;
-    background-color: #00B67A;
+    background: linear-gradient(0deg, #f46b0c 27%, #f0a80f 97%);;
     border-radius: 12px;
     line-height: 50px;
     text-align: center;
@@ -565,7 +569,7 @@ i.fa-brands.fa-linkedin-in {
 
                                                     <div class="info-text completed_time">
                                                         <img src="cid:orange_BulletPointIcon@unique.cid" alt="Info" />
-                                                        <span class='email_para'>Completed Time: {{completion_time}}</span>
+                                                        <div style="padding-top: 3px;"><span class='email_para'>Completed Time: {{completion_time}}</span></div>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -662,11 +666,10 @@ i.fa-brands.fa-linkedin-in {
                                             </tr>
                                             <tr>
                                                 <td align="center" style="padding: 60px 20px 80px 20px;">
-                                                    {{!-- <a href="https://www.trustpilot.com/review/coinoswap.com" target="_blank"
+                                                    <a href="https://coinoswap.com/offers" target="_blank"
                                                         class="trustpiolot_btn">
-                                                        <span style="display: inline-block; vertical-align: middle; " class="rate_us email_heading">Rate Us On</span>
-                                                        <img src="cid:TrustpilotLogo@unique.cid" alt="Star" style="display: inline-block; vertical-align: middle; margin: 0 5px; height: 19px;" class="Trustpilot_logo" />
-                                                    </a> --}}
+                                                        <span style="display: inline-block; vertical-align: middle; " class="rate_us email_heading">Create New Exchange</span>
+                                                    </a>
                                                 </td>
                                             </tr>  
                                              <!-- Footer Section -->
