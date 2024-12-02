@@ -321,7 +321,7 @@ class offerController {
       try {
           const result = await response6.json();
         if(!isNaN(result.result[0].result)){
-          changehero_fixed_price=sendingamount*parseFloat(result.result[0].result);
+          changehero_fixed_price=(sendingamount*parseFloat(result.result[0].result))-parseFloat(result.result[0].networkFee);
           changehero_fixed_rateId=result.result[0].id;
         }
     } catch (error) { 
@@ -584,6 +584,33 @@ class offerController {
         { name: "simpleswap", offerED:sendingamount>=simpleswap_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=simpleswap_fixed_minimum_amount&&simpleswap_fixed_price==0?0:simpleswap_fixed_visibility, min: truncateNumber(simpleswap_fixed_minimum_amount, 8), max:simpleswap_fixed_maximum_amount, transaction_type:"Fixed", eta:"9-50 Min", kyc:"Rarely Required", rating:"4.4/5",  rate: truncateNumber(simpleswap_fixed_price, 16)},
       ];
 
+      function bringChangeHeroToFront(sortedArray) {
+        // Find the index of the object with name == "changehero" and transactionType == "Fixed"
+        const index = sortedArray.findIndex(
+          obj => obj.name === "changehero" && obj.transaction_type === "Floating"
+        );
+      
+        // If an object was found, move it to the 0th index
+        if (index !== -1) {
+          const [changeHeroObject] = sortedArray.splice(index, 1); // Remove the object from its current position
+          sortedArray.unshift(changeHeroObject); // Add it to the front of the array
+        }
+        return sortedArray.map((obj, index) => {
+          if(obj.name=="changehero" && obj.transaction_type=="Floating"){
+            return { ...obj, offer_type: "Zealy Giveaway" };
+          }
+
+          if(sortedArray[0].name=="changehero" && sortedArray[0].rate < sortedArray[1].rate && sortedArray.length>2 && index==1 ){
+            return { ...obj, offer_type: "Best Rate" };
+          }else if(sortedArray[0].name!=="changehero" && index==0){
+            return { ...obj, offer_type: "Best Rate" };
+          }else{
+            return { ...obj, offer_type: null };
+          }
+
+        });
+      }
+
       //Arranging offers based on offer sequence type function
       function sortArrayDescending(offerarray) {
         if(offerstype=="bestprices")
@@ -598,8 +625,8 @@ class offerController {
           let sortedArray = enabledObjects.concat(disabledObjects);
           
           sortedArray=fixed=="Floating"?sortedArray.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):sortedArray.filter(obj => obj.transaction_type ==="Fixed");
-          // console.log(sortedArray);
-          return sortedArray;
+          
+          return bringChangeHeroToFront(sortedArray);
 
         }else if(offerstype=="fastestswap"){
           let fastestswap_array=[offerarray[9], offerarray[10], offerarray[0], offerarray[1], offerarray[11], offerarray[12], offerarray[13], offerarray[14], offerarray[2], offerarray[3], offerarray[4], offerarray[5], offerarray[8], offerarray[6], offerarray[7] ];
