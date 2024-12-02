@@ -584,10 +584,10 @@ class offerController {
         { name: "simpleswap", offerED:sendingamount>=simpleswap_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=simpleswap_fixed_minimum_amount&&simpleswap_fixed_price==0?0:simpleswap_fixed_visibility, min: truncateNumber(simpleswap_fixed_minimum_amount, 8), max:simpleswap_fixed_maximum_amount, transaction_type:"Fixed", eta:"9-50 Min", kyc:"Rarely Required", rating:"4.4/5",  rate: truncateNumber(simpleswap_fixed_price, 16)},
       ];
 
-      function bringChangeHeroToFront(sortedArray) {
+      function bringChangeHeroToFront(sortedArray, exchangename, offerType, giveAwayTag) {
         // Find the index of the object with name == "changehero" and transactionType == "Fixed"
         const index = sortedArray.findIndex(
-          obj => obj.name === "changehero" && obj.transaction_type === "Floating"
+          obj => obj.name === exchangename && obj.transaction_type === "Floating"
         );
       
         // If an object was found, move it to the 0th index
@@ -596,14 +596,17 @@ class offerController {
           sortedArray.unshift(changeHeroObject); // Add it to the front of the array
         }
         return sortedArray.map((obj, index) => {
-          if(obj.name=="changehero" && obj.transaction_type=="Floating"){
-            return { ...obj, offer_type: "Zealy Giveaway" };
+
+          if(sortedArray[0].name!==exchangename && index==0){
+            return { ...obj, offer_type: offerType };
           }
 
-          if(sortedArray[0].name=="changehero" && sortedArray[0].rate < sortedArray[1].rate && sortedArray.length>2 && index==1 ){
-            return { ...obj, offer_type: "Best Rate" };
-          }else if(sortedArray[0].name!=="changehero" && index==0){
-            return { ...obj, offer_type: "Best Rate" };
+          if(obj.name==exchangename && obj.transaction_type=="Floating" && index==0){
+            return { ...obj, offer_type: giveAwayTag };
+          }else if(sortedArray[0].name==exchangename && sortedArray[1].rate>sortedArray[0].rate && index==1){
+            return { ...obj, offer_type: offerType };
+          }else if(sortedArray[0].name!==exchangename && index==0){
+            return { ...obj, offer_type: offerType };
           }else{
             return { ...obj, offer_type: null };
           }
@@ -626,27 +629,23 @@ class offerController {
           
           sortedArray=fixed=="Floating"?sortedArray.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):sortedArray.filter(obj => obj.transaction_type ==="Fixed");
           
-          return bringChangeHeroToFront(sortedArray);
+          return bringChangeHeroToFront(sortedArray, "changehero", "Best Rate", "Zealy Giveaway");
 
         }else if(offerstype=="fastestswap"){
           let fastestswap_array=[offerarray[9], offerarray[10], offerarray[0], offerarray[1], offerarray[11], offerarray[12], offerarray[13], offerarray[14], offerarray[2], offerarray[3], offerarray[4], offerarray[5], offerarray[8], offerarray[6], offerarray[7] ];
 
               // Filter out objects with visibility equal to 0
               fastestswap_array = fastestswap_array.filter(obj => obj.visibility !== 0);
-              
               fastestswap_array=fixed=="Floating"?fastestswap_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):fastestswap_array.filter(obj => obj.transaction_type ==="Fixed");
-              // console.log(fastestswap_array);
-              return fastestswap_array;
+              return bringChangeHeroToFront(fastestswap_array, "changehero", "Fastest Swap");
 
         }else if(offerstype=="bestrating"){
           let bestrating_array=[offerarray[11], offerarray[12], offerarray[9], offerarray[10], offerarray[8], offerarray[2], offerarray[3], offerarray[13], offerarray[14], offerarray[6], offerarray[7], offerarray[0], offerarray[1], offerarray[4], offerarray[5] ];
 
               // Filter out objects with visibility equal to 0
               bestrating_array = bestrating_array.filter(obj => obj.visibility !== 0);
-
               bestrating_array=fixed=="Floating"?bestrating_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):bestrating_array.filter(obj => obj.transaction_type ==="Fixed");
-              // console.log(bestrating_array);
-              return bestrating_array;
+              return bringChangeHeroToFront(bestrating_array, "changehero", "Best Rated");
         }
       }
 
