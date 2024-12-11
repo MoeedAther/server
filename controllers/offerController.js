@@ -295,6 +295,7 @@ class offerController {
       try {
           const result1 = await response4.json();
           const result2 = await response21.json();
+          return res.json(result2);
           if(!isNaN(result1.result)&&!isNaN(result2.result[0].minFrom)&&!isNaN(result2.result[0].maxFrom)){
           changehero_floating_minimum_amount=parseFloat(result1.result);
           changehero_fixed_minimum_amount=parseFloat(result2.result[0].minFrom);
@@ -629,7 +630,7 @@ class offerController {
           
           sortedArray=fixed=="Floating"?sortedArray.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):sortedArray.filter(obj => obj.transaction_type ==="Fixed");
           
-          return bringChangeHeroToFront(sortedArray, "changehero", "Best Rate", "Zealy Giveaway");
+          return bringChangeHeroToFront(sortedArray, "simpleswap", "Best Rate", "Zealy Giveaway");
 
         }else if(offerstype=="fastestswap"){
           let fastestswap_array=[offerarray[9], offerarray[10], offerarray[0], offerarray[1], offerarray[11], offerarray[12], offerarray[13], offerarray[14], offerarray[2], offerarray[3], offerarray[4], offerarray[5], offerarray[8], offerarray[6], offerarray[7] ];
@@ -637,7 +638,7 @@ class offerController {
               // Filter out objects with visibility equal to 0
               fastestswap_array = fastestswap_array.filter(obj => obj.visibility !== 0);
               fastestswap_array=fixed=="Floating"?fastestswap_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):fastestswap_array.filter(obj => obj.transaction_type ==="Fixed");
-              return bringChangeHeroToFront(fastestswap_array, "changehero", "Fastest Swap");
+              return bringChangeHeroToFront(fastestswap_array, "simpleswap", "Fastest Swap");
 
         }else if(offerstype=="bestrating"){
           let bestrating_array=[offerarray[11], offerarray[12], offerarray[9], offerarray[10], offerarray[8], offerarray[2], offerarray[3], offerarray[13], offerarray[14], offerarray[6], offerarray[7], offerarray[0], offerarray[1], offerarray[4], offerarray[5] ];
@@ -645,7 +646,7 @@ class offerController {
               // Filter out objects with visibility equal to 0
               bestrating_array = bestrating_array.filter(obj => obj.visibility !== 0);
               bestrating_array=fixed=="Floating"?bestrating_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):bestrating_array.filter(obj => obj.transaction_type ==="Fixed");
-              return bringChangeHeroToFront(bestrating_array, "changehero", "Best Rated");
+              return bringChangeHeroToFront(bestrating_array, "simpleswap", "Best Rated");
         }
       }
 
