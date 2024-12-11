@@ -629,7 +629,7 @@ class offerController {
           
           sortedArray=fixed=="Floating"?sortedArray.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):sortedArray.filter(obj => obj.transaction_type ==="Fixed");
           
-          return bringChangeHeroToFront(sortedArray, "simpleswap", "Best Rate", "Zealy Giveaway");
+          return bringChangeHeroToFront(sortedArray, "simpleswap", "Best Rate", "Giveaway");
 
         }else if(offerstype=="fastestswap"){
           let fastestswap_array=[offerarray[9], offerarray[10], offerarray[0], offerarray[1], offerarray[11], offerarray[12], offerarray[13], offerarray[14], offerarray[2], offerarray[3], offerarray[4], offerarray[5], offerarray[8], offerarray[6], offerarray[7] ];
