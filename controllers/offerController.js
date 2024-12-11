@@ -295,7 +295,6 @@ class offerController {
       try {
           const result1 = await response4.json();
           const result2 = await response21.json();
-          return res.json(result2);
           if(!isNaN(result1.result)&&!isNaN(result2.result[0].minFrom)&&!isNaN(result2.result[0].maxFrom)){
           changehero_floating_minimum_amount=parseFloat(result1.result);
           changehero_fixed_minimum_amount=parseFloat(result2.result[0].minFrom);
