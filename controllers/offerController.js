@@ -1376,38 +1376,6 @@ class offerController {
 
 })
 
-      // return res.json(      [{
-      //   coinindex: 0,
-      //   symbol: "btc",
-      //   isExtraIdSupported: false,
-      //   popular: true,
-      //   shortname: "btc",
-      //   isstable: false,
-      //   othercoin: false,
-      //   network: "btc",
-      //   networkcolor: "",
-      //   name: "Bitcoin",
-      //   image: "https://content-api.changenow.io/uploads/btc_1_527dc9ec3c.svg",
-      //   chainname1: "",
-      //   chainname2: "",
-      //   symbol2: "Bitcoin"
-      // },
-      // {
-      //   coinindex: 1,
-      //   symbol: "eth",
-      //   isExtraIdSupported: false,
-      //   popular: true,
-      //   shortname: "eth",
-      //   isstable: false,
-      //   othercoin: false,
-      //   network: "eth",
-      //   networkcolor: "rgb(79,173,208)",
-      //   name: "Ethereum",
-      //   image: "https://content-api.changenow.io/uploads/eth_f4ebb54ec0.svg",
-      //   chainname1: "",
-      //   chainname2: "",
-      //   symbol2: "Ethereum"
-      // }]);
     return res.json(array);  
     };
 
@@ -1527,15 +1495,22 @@ class offerController {
       request(param1, async function (error, response) {
         try {
           if (error) {
-            console.log("Changelly Floating Api Call", error);          
             // Return here only stops further execution inside this callback, not the parent function
-            return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+            return res.status(502).json({price:0, message:"exchange_response_error"});
           }
           const data = await JSON.parse(response.body);
+
+          //Check if amount is not in range
+          if(data.error.data.limits){
+            return res.status(404).json({price:0, message:"amount_not_in_range"});
+          }
+
+          //Sending response becase amount in range
           let price = data.result[0].amountTo;
-          return res.json({price:price})
+          return res.status(200).json({price:price, message:"success"});
+
         } catch (error) {
-          return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+          return res.status(502).json({price:0, message:"exchange_response_error"});
         }
       })
   }
@@ -1553,15 +1528,17 @@ class offerController {
           },
         }
       )
-      const data=await response.json()
-      const price=data.estimatedAmount;
+      const data=await response.json();
       if(data.estimatedAmount){
-        return res.json({price:price});
+        const price=data.estimatedAmount;
+        return res.status(200).json({price:price, message:"success"});
+      }else if(data.error=="deposit_too_small"){
+        return res.status(404).json({price:0, message:"amount_not_in_range"});
       }else{
         throw new Error();
       }
     } catch (error) {
-      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+      return res.status(502).json({price:0, message:"exchange_response_error"});
     }
   }
 
@@ -1580,13 +1557,15 @@ class offerController {
       const data=await response.json()
       if(data.estimated_amount){
         const price=data.estimated_amount;
-        return res.json({price:price});
+        return res.status(200).json({price:price, message:"success"});
+      }else if(data.err.details=="Amount is out of range"){
+        return res.status(404).json({price:0, message:"amount_not_in_range"});
       }else{
         throw new Error();
       }
 
     } catch (error) {
-      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+      return res.status(502).json({price:0, message:"exchange_response_error"})
     }
   }
 
@@ -1604,15 +1583,17 @@ class offerController {
         }
       )
     
-      const data=await response.json()
+      const data=await response.json();
       if(data.toAmount){
         const price=data.toAmount
-        return res.json({price:price});
+        return res.status(200).json({price:price, message:"success"});
+      }else if(data.message=="Amount to exchange is below the possible min amount to exchange"){
+        return res.status(404).json({price:0, message:"amount_not_in_range"});
       }else{
         throw new Error();
       }
     } catch (error) {
-      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."})
+      return res.status(502).json({price:0, message:"exchange_response_error"});
     }
 
   }
@@ -1629,14 +1610,17 @@ class offerController {
       });
     
       const data=await response.json();
-      if(data.error){
-        throw new Error();
-      }else{
+
+      if(!isNaN(Number(data)) && isFinite(data)){
         const price=data
-        return res.json({price:price}); 
+        return res.status(200).json({price:price, message:"success"}); 
+      }else if(data.error=="Unprocessable Entity"){
+        return res.status(404).json({price:0, message:"amount_not_in_range"});
+      }else{
+        throw new Error();
       }
     } catch (error) {
-        return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."});
+        return res.status(502).json({price:0, message:"exchange_response_error"});
     }
   }
 
@@ -1666,12 +1650,14 @@ class offerController {
       const data=await response.json();
       if(data.result){
         const price=data.result;
-        return res.json({price:price});
+        return res.status(200).json({price:price, message:"success"});
+      }else if(data.error.message.split(":")[0]=="Amount is less than minimal"){
+        res.status(404).json({price:0, message:"amount_not_in_range"});
       }else{
         throw new Error();
       }
     } catch (error) {
-      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."});
+      return res.status(502).json({price:0, message:"exchange_response_error"});
     }
   }
 
@@ -1693,15 +1679,21 @@ class offerController {
         body: JSON.stringify(param),
       })
     
-      const data=await response.json();
+      const data=await response.json(); 
       if(data.amount){
         const price=data.amount;
-        return res.json({price:price});
+        if(price!=="0"){
+          return res.status(200).json({price:price, message:"success"});
+        }else{
+          return res.status(404).json({price:0, message:"amount_not_in_range"});
+        }
+      }else if(data.error){
+        throw new Error();
       }else{
         throw new Error();
       }
     } catch (error) {
-      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."});
+      return res.status(502).json({price:0, message:"exchange_response_error"});
     }
   }
 
@@ -1727,16 +1719,20 @@ class offerController {
       })
     
       const data=await response.json();
-      
+      // return res.json(data);
       if(data.amount){
         const price=data.amount;
-        return res.json({price:price});
+        if(price!=="0"){
+          return res.status(200).json({price:price, message:"success"});
+        }else{
+          return res.status(404).json({price:0, message:"amount_not_in_range"});
+        }
       }else{
         throw new Error();
       }
 
     } catch (error) {
-      return res.json({price:0, message:"Amount not in range! Please wait until amount comes in range or change sell amount."});
+      return res.status(502).json({price:0, message:"exchange_response_error"});
     }
 
   }

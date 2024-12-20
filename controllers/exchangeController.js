@@ -595,7 +595,7 @@ class exchangeController{
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
-          }
+          
           res.json({
             transaction_id:data.id,	
             sell_coin:sell,	
@@ -611,9 +611,12 @@ class exchangeController{
             deposit_extraid:data.payinExtraId?data.payinExtraId:null,
             email:email	,
             transaction_type:"Floating"
-          });
+          })
+        }else{
+          return res.json(data);
+        };
         } catch (error) {
-          res.json(data);
+          return res.json(data);
         }
     }
 
@@ -657,7 +660,7 @@ class exchangeController{
             db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
-          }
+          
           res.json({
             transaction_id:data.result.id,	
 
@@ -680,8 +683,9 @@ class exchangeController{
             email:email,
             
             transaction_type:"Floating"
-          });
-        
+          })}else{
+            res.json(data);
+          };
         } catch (error) {
           res.json(data);
         }      
@@ -724,7 +728,7 @@ class exchangeController{
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
               if (error) throw error;
             })
-          }
+          
           res.json({
             transaction_id:data.id,	
 
@@ -748,7 +752,9 @@ class exchangeController{
             email:email,
             
             transaction_type:"Floating"
-          });
+          })}else{
+            res.json(data);
+          };
         } catch (error) {
           res.json(data);
         }
@@ -789,7 +795,7 @@ class exchangeController{
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
-          }
+          
           res.json({
             transaction_id:data.id,	
 
@@ -811,10 +817,11 @@ class exchangeController{
             deposit_extraid:data.depositExtraId?data.depositExtraId:null,
             email:email,
             transaction_type:"Floating"
-          });
-
+          })}else{
+            res.json(data);
+          };
         } catch (error) {
-          res.json(data)
+          res.json(data);
         }
     }
 
@@ -857,7 +864,7 @@ class exchangeController{
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
               if (error) throw error;
             })
-          }
+          
           res.json({
             transaction_id:data.id,	
 
@@ -881,7 +888,9 @@ class exchangeController{
             email:email,
             
             transaction_type:"Floating"
-          });
+          })}else{
+            res.json(data);
+          };
         } catch (error) {
           res.json(data);
         }
@@ -926,7 +935,7 @@ class exchangeController{
             db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
               if (error) throw error;
             })
-          }
+          
           res.json({
             transaction_id:data.transaction_id,	
 
@@ -950,10 +959,12 @@ class exchangeController{
             email:email,
             
             transaction_type:"Floating"
-          });
+          })}else{
+            res.json(data);
+          };
 
         } catch (error) {
-          res.json(data)
+          res.json(data);
         }
     }
 
@@ -997,7 +1008,7 @@ class exchangeController{
       db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
         if (error) throw error;
       })
-    }
+    
     return res.json({
       transaction_id:data.transaction_id,	
 
@@ -1021,7 +1032,9 @@ class exchangeController{
       email:email,
       
       transaction_type:"Floating"
-    });
+    })}else{
+      return res.json(data);
+    };
     
   } catch (error) {
    return res.json(data);
@@ -1171,7 +1184,7 @@ class exchangeController{
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
-    }
+    
 
     res.json({
       transaction_id:data.id,	
@@ -1196,7 +1209,9 @@ class exchangeController{
       email:email,
 
       transaction_type:"Fixed"
-    });
+    })}else{
+      res.json(data);
+    };
 
   } catch (error) {
     res.json(data);
@@ -1246,7 +1261,7 @@ class exchangeController{
       db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
-    }
+    
       res.json({
       transaction_id:data.result.id,	
 
@@ -1270,7 +1285,9 @@ class exchangeController{
       email:email,
 
       transaction_type:"Fixed"
-    });
+    })}else{
+      res.json(data);
+    };
   } catch (error) {
     res.json(data);
   }   
@@ -1311,7 +1328,7 @@ class exchangeController{
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
-    }
+    
     res.json({
       transaction_id:data.id,	
 
@@ -1335,7 +1352,9 @@ class exchangeController{
       email:email,
 
       transaction_type:"Fixed"
-    });
+    })}else{
+      res.json(data);
+    };
   } catch (error) {
     res.json(data);
   }
@@ -1377,7 +1396,7 @@ class exchangeController{
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, "Fixed", profit ], function(error, result){
               if (error) throw error;
             })
-          }
+          
           res.json({
             transaction_id:data.id,	
       
@@ -1401,7 +1420,9 @@ class exchangeController{
             email:email,
       
             transaction_type:"Fixed"
-          });
+          })}else{
+            res.json(data);
+          };
         } catch (error) {
           res.json(data);
         }
@@ -1445,7 +1466,7 @@ class exchangeController{
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
-    }
+    
     res.json({
       transaction_id:data.id,	
 
@@ -1469,7 +1490,9 @@ class exchangeController{
       email:email,
 
       transaction_type:"Fixed"
-    });
+    })}else{
+      res.json(data);
+    };
   } catch (error) {
     res.json(data);
   }
@@ -1516,7 +1539,7 @@ class exchangeController{
             db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address,  data.deposit, email, "Fixed", profit ], function(error, result){
               if (error) throw error;
             })
-          }
+          
           res.json({
             transaction_id:data.transaction_id,	
       
@@ -1540,7 +1563,9 @@ class exchangeController{
             email:email,
       
             transaction_type:"Fixed"
-          });
+          })}else{
+            res.json(data);
+          };
         } catch (error) {
           res.json(data);
         }
@@ -2103,6 +2128,7 @@ class exchangeController{
     }
         const response=await fetch(url,options);
         const data=await response.json();
+        console.log(data);
         res.json(data)
     }
 
