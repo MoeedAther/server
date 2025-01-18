@@ -4,6 +4,7 @@ import exchangeController from '../controllers/exchangeController.js';
 import AdminController from '../controllers/adminController.js';
 import CronController from '../controllers/cronController.js';
 import SupportController from '../controllers/supportController.js';
+import metadataController from '../controllers/metadataController.js';
 
 
 const router=express.Router();
@@ -180,6 +181,9 @@ router.get('/coin_market_data', offerController.getcryptomarket);
 //....................................... Contact Api Route ......................................./
 router.post('/contact_form', SupportController.contactMail);
 
+//....................................... Meta Data Api ......................................./
+
+router.post('/store/meta', metadataController.storeMeta);
 
 
 

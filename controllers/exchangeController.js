@@ -528,7 +528,14 @@ class exchangeController{
           };
         
           request(paramCreateExchange, async function (error, response) {
+              if (error) throw error;
+            
             const data = await JSON.parse(response.body);
+
+            if(data.error){
+                return res.status(404).json(data);
+            }
+
             try {
               if(data.result.id){
                 const profit=await calculateProfitInBTC("changelly", sell, amount, "Floating");
@@ -537,7 +544,7 @@ class exchangeController{
                   if (error) throw error;
                 })
               }
-              res.json({
+              return res.status(200).json({
                 transaction_id:data.result.id,	
                 sell_coin:sell,	
                 get_coin:get,	
@@ -555,7 +562,7 @@ class exchangeController{
               });
 
             } catch (error) {
-              res.json(data);              
+              return res.status(502).json();              
             }
           })
     }
@@ -588,6 +595,12 @@ class exchangeController{
       
         const response = await fetch(url, options)
         const data = await response.json();
+
+        //Exchange Api error
+        if (data.error){
+          return res.status(404).json(data);
+        }
+
         try {
           if(data.id){
             const profit=await calculateProfitInBTC("changenow", sell, amount, "Floating");
@@ -596,7 +609,7 @@ class exchangeController{
               if (error) throw error;
             })
           
-          res.json({
+          return res.status(200).json({
             transaction_id:data.id,	
             sell_coin:sell,	
             get_coin:get,	
@@ -611,12 +624,11 @@ class exchangeController{
             deposit_extraid:data.payinExtraId?data.payinExtraId:null,
             email:email	,
             transaction_type:"Floating"
-          })
-        }else{
-          return res.json(data);
-        };
+          });
+        }
         } catch (error) {
-          return res.json(data);
+          //Exchange response invalid
+          return res.status(502).json();
         }
     }
 
@@ -652,7 +664,12 @@ class exchangeController{
         const response = await fetch(url, options)
       
       
-        const data = await response.json()
+        const data = await response.json();
+
+        if (data.error){
+          return res.status(404).json(data);
+        }
+
         try {
           if(data.result.id){
             const profit=await calculateProfitInBTC("changehero", sell, amount, "Floating");
@@ -661,7 +678,7 @@ class exchangeController{
               if (error) throw error;
             })
           
-          res.json({
+          return res.status(200).json({
             transaction_id:data.result.id,	
 
             sell_coin:sell,	
@@ -683,11 +700,9 @@ class exchangeController{
             email:email,
             
             transaction_type:"Floating"
-          })}else{
-            res.json(data);
-          };
+          })}
         } catch (error) {
-          res.json(data);
+          return res.status(502).json();
         }      
       
     }
@@ -718,8 +733,12 @@ class exchangeController{
           body: JSON.stringify(params)
         }
       
-        const response = await fetch(url, options)
-        const data = await response.json()
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if(data.err){
+          return res.status(404).json(data);
+        }
         
         try {
           if(data.id){
@@ -729,7 +748,7 @@ class exchangeController{
               if (error) throw error;
             })
           
-          res.json({
+          return res.status(200).json({
             transaction_id:data.id,	
 
             sell_coin:sell,	
@@ -752,11 +771,10 @@ class exchangeController{
             email:email,
             
             transaction_type:"Floating"
-          })}else{
-            res.json(data);
-          };
+          })}
+
         } catch (error) {
-          res.json(data);
+          return res.status(502).json();
         }
     }
 
@@ -786,8 +804,13 @@ class exchangeController{
           body: JSON.stringify(params)
         }
       
-        const response = await fetch(url, options)
-        const data = await response.json()
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if(data.error || data.message){
+          return res.status(404).json(data);
+        }
+
         try {
           if(data.id){
             const profit=await calculateProfitInBTC("exolix", sell, amount, "Floating");
@@ -796,40 +819,30 @@ class exchangeController{
               if (error) throw error;
             })
           
-          res.json({
+          return res.status(200).json({
             transaction_id:data.id,	
-
             sell_coin:sell,	
             get_coin:get,	
             sell_amount:amount,
-
             get_amount:data.amountTo,	
-
             recipient_extraid:extraid,	
             refund_extraid:refextraid,
-
             status:data.status, 
-
             recipient_address:recieving_Address, 
             refund_address:refund_Address,
-
             deposit_address:data.depositAddress,
             deposit_extraid:data.depositExtraId?data.depositExtraId:null,
             email:email,
             transaction_type:"Floating"
-          })}else{
-            res.json(data);
-          };
+          })};
+
         } catch (error) {
-          res.json(data);
+          return res.status(502).json();
         }
     }
 
     static simpleswapFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
-
-        console.log(req.body)
-      
+        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body      
         const url = "https://api.simpleswap.io/create_exchange?api_key=ae57f22d-7a23-4dbe-9881-624b2e147759";
       
         const params = {
@@ -852,11 +865,13 @@ class exchangeController{
           },
           body: JSON.stringify(params)
         }
-      
         const response = await fetch(url, options)
-      
-        const data = await response.json()
-      
+        const data = await response.json();
+        
+        if(data.error){
+          return res.status(404).json(data);
+        }
+
         try {
           if(data.id){
             const profit=await calculateProfitInBTC("simpleswap", sell, amount, "Floating");
@@ -865,34 +880,25 @@ class exchangeController{
               if (error) throw error;
             })
           
-          res.json({
+          return res.status(200).json({
             transaction_id:data.id,	
-
             sell_coin:sell,	
             get_coin:get,	
             sell_amount:amount,
-
             get_amount:data.amount_to,	
-
             recipient_extraid:extraid,	
             refund_extraid:refextraid,
-
             status:data.status, 
-
             recipient_address:recieving_Address, 
             refund_address:refund_Address,
-
             deposit_address:data.address_from,
             deposit_extraid:data.extra_id_from?data.extra_id_from:null,
-
             email:email,
-            
             transaction_type:"Floating"
-          })}else{
-            res.json(data);
-          };
+          })}
+
         } catch (error) {
-          res.json(data);
+          return res.status(502).json();
         }
     }
 
@@ -926,7 +932,11 @@ class exchangeController{
       
         const response = await fetch(url, options)
       
-        const data = await response.json()
+        const data = await response.json();
+
+        if(data.validation){
+          return res.status(404).json(data);
+        }
       
         try {
           if(data.transaction_id){
@@ -936,35 +946,25 @@ class exchangeController{
               if (error) throw error;
             })
           
-          res.json({
+        return res.status(200).json({
             transaction_id:data.transaction_id,	
-
             sell_coin:sell,	
             get_coin:get,	
             sell_amount:amount,
-
             get_amount:data.withdrawal_amount,	
-
             recipient_extraid:extraid,	
             refund_extraid:refextraid,
-
             status:data.status, 
-
             recipient_address:recieving_Address, 
             refund_address:refund_Address,
-
             deposit_address:data.deposit,
             deposit_extraid:data.deposit_extra_id?data.deposit_extra_id:null,
-
-            email:email,
-            
+            email:email,  
             transaction_type:"Floating"
-          })}else{
-            res.json(data);
-          };
+          })}
 
         } catch (error) {
-          res.json(data);
+          return res.status(502).json();
         }
     }
 
@@ -999,7 +999,11 @@ class exchangeController{
 
   const response = await fetch(url, options)
 
-  const data = await response.json()
+  const data = await response.json();
+
+  if(data.error){
+    return res.status(404).json(data);
+  }
 
   try {
     if(data.transaction_id){
@@ -1009,35 +1013,25 @@ class exchangeController{
         if (error) throw error;
       })
     
-    return res.json({
+    return res.status(200).json({
       transaction_id:data.transaction_id,	
-
       sell_coin:sell,	
       get_coin:get,	
       sell_amount:amount,
-
       get_amount:data.withdrawal_amount,	
-
       recipient_extraid:extraid,	
       refund_extraid:refextraid,
-
       status:data.status, 
-
       recipient_address:recieving_Address, 
       refund_address:refund_Address,
-
       deposit_address:data.deposit,
       deposit_extraid:data.deposit_extra_id?data.deposit_extra_id:null,
-
-      email:email,
-      
+      email:email, 
       transaction_type:"Floating"
-    })}else{
-      return res.json(data);
-    };
+    })}
     
   } catch (error) {
-   return res.json(data);
+   return res.status(502).json();
   }
     }
 
@@ -1109,7 +1103,15 @@ class exchangeController{
           };
         
           request(paramy, async function (error, response) {
+
+            if (error) throw error;
+
             const data = await JSON.parse(response.body);
+
+            if(data.error){
+              return res.status(404).json(data);
+          }
+
             try {
               const profit=await calculateProfitInBTC("changelly", sell, amount, "Fixed");
               if(data.result.id){
@@ -1118,32 +1120,24 @@ class exchangeController{
                   if (error) throw error;
                 })
               }
-              res.json({
+              return res.status(200).json({
                 transaction_id:data.result.id,	
-          
                 sell_coin:sell,	
                 get_coin:get,	
                 sell_amount:amount,
-          
                 get_amount:data.result.amountExpectedTo,	
-          
                 recipient_extraid:extraid,	
                 refund_extraid:refextraid,
-          
                 status: data.result.status, 
-          
                 recipient_address:recieving_Address, 
                 refund_address:refund_Address,
-          
                 deposit_address:data.result.payinAddress,
                 deposit_extraid:data.result.payinExtraId?data.result.payinExtraId:null,
-
                 email:email,
-
                 transaction_type:"Fixed"
               });
             } catch (error) {
-              res.json(data);
+              return res.status(502).json();
             }
           })
     }
@@ -1176,7 +1170,12 @@ class exchangeController{
   }
 
   const response = await fetch(url, options)
-  const data = await response.json()
+  const data = await response.json();
+
+          //Exchange Api error
+          if (data.error){
+            return res.status(404).json(data);
+          }
   try {
     if(data.id){
       const profit=await calculateProfitInBTC("changenow", sell, amount, "Fixed");
@@ -1186,7 +1185,7 @@ class exchangeController{
       })
     
 
-    res.json({
+    return res.status(200).json({
       transaction_id:data.id,	
 
       sell_coin:sell,	
@@ -1209,16 +1208,14 @@ class exchangeController{
       email:email,
 
       transaction_type:"Fixed"
-    })}else{
-      res.json(data);
-    };
+    })}
 
   } catch (error) {
-    res.json(data);
+    return res.status(502).json();
   }
     }
 
-    static changeheroFixedTransaction = async (req, res)=>{
+  static changeheroFixedTransaction = async (req, res)=>{
   const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
 
   const url = "https://api.changehero.io/v2/";
@@ -1252,7 +1249,10 @@ class exchangeController{
   const response = await fetch(url, options)
 
 
-  const data = await response.json()
+  const data = await response.json();
+  if (data.error){
+    return res.status(404).json(data);
+  }
 
   try {
     if(data.result.id){
@@ -1262,7 +1262,7 @@ class exchangeController{
         if (error) throw error;
       })
     
-      res.json({
+      return res.status(200).json({
       transaction_id:data.result.id,	
 
       sell_coin:sell,	
@@ -1285,16 +1285,14 @@ class exchangeController{
       email:email,
 
       transaction_type:"Fixed"
-    })}else{
-      res.json(data);
-    };
+    })}
   } catch (error) {
-    res.json(data);
+    return res.status(502).json();
   }   
     }
 
-    static stealthexFixedTransaction = async (req, res)=>{
-   const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+  static stealthexFixedTransaction = async (req, res)=>{
+  const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
 
   const url = `https://api.stealthex.io/api/v2/exchange?api_key=${process.env.STEALTHEX}`;
 
@@ -1320,7 +1318,12 @@ class exchangeController{
   }
 
   const response = await fetch(url, options)
-  const data = await response.json()
+  const data = await response.json();
+
+  if(data.err){
+    return res.status(404).json(data);
+  }
+
   try {
     if(data.id){
       const profit=await calculateProfitInBTC("stealthex", sell, amount, "Fixed");
@@ -1329,34 +1332,24 @@ class exchangeController{
         if (error) throw error;
       })
     
-    res.json({
+    return res.status(200).json({
       transaction_id:data.id,	
-
       sell_coin:sell,	
       get_coin:get,	
       sell_amount:amount,
-
       get_amount:data.amount_to,	
-
       recipient_extraid:extraid,	
       refund_extraid:refextraid,
-
       status: data.status, 
-
       recipient_address:recieving_Address, 
       refund_address:refund_Address,
-
       deposit_address: data.address_from,
       deposit_extraid:data.extra_id_from?data.extra_id_from:null,
-
       email:email,
-
       transaction_type:"Fixed"
-    })}else{
-      res.json(data);
-    };
+    })}
   } catch (error) {
-    res.json(data);
+    return res.status(502).json();
   }
 }
 
@@ -1388,7 +1381,12 @@ class exchangeController{
         }
       
         const response = await fetch(url, options)
-        const data = await response.json()
+        const data = await response.json();
+
+        if(data.error || data.message){
+          return res.status(404).json(data);
+        }
+
         try {
           if(data.id){
             const profit=await calculateProfitInBTC("exolix", sell, amount, "Fixed");
@@ -1397,34 +1395,24 @@ class exchangeController{
               if (error) throw error;
             })
           
-          res.json({
+          return res.status(200).json({
             transaction_id:data.id,	
-      
             sell_coin:sell,	
             get_coin:get,	
             sell_amount:amount,
-      
             get_amount:data.amountTo,	
-      
             recipient_extraid:extraid,	
             refund_extraid:refextraid,
-      
             status: data.status, 
-      
             recipient_address:recieving_Address, 
-            refund_address:refund_Address,
-      
+            refund_address:refund_Address,  
             deposit_address: data.depositAddress,
             deposit_extraid:data.depositExtraId?data.depositExtraId:null,
-      
             email:email,
-      
             transaction_type:"Fixed"
-          })}else{
-            res.json(data);
-          };
+          })}
         } catch (error) {
-          res.json(data);
+          return res.status(502).json();
         }
     }
 
@@ -1458,7 +1446,12 @@ class exchangeController{
 
   const response = await fetch(url, options)
 
-  const data = await response.json()
+  const data = await response.json();
+
+  if(data.error){
+    return res.status(404).json(data);
+  }
+
   try {
     if(data.id){
       const profit=await calculateProfitInBTC("simpleswap", sell, amount, "Fixed");
@@ -1467,34 +1460,25 @@ class exchangeController{
         if (error) throw error;
       })
     
-    res.json({
+    return res.status(200).json({
       transaction_id:data.id,	
-
       sell_coin:sell,	
       get_coin:get,	
       sell_amount:amount,
-
       get_amount: data.amount_to,	
-
       recipient_extraid:extraid,	
       refund_extraid:refextraid,
-
       status: data.status, 
-
       recipient_address:recieving_Address, 
       refund_address:refund_Address,
-
       deposit_address:  data.address_from,
       deposit_extraid:data.extra_id_from?data.extra_id_from:null,
-
       email:email,
-
       transaction_type:"Fixed"
-    })}else{
-      res.json(data);
-    };
+    })}
+
   } catch (error) {
-    res.json(data);
+    return res.status(502).json();
   }
 
     }
@@ -1527,11 +1511,13 @@ class exchangeController{
           body: JSON.stringify(params)
         }
       
-        const response = await fetch(url, options)
-      
-      
-        const data = await response.json()
-      
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if(data.error){
+          return res.status(404).json(data);
+        }
+
         try {
           if(data.transaction_id){
             const profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
@@ -1540,34 +1526,25 @@ class exchangeController{
               if (error) throw error;
             })
           
-          res.json({
+          return res.status(200).json({
             transaction_id:data.transaction_id,	
-      
             sell_coin:sell,	
             get_coin:get,	
             sell_amount:amount,
-      
             get_amount: data.withdrawal_amount,	
-      
             recipient_extraid:extraid,	
             refund_extraid:refextraid,
-      
             status: data.status, 
-      
             recipient_address:recieving_Address, 
             refund_address:refund_Address,
-      
             deposit_address:  data.deposit,
             deposit_extraid:data.deposit_extra_id?data.deposit_extra_id:null,
-      
             email:email,
-      
             transaction_type:"Fixed"
-          })}else{
-            res.json(data);
-          };
+          })}
+
         } catch (error) {
-          res.json(data);
+          return res.status(502).json();
         }
     }
 
