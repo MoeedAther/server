@@ -1498,13 +1498,16 @@ class offerController {
         try {
           if (error) {
             // Return here only stops further execution inside this callback, not the parent function
+            console.log(error);
             return res.status(502).json({price:0, message:"exchange_response_error"});
           }
           const data = await JSON.parse(response.body);
 
           //Check if amount is not in range
-          if(data.error.data.limits){
-            return res.status(404).json({price:0, message:"amount_not_in_range"});
+          if(data.error){
+            if(data.error.data.limits){
+              return res.status(404).json({price:0, message:"amount_not_in_range"});
+            }
           }
 
           //Sending response becase amount in range
