@@ -584,10 +584,49 @@ class offerController {
         { name: "simpleswap", offerED:sendingamount>=simpleswap_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=simpleswap_fixed_minimum_amount&&simpleswap_fixed_price==0?0:simpleswap_fixed_visibility, min: truncateNumber(simpleswap_fixed_minimum_amount, 8), max:simpleswap_fixed_maximum_amount, transaction_type:"Fixed", eta:"9-50 Min", kyc:"Rarely Required", rating:"4.4/5",  rate: truncateNumber(simpleswap_fixed_price, 16)},
       ];
 
-      function bringChangeHeroToFront(sortedArray, exchangename, offerType, giveAwayTag) {
+
+      function fetchGiveawayMeta(){
+        return new Promise((resolve, reject)=>{
+        const checkQuery = "SELECT * FROM meta_data WHERE meta_identifier = ?";
+        db.query(checkQuery, ["giveaway"], (err, results) => {
+          if (err) {
+            return reject({ error: "Database error while checking metadata" });
+        }
+        try {
+          const metaData=JSON.parse(results[0].meta_object);
+          resolve(metaData);
+        } catch (error) {
+          reject({ error: "Invalid metadata format" });
+        }
+        });
+      });
+      }
+
+      function fetchExchangeVisibilityMeta(){
+        return new Promise((resolve, reject)=>{
+        const checkQuery = "SELECT * FROM meta_data WHERE meta_identifier = ?";
+        db.query(checkQuery, ["exchangevisibility"], (err, results) => {
+          if (err) {
+            return reject({ error: "Database error while checking metadata" });
+        }
+        try {
+          const metaData=JSON.parse(results[0].meta_object);
+          resolve(metaData);
+        } catch (error) {
+          reject({ error: "Invalid metadata format" });
+        }
+        });
+      });
+      }
+
+     async function bringChangeHeroToFront(sortedArray, offerType) {
         // Find the index of the object with name == "changehero" and transactionType == "Fixed"
+
+        const metaData= await fetchGiveawayMeta();
+        const exchangeVisibilityMeta=await fetchExchangeVisibilityMeta();
+
         const index = sortedArray.findIndex(
-          obj => obj.name === exchangename && obj.transaction_type === "Floating"
+          obj => obj.name === metaData.giveaway && obj.transaction_type === "Floating"
         );
       
         // If an object was found, move it to the 0th index
@@ -595,27 +634,44 @@ class offerController {
           const [changeHeroObject] = sortedArray.splice(index, 1); // Remove the object from its current position
           sortedArray.unshift(changeHeroObject); // Add it to the front of the array
         }
-        return sortedArray.map((obj, index) => {
+        let newSortedArray= sortedArray.map((obj, index) => {
 
-          if(sortedArray[0].name!==exchangename && index==0){
+          if(sortedArray[0].name!==metaData.giveaway && index==0){
             return { ...obj, offer_type: offerType };
           }
 
-          if(obj.name==exchangename && obj.transaction_type=="Floating" && index==0){
-            return { ...obj, offer_type: giveAwayTag };
-          }else if(sortedArray[0].name==exchangename && sortedArray[1].rate>sortedArray[0].rate && index==1){
+          if(obj.name==metaData.giveaway && obj.transaction_type=="Floating" && index==0){
+            return { ...obj, offer_type: metaData.tagline };
+          }else if(sortedArray[0].name==metaData.giveaway && sortedArray[1].rate>sortedArray[0].rate && index==1){
             return { ...obj, offer_type: offerType };
-          }else if(sortedArray[0].name!==exchangename && index==0){
+          }else if(sortedArray[0].name!==metaData.giveaway && index==0){
             return { ...obj, offer_type: offerType };
           }else{
             return { ...obj, offer_type: null };
           }
 
         });
+
+        const updatedExchanges = newSortedArray.map((obj1) => {
+          const matchedExchange = exchangeVisibilityMeta.find((obj2) => obj2.name === obj1.name && obj1.visibility===1);
+          
+          if (matchedExchange) {
+            if (obj1.transaction_type === "Fixed") {
+              return { ...obj1, visibility: matchedExchange.fixed }; // Update visibility with `fixed` value
+            } else {
+              return { ...obj1, visibility: matchedExchange.floating }; // Update visibility with `floating` value
+            }
+          }
+        
+          return obj1; // Return unchanged if no match found
+        });
+        
+        const filteredExchanges = updatedExchanges.filter(obj => obj.visibility !== 0);
+        return filteredExchanges;
       }
 
       //Arranging offers based on offer sequence type function
-      function sortArrayDescending(offerarray) {
+      async function sortArrayDescending(offerarray) {
         if(offerstype=="bestprices")
         {
           // Filter objects with offer value "enable" and sort them based on rate in descending order
@@ -630,7 +686,7 @@ class offerController {
           sortedArray=fixed=="Floating"?sortedArray.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):sortedArray.filter(obj => obj.transaction_type ==="Fixed");
           
           // Second input parameter is exchange name to pass on for giveaway
-          return bringChangeHeroToFront(sortedArray, "", "Best Rate", "Giveaway");
+          return await bringChangeHeroToFront(sortedArray,"Best Rate");
 
         }else if(offerstype=="fastestswap"){
           let fastestswap_array=[offerarray[9], offerarray[10], offerarray[0], offerarray[1], offerarray[11], offerarray[12], offerarray[13], offerarray[14], offerarray[2], offerarray[3], offerarray[4], offerarray[5], offerarray[8], offerarray[6], offerarray[7] ];
@@ -638,7 +694,7 @@ class offerController {
               // Filter out objects with visibility equal to 0
               fastestswap_array = fastestswap_array.filter(obj => obj.visibility !== 0);
               fastestswap_array=fixed=="Floating"?fastestswap_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):fastestswap_array.filter(obj => obj.transaction_type ==="Fixed");
-              return bringChangeHeroToFront(fastestswap_array, "", "Fastest Swap");
+              return await  bringChangeHeroToFront(fastestswap_array, "Fastest Swap");
 
         }else if(offerstype=="bestrating"){
           let bestrating_array=[offerarray[11], offerarray[12], offerarray[9], offerarray[10], offerarray[8], offerarray[2], offerarray[3], offerarray[13], offerarray[14], offerarray[6], offerarray[7], offerarray[0], offerarray[1], offerarray[4], offerarray[5] ];
@@ -646,11 +702,11 @@ class offerController {
               // Filter out objects with visibility equal to 0
               bestrating_array = bestrating_array.filter(obj => obj.visibility !== 0);
               bestrating_array=fixed=="Floating"?bestrating_array.filter(obj => obj.transaction_type ==="Floating" || obj.transaction_type ==="Fixed"):bestrating_array.filter(obj => obj.transaction_type ==="Fixed");
-              return bringChangeHeroToFront(bestrating_array, "", "Best Rated");
+              return await  bringChangeHeroToFront(bestrating_array, "Best Rated");
         }
       }
 
-      const sortedArray = sortArrayDescending(offerarray, "rate");
+      const sortedArray = await sortArrayDescending(offerarray, "rate");
       
       return res.json({bestoffer:sortedArray.length>0?sortedArray[0].rate:0, offersarray:sortedArray});
       },responsecalldelay);

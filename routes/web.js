@@ -183,7 +183,8 @@ router.post('/contact_form', SupportController.contactMail);
 
 //....................................... Meta Data Api ......................................./
 
-router.post('/store/meta', metadataController.storeMeta);
+router.post('/store/meta', metadataController.storeAndUpdateMeta);
+router.post('/find/meta', metadataController.getMeta);
 
 
 

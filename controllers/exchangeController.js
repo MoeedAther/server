@@ -806,6 +806,7 @@ class exchangeController{
       
         const response = await fetch(url, options);
         const data = await response.json();
+        console.log(data);
 
         if(data.error || data.message){
           return res.status(404).json(data);
@@ -1246,7 +1247,7 @@ class exchangeController{
     body: JSON.stringify(params)
   }
 
-  const response = await fetch(url, options)
+  const response = await fetch(url, options);
 
 
   const data = await response.json();
