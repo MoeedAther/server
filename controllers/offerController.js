@@ -547,9 +547,6 @@ class offerController {
       return parseFloat(numStr);
   }
   
-
-
-
       //Response Array
       let offerarray = [
         //0
@@ -575,9 +572,9 @@ class offerController {
         //10
         { name: "letsexchange", offerED:sendingamount>=letsexchange_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=letsexchange_fixed_minimum_amount&&letsexchange_fixed_price==0?0:letsexchange_fixed_visibility, min:truncateNumber(letsexchange_fixed_minimum_amount, 8), max:letsexchange_fixed_maximum_amount, transaction_type:"Fixed", eta:"2-44 Min", kyc:"Not Required", rating:"4.6/5", rate: truncateNumber(letsexchange_fixed_price, 16), rateId: letsexchange_fixed_rateId },
         //11
-        { name: "stealthex", offerED:sendingamount>=stealthex_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=stealthex_floating_minimum_amount&&stealthex_floating_price==0?0:stealthex_floating_visibility, min:truncateNumber(stealthex_floating_minimum_amount, 8), max:stealthex_floating_maximum_amount, transaction_type:"Floating", eta:"7-38 Min", kyc:"On Occasion", rating:"4.7/5", rate: truncateNumber(stealthex_floating_price, 16)},
+        { name: "stealthex", offerED:sendingamount>=stealthex_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=stealthex_floating_minimum_amount&&stealthex_floating_price==0?0:stealthex_floating_visibility, min:truncateNumber(stealthex_floating_minimum_amount, 8), max:stealthex_floating_maximum_amount, transaction_type:"Floating", eta:"7-38 Min", kyc:"Rarely Required", rating:"4.7/5", rate: truncateNumber(stealthex_floating_price, 16)},
         //12
-        { name: "stealthex", offerED:sendingamount>=stealthex_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=stealthex_fixed_minimum_amount&&stealthex_fixed_price==0?0:stealthex_fixed_visibility,  min:truncateNumber(stealthex_fixed_minimum_amount, 8), max:stealthex_fixed_maximum_amount, transaction_type:"Fixed", eta:"7-38 Min", kyc:"On Occasion", rating:"4.7/5", rate: truncateNumber(stealthex_fixed_price, 16), rateId: stealthex_fixed_rateId },
+        { name: "stealthex", offerED:sendingamount>=stealthex_fixed_minimum_amount?"enable":"disable", visibility:sendingamount>=stealthex_fixed_minimum_amount&&stealthex_fixed_price==0?0:stealthex_fixed_visibility,  min:truncateNumber(stealthex_fixed_minimum_amount, 8), max:stealthex_fixed_maximum_amount, transaction_type:"Fixed", eta:"7-38 Min", kyc:"Rarely Required", rating:"4.7/5", rate: truncateNumber(stealthex_fixed_price, 16), rateId: stealthex_fixed_rateId },
         //13
         { name: "simpleswap", offerED:sendingamount>=simpleswap_floating_minimum_amount?"enable":"disable", visibility:sendingamount>=simpleswap_floating_minimum_amount&&simpleswap_floating_price==0?0:simpleswap_floating_visibility, min: truncateNumber(simpleswap_floating_minimum_amount, 8), max:simpleswap_floating_maximum_amount, transaction_type:"Floating", eta:"9-50 Min", kyc:"Rarely Required", rating:"4.4/5", rate:truncateNumber(simpleswap_floating_price, 16) },
         //14
@@ -635,11 +632,6 @@ class offerController {
           sortedArray.unshift(changeHeroObject); // Add it to the front of the array
         }
         let newSortedArray= sortedArray.map((obj, index) => {
-
-          if(sortedArray[0].name!==metaData.giveaway && index==0){
-            return { ...obj, offer_type: offerType };
-          }
-
           if(obj.name==metaData.giveaway && obj.transaction_type=="Floating" && index==0){
             return { ...obj, offer_type: metaData.tagline };
           }else if(sortedArray[0].name==metaData.giveaway && sortedArray[1].rate>sortedArray[0].rate && index==1){
@@ -649,8 +641,9 @@ class offerController {
           }else{
             return { ...obj, offer_type: null };
           }
-
         });
+
+        // console.log(newSortedArray);
 
         const updatedExchanges = newSortedArray.map((obj1) => {
           const matchedExchange = exchangeVisibilityMeta.find((obj2) => obj2.name === obj1.name && obj1.visibility===1);
