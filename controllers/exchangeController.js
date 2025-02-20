@@ -735,7 +735,6 @@ class exchangeController{
       
         const response = await fetch(url, options);
         const data = await response.json();
-
         if(data.err){
           return res.status(404).json(data);
         }
@@ -2053,8 +2052,6 @@ class exchangeController{
     static checkTransactionStatus=async (req, res)=>{
 
       const {id}=req.body;
-      console.log(id)
-
       var sql1="SELECT * FROM changelly_transactions WHERE transaction_id=?";
       var sql2="SELECT * FROM changenow_transactions WHERE transaction_id=?";
       var sql3="SELECT * FROM changehero_transactions WHERE transaction_id=?";

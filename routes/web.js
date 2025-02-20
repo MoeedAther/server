@@ -5,6 +5,7 @@ import AdminController from '../controllers/adminController.js';
 import CronController from '../controllers/cronController.js';
 import SupportController from '../controllers/supportController.js';
 import metadataController from '../controllers/metadataController.js';
+import exchangeRatesController from '../controllers/individualExchangeRateController.js';
 
 
 const router=express.Router();
@@ -25,6 +26,16 @@ router.post('/simpleswap/price', offerController.simpleswapprice);
 router.post('/changehero/price', offerController.changeheroprice);
 router.post('/godex/price', offerController.godexprice);
 router.post('/letsexchange/price', offerController.letsexchangeprice);
+
+//**************************************** Price Check Apis New Controller ************************* */
+router.post('/changelly/new/price', exchangeRatesController.changellyprice);
+router.post('/changenow/new/price', exchangeRatesController.changenowprice);
+router.post('/stealthex/new/price', exchangeRatesController.stealthexprice);
+router.post('/exolix/new/price', exchangeRatesController.exolixprice);
+router.post('/simpleswap/new/price', exchangeRatesController.simpleswapprice);
+router.post('/changehero/new/price', exchangeRatesController.changeheroprice);
+router.post('/godex/new/price', exchangeRatesController.godexprice);
+router.post('/letsexchange/new/price', exchangeRatesController.letsexchangeprice);
 
 
 //Offer Controller

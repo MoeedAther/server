@@ -656,8 +656,7 @@ function countTrueValues(obj) {
             const stealthex=async()=>{
                 db.query('SELECT * FROM coins_data', async (error, coins)=>{
                 try {
-
-                        const url = `https://api.stealthex.io/api/v2/currency?api_key=${process.env.STEALTHEX}&fixed=boolean`;
+                        const url = `https://api.stealthex.io/api/v2/currency?api_key=${process.env.STEALTHEX}`;
         
                         const options = {
                         method: "GET",
@@ -665,7 +664,6 @@ function countTrueValues(obj) {
                         "Content-Type": "application/json",
                             },
                         }
-      
                         const response = await fetch(url, options)
       
                         const data = await response.json();
@@ -1498,9 +1496,9 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                         let keys = Object.keys(data.currencies); // Get the keys as an array
                                         let keyAtIndex = keys[1]; // Get the key at the specified index
                                         let innerObject = data.currencies[keyAtIndex]; // Access the inner object using the key
+                                        // console.log(innerObject);
         
                                         if(data.status && data.tx_to && data.tx_to!=""){
-
                                             let tx_explorer;
                                             const matchCoinsTicker = coins.find(coin => swap.get_coin === coin.ticker);
                                             if(innerObject.tx_explorer==null || innerObject.tx_explorer==''){
@@ -1511,8 +1509,8 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
 
                                             db.query(`UPDATE stealthex_transactions SET status=?, tx_hash=?, tx_hash_link=?, sell_amount=?, get_amount=?, completion_time=NOW() WHERE transaction_id=?`,[data.status, data.tx_to, tx_explorer, data.amount_from, data.amount_to, swap.transaction_id],(error, result)=>{
                                                 if(error){
-                                                    // console.log("Error 1 Loop:", index)
-                                                    // console.log("Transaction ID:", swap.transaction_id)
+                                                    console.log("Error 1 Loop:", index)
+                                                    console.log("Transaction ID:", swap.transaction_id)
                                                 }
                                             })
                                                 }else if(data.status){
@@ -1528,7 +1526,7 @@ db.query('SELECT * FROM cron_job WHERE type=?',["status/removal cron"], (error, 
                                                 }
                                         }
                                     } catch (error) {
-                                        // console.log('No changes done stealthex: ', index, data)
+                                        console.log('No changes done stealthex: ', error);
                                     }}
                                     
                                 })             
