@@ -1348,6 +1348,18 @@ class exchangeController{
     return res.status(404).json(data);
   }
 
+                    // Create the logger
+                    const logger = createLogger({
+                      format: combine(
+                          timestamp(),
+                          logFormat
+                      ),
+                      transports: [
+                          new transports.Console(),
+                          new transports.File({ filename: './logs/stealthex/swap.log' })
+                      ]
+                  });
+
   try {
     if(data.id){
       const profit=await calculateProfitInBTC("stealthex", sell, amount, "Fixed");
