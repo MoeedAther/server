@@ -1,0 +1,3 @@
+2025-02-21T18:59:01.353Z error: swapObject: [object Object]
+2025-02-21T18:59:01.432Z error: Error: null || swapObject: [object Object]
+2025-02-21T19:05:58.555Z error: Error: null || transaction_id:zbKgefB3z expiry_time:1740168356725 sell: btc get: eth   sellname: BTC getname: ETH selllogo: https://content-api.changenow.io/uploads/btc_1_527dc9ec3c.svg getlogo: https://content-api.changenow.io/uploads/eth_f4ebb54ec0.svg amount: 0.34 get_amount: 12.10661294 extraid:  refextraid:  status: waiting recipient_address: 0x635bf4bd6aa836f9e8c6a742125dab33b42573dc refund_address: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa deposit_address: bc1qkd5c7szrdm5f6h9es6jdgh0umcymx6mwv05va5 email: softwareengineermoeed@gmail.com average_profit_percent: 0.00136

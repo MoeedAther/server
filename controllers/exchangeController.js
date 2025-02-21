@@ -3,7 +3,15 @@ import request from "request";
 import fetch from "node-fetch";
 import dotenv from 'dotenv';
 import {db} from '../database/connectdb.js';
+import {createLogger, format, transports} from 'winston';
+const { combine, timestamp, printf } = format;
+
 dotenv.config();
+
+// Define custom log format
+const logFormat = printf(({ level, message, timestamp }) => {
+  return `${timestamp} ${level}: ${message}`;
+});
 
 //Function for calculating percentage;
 function calculatePercentage(Number, PercentageOf){
@@ -738,12 +746,27 @@ class exchangeController{
         if(data.err){
           return res.status(404).json(data);
         }
+
+                  // Create the logger
+                  const logger = createLogger({
+                    format: combine(
+                        timestamp(),
+                        logFormat
+                    ),
+                    transports: [
+                        new transports.Console(),
+                        new transports.File({ filename: './logs/stealthex/swap.log' })
+                    ]
+                });
         
         try {
+
           if(data.id){
             const profit=await calculateProfitInBTC("stealthex", sell, amount, "Floating");
+
             var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
+              logger.error(`Error: ${error} || transaction_id:${data.id} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit}`);
               if (error) throw error;
             })
           
@@ -773,6 +796,7 @@ class exchangeController{
           })}
 
         } catch (error) {
+          logger.error(`Error: ${error} returning 502 response`);
           return res.status(502).json();
         }
     }
@@ -1329,6 +1353,7 @@ class exchangeController{
       const profit=await calculateProfitInBTC("stealthex", sell, amount, "Fixed");
       var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
+        logger.error(`Error: ${error} || transaction_id:${data.id} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} transaction_type:Fixed average_profit_percent: ${profit}`);
         if (error) throw error;
       })
     

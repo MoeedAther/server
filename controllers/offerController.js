@@ -471,7 +471,6 @@ class offerController {
 
       //*************** Simpleswap Minimum Maximum Floating Response Handeling ******************//
       try {
-        // return res.json(result)
           const result = await response16.json();
         if(!isNaN(result.min)){
             simpleswap_floating_minimum_amount=parseFloat(result.min);

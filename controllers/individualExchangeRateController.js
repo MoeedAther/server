@@ -12,18 +12,120 @@ class exchangeRatesController {
     static changellyprice=async (req, res)=>{
         const {sell,get,amount,exchangetype}=req.body
         const typeidentifier=exchangetype=="Floating"?"getExchangeAmount":"getFixRateForAmount";
+
+
+        // Fixed and float public and private keys for Changelly
         const privateKey = crypto.createPrivateKey({
-          key: process.env.CHANGELLY_PRIVATE_KEY,
-          format: "der",
-          type: "pkcs8",
-          encoding: "hex",
-        });
-      
-        //Common Variables for Changelly
-        const publicKey = crypto.createPublicKey(privateKey).export({
-          type: "pkcs1",
-          format: "der",
-        });
+            key: process.env.CHANGELLY_PRIVATE_KEY,
+            format: "der",
+            type: "pkcs8",
+            encoding: "hex",
+          });
+        
+          //Common Variables for Changelly
+          const publicKey = crypto.createPublicKey(privateKey).export({
+            type: "pkcs1",
+            format: "der",
+          });
+
+        let rateObject={
+            name:"changelly",
+            rate:0,
+            rate_id:null,
+            min:0,
+            max:0,
+        }
+        
+
+        //Fixed and Float body objects for Min and Max Rates Fixed and Floating
+        const message2 = {
+                jsonrpc: "2.0",
+                id: "test",
+                method: "getPairsParams",
+                params: [
+                  {
+                    from: sell,
+                    to: get,
+                  }
+                ]
+              }
+        
+              const signature2 = crypto.sign(
+                "sha256",
+                Buffer.from(JSON.stringify(message2)),
+                {
+                  key: privateKey,
+                  type: "pkcs8",
+                  format: "der",
+                }
+              );
+            
+              const param2 = {
+                method: "POST",
+                url: "https://api.changelly.com/v2",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-Api-Key": crypto
+                    .createHash("sha256")
+                    .update(publicKey)
+                    .digest("base64"),
+                  "X-Api-Signature": signature2.toString("base64"),
+                },
+                body: JSON.stringify(message2),
+              };
+
+              // Function to make API request using Promises
+        const makeRequest = (options) => {
+            return new Promise((resolve, reject) => {
+                request(options, (error, response, body) => {
+                    if (error) {
+                        return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
+                    } else {
+                        resolve(JSON.parse(body));
+                    }
+                });
+            });
+        };
+        try {
+            const data = await makeRequest(param2);
+            if(!isNaN(data.result[0].minAmountFloat)&&!isNaN(data.result[0].maxAmountFloat)&&!isNaN(data.result[0].minAmountFixed)&&!isNaN(data.result[0].maxAmountFixed)){
+            
+                //Storing minimum and maximum amount for both fixed and floating rate in rateObject
+              if(exchangetype=="Floating"){
+                rateObject.min=parseFloat(data.result[0].minAmountFixed);
+                rateObject.max=parseFloat(data.result[0].maxAmountFixed);
+                }else{
+                rateObject.min=parseFloat(data.result[0].minAmountFixed);
+                rateObject.max=parseFloat(data.result[0].maxAmountFixed);
+                }
+            }
+        } catch (error) {
+            return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
+        }
+            
+
+                // request(param2, async function (error, response) {
+                //   try {
+                //     if (error) {
+                //         return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
+                //     }
+                //     const data = await JSON.parse(response.body);
+                //     if(!isNaN(data.result[0].minAmountFloat)&&!isNaN(data.result[0].maxAmountFloat)&&!isNaN(data.result[0].minAmountFixed)&&!isNaN(data.result[0].maxAmountFixed)){
+                    
+                //         //Storing minimum and maximum amount for both fixed and floating rate in rateObject
+                //       if(exchangetype=="Floating"){
+                //         rateObject.min=parseFloat(data.result[0].minAmountFixed);
+                //         rateObject.max=parseFloat(data.result[0].maxAmountFixed);
+                //         }else{
+                //         rateObject.min=parseFloat(data.result[0].minAmountFixed);
+                //         rateObject.max=parseFloat(data.result[0].maxAmountFixed);
+                //         }
+                //     }
+        
+                //   } catch (error) {
+                //     return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
+                //   }
+                // })
       
         const message1 = {
           jsonrpc: "2.0",
@@ -65,36 +167,64 @@ class exchangeRatesController {
             try {
               if (error) {
                 // Return here only stops further execution inside this callback, not the parent function
-                return res.status(502).json({name:"changelly", rate:0, message:"exchange_response_error"});
+                return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
               }
               const data = await JSON.parse(response.body);
     
               //Check if amount is not in range
               if(data.error){
                 if(data.error.data.limits){
-                  return res.status(404).json({name:"changelly", rate:0, message:"amount_not_in_range"});
+                  return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
                 }
               }
     
               //Sending response becase amount in range
-              let rate = data.result[0].amountTo;
+              let rate = parseFloat(data.result[0].amountTo);
+              rateObject.rate=rate;
               let rate_id=null;
               if(exchangetype=="Fixed"){
                 rate_id=data.result[0].id;
               }
-              return res.status(200).json({name:"changelly", rate:rate, rate_id:rate_id, message:"success"});
-    
+              return res.status(200).json({rateObject:rateObject, message:"success"});
             } catch (error) {
-              return res.status(502).json({name:"changelly", rate:0, message:"exchange_response_error"});
+              return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
             }
-          })
+          });
       }
     
       static changenowprice=async (req, res)=>{
+
         const {sell,get,amount, exchangetype}=req.body
         const typeidentifier=exchangetype=="Floating"?"":"/fixed-rate";
+        const mintypeidentifier=exchangetype=="Floating"?"standard":"fixed-rate";
+
+        let rateObject={
+            name:"changenow",
+            rate:0,
+            rate_id:null,
+            min:0,
+            max:0,
+        }
+
         try {
-          const response = await fetch(
+
+            const respons1=await fetch(
+                `https://api.changenow.io/v2/exchange/range?fromCurrency=${sell}&toCurrency=${get}&flow=${mintypeidentifier}`,
+                {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "x-changenow-api-key":"3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c"
+                  },
+                }
+              )
+            const result1=await respons1.json();
+
+            if(!isNaN(result1.minAmount)){
+                rateObject.min=parseFloat(result1.minAmount);
+            }
+
+          const response2 = await fetch(
             `https://api.changenow.io/v1/exchange-amount${typeidentifier}/${amount}/${sell}_${get}/?api_key=3016eb278f481714c943980dec2bfc595f8a2160e8eabd0228dc02cc627a184c&useRateId=true`,
             {
               method: "GET",
@@ -103,53 +233,98 @@ class exchangeRatesController {
               },
             }
           )
-          const data=await response.json();
+          const data=await response2.json();
           if(data.estimatedAmount){
-            const rate=data.estimatedAmount;
-            let rate_id=null;
+            rateObject.rate=parseFloat(data.estimatedAmount);
+
+            // Storing rate_id in rateObject if exchangetype is Fixed
             if(exchangetype=="Fixed"){
-              rate_id=data.rateId;
+              rateObject.rate_id=data.rateId;
             }
-            return res.status(200).json({name:"changenow", rate:rate, rate_id:rate_id, message:"success"});
-          }else if(data.error=="deposit_too_small"){
-            return res.status(404).json({name:"changenow", rate:0, message:"amount_not_in_range"});
+
+            // finding if rate is greater than minimum amount
+            if(rateObject.rate>rateObject.min){
+                return res.status(200).json({rateObject:rateObject, message:"success"});
+            }else{
+                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            }
+
+            // If exchanges tells amount is out of range
+          }else if(data.error=="deposit_too_small" || data.error=="out_of_range"){
+            return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+
+            // If exchange response is not as expected
           }else{
             throw new Error();
           }
         } catch (error) {
-            console.log(error)
-          return res.status(502).json({name:"changenow", rate:0, message:"exchange_response_error"});
+          return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
         }
       }
     
       static stealthexprice=async (req, res)=>{
         const {sell,get,amount, exchangetype}=req.body;
         const typeidentifier=exchangetype=="Floating"?"false":"true";
+
+        let rateObject={
+            name:"stealthex",
+            rate:0,
+            rate_id:null,
+            min:0,
+            max:0,
+        }
+
         try {
+          const response1=await fetch(
+            `https://api.stealthex.io/api/v2/range/${sell}/${get}?api_key=6cbd846e-a085-4505-afeb-8fca0d650c58&fixed=${typeidentifier}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+            const result1=await response1.json();
+            if(!isNaN(result1.min_amount)){
+                rateObject.min=parseFloat(result1.min_amount);
+              }
     
-          const response = await fetch(`https://api.stealthex.io/api/v2/estimate/${sell}/${get}?amount=${amount}&api_key=6cbd846e-a085-4505-afeb-8fca0d650c58&fixed=${typeidentifier}`, {
+          const response2 = await fetch(`https://api.stealthex.io/api/v2/estimate/${sell}/${get}?amount=${amount}&api_key=6cbd846e-a085-4505-afeb-8fca0d650c58&fixed=${typeidentifier}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
           })
         
-          const data=await response.json();
+          const data=await response2.json();
+
           if(data.estimated_amount){
-            const rate=data.estimated_amount;
-            let rate_id=null;
+
+            // Storing rate in rateObject
+            rateObject.rate=parseFloat(data.estimated_amount);
+
+            // Storing rate_id in rateObject if exchangetype is Fixed
             if(exchangetype=="Fixed"){
-                rate_id=data.rate_id;
+                rateObject.rate_id=data.rate_id;
             }
-            return res.status(200).json({name:"stealthex", rate:rate, rate_id:rate_id, message:"success"});
+
+            // finding if rate is greater than minimum amount
+            if(rateObject.rate>rateObject.min){
+                return res.status(200).json({rateObject:rateObject, message:"success"});
+            }else{
+                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            }
+
+            // If exchanges tells amount is out of range
           }else if(data.err.details=="Amount is out of range"){
-            return res.status(404).json({name:"stealthex", rate:0, message:"amount_not_in_range"});
+            return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
           }else{
+            // If exchange response is not as expected
             throw new Error();
           }
     
         } catch (error) {
-          return res.status(502).json({name:"stealthex", rate:0, message:"exchange_response_error"})
+          return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"})
         }
       }
     
@@ -186,34 +361,110 @@ class exchangeRatesController {
       static simpleswapprice=async (req, res)=>{
         const {sell,get,amount, exchangetype}=req.body;
         const typeidentifier=exchangetype=="Floating"?"false":"true";
+
+        // Object for storing rate data
+        let rateObject={
+            name:"simpleswap",
+            rate:0,
+            rate_id:null,
+            min:0,
+            max:0,
+        }
+
         try {
+          // Fetching minimum and maximum amount for both fixed and floating rate
+          let sellcoin=sell=="toncoin"?"tonerc20":sell;
+          let getcoin=get=="toncoin"?"tonerc20":get;
+  
+          const response1 = await fetch(`https://api.simpleswap.io/get_ranges?api_key=ae57f22d-7a23-4dbe-9881-624b2e147759&fixed=${typeidentifier}&currency_from=${sellcoin}&currency_to=${getcoin}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            }
+          });
+
+          const data1=await response1.json();
+          if(!isNaN(data1.min)&&!isNaN(data1.max)){
+            rateObject.min=parseFloat(data1.min);
+            rateObject.max=parseFloat(data1.max);
+        }
+
+        // Fetching rate from api
           const response =  await fetch(`https://api.simpleswap.io/get_estimated?api_key=ae57f22d-7a23-4dbe-9881-624b2e147759&fixed=${typeidentifier}&currency_from=${sell}&currency_to=${get}&amount=${amount}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
             }
           });
-        
           const data=await response.json();
-    
+
+        //   Storing rate in rateObject if response is as expected
           if(!isNaN(Number(data)) && isFinite(data)){
-            const rate=data;
-            let rate_id=null;
-            return res.status(200).json({name:"simpleswap", rate:rate, rate_id:rate_id, message:"success"}); 
+            rateObject.rate=parseFloat(data);
+
+            // finding if rate is greater than minimum amount
+            if(rateObject.rate>rateObject.min){
+                return res.status(200).json({rateObject:rateObject, message:"success"});
+            }
+            else{
+                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            }
+
+            // If exchanges tells amount is out of range
           }else if(data.error=="Unprocessable Entity"){
-            return res.status(404).json({name:"simpleswap", rate:0, message:"amount_not_in_range"});
-          }else{
+            return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+
+        // If exchange response is not as expected  
+        }else{
             throw new Error();
           }
         } catch (error) {
-            return res.status(502).json({name:"simpleswap", rate:0, message:"exchange_response_error"});
+            return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
         }
       }
     
       static changeheroprice=async (req, res)=>{
         const {sell,get,amount, exchangetype}=req.body;
         const typeidentifier=exchangetype=="Floating"?"getExchangeAmount":"getFixRate";
+
+        // Object for storing rate data
+        let rateObject={
+            name:"changehero",
+            rate:0,
+            rate_id:null,
+            min:0,
+            max:0,
+        }
+
         try {
+
+            const param1 = {
+                jsonrpc: "2.0",
+                method: "getFixRate",
+                params: {
+                  from: sell,
+                  to: get,
+                },
+              };
+      
+            const  response1 = await fetch(
+                `https://api.changehero.io/v2/`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "api-key": "46799cd819854116907d2a6f54926157",
+                  },
+                  body: JSON.stringify(param1),
+                }
+              )
+
+            const data1=await response1.json();    
+            if(!isNaN(data1.result[0].minFrom)&&!isNaN(data1.result[0].maxFrom)){
+                rateObject.min=parseFloat(data1.result[0].minFrom);
+                rateObject.max=parseFloat(data1.result[0].maxFrom);
+            }
+
           const param = {
             jsonrpc: "2.0",
             method: typeidentifier,
@@ -234,23 +485,37 @@ class exchangeRatesController {
           })
         
           const data=await response.json();
+
+          // Storing rate in rateObject if response is as expected
           if(data.result){
-            let rate=0;
-            let rate_id=null;
+
+            // Changehero response is different for fixed and floating rate so when there is rate response response object is stored inside an array and when there is floating response object isnt stored in an array
+            // Storing rate_id in rateObject if exchangetype is Fixed
             if(exchangetype=="Fixed"){
-                rate=data.result[0].result;
-                rate_id=data.result[0].id;
+            rateObject.rate=parseFloat(data.result[0].result);
+            rateObject.rate_id=data.result[0].id;
             }else{
-                rate=data.result;
+            rateObject.rate=parseFloat(data.result);
             }
-            return res.status(200).json({name:"changehero", rate:rate, rate_id:rate_id, message:"success"});
+
+            // finding if rate is greater than minimum amount
+            if(rateObject.rate>rateObject.min){
+                return res.status(200).json({rateObject:rateObject, message:"success"});
+            }else{
+                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            }
+
+            // If exchanges tells amount is out of range
           }else if(data.error.message.split(":")[0]=="Amount is less than minimal"){
-            res.status(404).json({name:"changehero", rate:0, message:"amount_not_in_range"});
+            res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+
+            // If exchange response is not as expected
           }else{
             throw new Error();
           }
         } catch (error) {
-          return res.status(502).json({name:"changehero", rate:0, message:"exchange_response_error"});
+            console.log(error)
+          return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
         }
       }
     
@@ -292,6 +557,7 @@ class exchangeRatesController {
       }
 
       static letsexchangeprice=async (req, res)=>{
+
         const {sell,get,amount, exchangetype}=req.body;
         const typeidentifier=exchangetype=="Floating"?true:false;
     
