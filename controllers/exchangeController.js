@@ -546,7 +546,12 @@ class exchangeController{
 
             try {
               if(data.result.id){
-                const profit=await calculateProfitInBTC("changelly", sell, amount, "Floating");
+                let profit=await calculateProfitInBTC("changelly", sell, amount, "Floating");
+                if(!NaN(profit)){
+                  //Dont Do any thing
+                }else{
+                  profit=0;
+                }
                 var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit], function(error, result){
                   if (error) throw error;
@@ -611,7 +616,12 @@ class exchangeController{
 
         try {
           if(data.id){
-            const profit=await calculateProfitInBTC("changenow", sell, amount, "Floating");
+            let profit=await calculateProfitInBTC("changenow", sell, amount, "Floating");
+            if(!NaN(profit)){
+              //Dont Do any thing
+            }else{
+              profit=0;
+            }
             var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, profit ], function(error, result){
               if (error) throw error;
@@ -680,7 +690,12 @@ class exchangeController{
 
         try {
           if(data.result.id){
-            const profit=await calculateProfitInBTC("changehero", sell, amount, "Floating");
+            let profit=await calculateProfitInBTC("changehero", sell, amount, "Floating");
+            if(!NaN(profit)){
+              //Dont Do any thing
+            }else{
+              profit=0;
+            }
             var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit ], function(error, result){
               if (error) throw error;
@@ -762,7 +777,12 @@ class exchangeController{
         try {
 
           if(data.id){
-            const profit=await calculateProfitInBTC("stealthex", sell, amount, "Floating");
+            let profit=await calculateProfitInBTC("stealthex", sell, amount, "Floating");
+            if(!NaN(profit)){
+              //Dont Do any thing
+            }else{
+              profit=0;
+            }
 
             var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
@@ -837,7 +857,12 @@ class exchangeController{
 
         try {
           if(data.id){
-            const profit=await calculateProfitInBTC("exolix", sell, amount, "Floating");
+            let profit=await calculateProfitInBTC("exolix", sell, amount, "Floating");
+            if(!NaN(profit)){
+              //Dont Do any thing
+            }else{
+              profit=0;
+            }
             var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, profit ], function(error, result){
               if (error) throw error;
@@ -898,7 +923,12 @@ class exchangeController{
 
         try {
           if(data.id){
-            const profit=await calculateProfitInBTC("simpleswap", sell, amount, "Floating");
+            let profit=await calculateProfitInBTC("simpleswap", sell, amount, "Floating");
+            if(!NaN(profit)){
+              //Dont Do any thing
+            }else{
+              profit=0;
+            }
             var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
               if (error) throw error;
@@ -964,7 +994,12 @@ class exchangeController{
       
         try {
           if(data.transaction_id){
-            const profit=await calculateProfitInBTC("godex", sell, amount, "Floating");
+            let profit=await calculateProfitInBTC("godex", sell, amount, "Floating");
+            if(!NaN(profit)){
+              //Dont Do any thing
+            }else{
+              profit=0;
+            }
             var sql="INSERT INTO godex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
               if (error) throw error;
@@ -1031,7 +1066,12 @@ class exchangeController{
 
   try {
     if(data.transaction_id){
-      const profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
+      let profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
+      if(!NaN(profit)){
+        //Dont Do any thing
+      }else{
+        profit=0;
+      }
       var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
         if (error) throw error;
@@ -1137,7 +1177,12 @@ class exchangeController{
           }
 
             try {
-              const profit=await calculateProfitInBTC("changelly", sell, amount, "Fixed");
+              let profit=await calculateProfitInBTC("changelly", sell, amount, "Fixed");
+              if(!NaN(profit)){
+                //Dont Do any thing
+              }else{
+                profit=0;
+              }
               if(data.result.id){
                 var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit], function(error, result){
@@ -1202,7 +1247,12 @@ class exchangeController{
           }
   try {
     if(data.id){
-      const profit=await calculateProfitInBTC("changenow", sell, amount, "Fixed");
+      let profit=await calculateProfitInBTC("changenow", sell, amount, "Fixed");
+      if(!NaN(profit)){
+        //Dont Do any thing
+      }else{
+        profit=0;
+      }
       var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
@@ -1280,7 +1330,12 @@ class exchangeController{
 
   try {
     if(data.result.id){
-      const profit=await calculateProfitInBTC("changehero", sell, amount, "Fixed");
+      let profit=await calculateProfitInBTC("changehero", sell, amount, "Fixed");
+      if(!NaN(profit)){
+        //Dont Do any thing
+      }else{
+        profit=0;
+      }
       var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
@@ -1362,7 +1417,12 @@ class exchangeController{
 
   try {
     if(data.id){
-      const profit=await calculateProfitInBTC("stealthex", sell, amount, "Fixed");
+      let profit=await calculateProfitInBTC("stealthex", sell, amount, "Fixed");
+      if(!NaN(profit)){
+        //Dont Do any thing
+      }else{
+        profit=0;
+      }
       var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
         logger.error(`Error: ${error} || transaction_id:${data.id} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} transaction_type:Fixed average_profit_percent: ${profit}`);
@@ -1426,7 +1486,12 @@ class exchangeController{
 
         try {
           if(data.id){
-            const profit=await calculateProfitInBTC("exolix", sell, amount, "Fixed");
+            let profit=await calculateProfitInBTC("exolix", sell, amount, "Fixed");
+            if(!NaN(profit)){
+              //Dont Do any thing
+            }else{
+              profit=0;
+            }
             var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, "Fixed", profit ], function(error, result){
               if (error) throw error;
@@ -1491,7 +1556,12 @@ class exchangeController{
 
   try {
     if(data.id){
-      const profit=await calculateProfitInBTC("simpleswap", sell, amount, "Fixed");
+      let profit=await calculateProfitInBTC("simpleswap", sell, amount, "Fixed");
+      if(!NaN(profit)){
+        //Dont Do any thing
+      }else{
+        profit=0;
+      }
       var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
@@ -1557,7 +1627,12 @@ class exchangeController{
 
         try {
           if(data.transaction_id){
-            const profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
+            let profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
+            if(!NaN(profit)){
+              //Dont Do any thing
+            }else{
+              profit=0;
+            }
             var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address,  data.deposit, email, "Fixed", profit ], function(error, result){
               if (error) throw error;

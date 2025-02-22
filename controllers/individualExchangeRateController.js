@@ -34,6 +34,7 @@ class exchangeRatesController {
             rate_id:null,
             min:0,
             max:0,
+            exchangetype: exchangetype,
         }
         
 
@@ -74,7 +75,10 @@ class exchangeRatesController {
                 body: JSON.stringify(message2),
               };
 
-              // Function to make API request using Promises
+
+        try {
+        
+            // Function to make API request using Promises
         const makeRequest = (options) => {
             return new Promise((resolve, reject) => {
                 request(options, (error, response, body) => {
@@ -86,7 +90,6 @@ class exchangeRatesController {
                 });
             });
         };
-        try {
             const data = await makeRequest(param2);
             if(!isNaN(data.result[0].minAmountFloat)&&!isNaN(data.result[0].maxAmountFloat)&&!isNaN(data.result[0].minAmountFixed)&&!isNaN(data.result[0].maxAmountFixed)){
             
@@ -204,6 +207,7 @@ class exchangeRatesController {
             rate_id:null,
             min:0,
             max:0,
+            exchangetype: exchangetype,
         }
 
         try {
@@ -272,6 +276,7 @@ class exchangeRatesController {
             rate_id:null,
             min:0,
             max:0,
+            exchangetype: exchangetype,
         }
 
         try {
@@ -331,6 +336,16 @@ class exchangeRatesController {
       static exolixprice=async (req, res)=>{
         const {sell,get,amount, exchangetype}=req.body;
         const typeidentifier=exchangetype=="Floating"?"float":"fixed";
+
+        let rateObject={
+            name:"exolix",
+            rate:0,
+            rate_id:null,
+            min:0,
+            max:0,
+            exchangetype: exchangetype,
+        }
+
         try {
           const response = await fetch(
             `https://exolix.com/api/v2/rate?coinFrom=${sell}&coinTo=${get}&amount=${amount}&rateType=${typeidentifier}`,
@@ -343,17 +358,33 @@ class exchangeRatesController {
           )
         
           const data=await response.json();
-          if(data.toAmount){
-            const rate=data.toAmount;
-            let rate_id=null;
-            return res.status(200).json({name:"exolix", rate:rate, rate_id: rate_id, message:"success"});
+
+          if(!isNaN(data.toAmount)){
+            rateObject.rate=parseFloat(data.toAmount);
+            rateObject.min=parseFloat(data.minAmount);
+            rateObject.max=parseFloat(data.maxAmount);
+          }else if(!isNaN(data.minAmount) || !isNaN(data.maxAmount)){
+            if(!isNaN(data.minAmount)){
+                rateObject.min=parseFloat(data.minAmount);
+            }
+            if(!isNaN(data.maxAmount)){
+                rateObject.max=parseFloat(data.maxAmount);
+            } 
           }else if(data.message=="Amount to exchange is below the possible min amount to exchange"){
-            return res.status(404).json({name:"exolix", rate:0, message:"amount_not_in_range"});
+            return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
           }else{
             throw new Error();
           }
+
+          //Comapring rate with minimum amount
+            if(rateObject.rate>rateObject.min){
+                return res.status(200).json({rateObject:rateObject, message:"success"});
+            }else{
+                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            }
+
         } catch (error) {
-          return res.status(502).json({name:"exolix", rate:0, message:"exchange_response_error"});
+          return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
         }
     
       }
@@ -369,6 +400,7 @@ class exchangeRatesController {
             rate_id:null,
             min:0,
             max:0,
+            exchangetype: exchangetype,
         }
 
         try {
@@ -434,6 +466,7 @@ class exchangeRatesController {
             rate_id:null,
             min:0,
             max:0,
+            exchangetype: exchangetype,
         }
 
         try {
@@ -520,7 +553,16 @@ class exchangeRatesController {
       }
     
       static godexprice=async (req, res)=>{
-        const {sell,get,amount}=req.body
+        const {sell,get,amount, exchangetype}=req.body
+        let rateObject={
+            name:"godex",
+            rate:0,
+            rate_id:null,
+            min:0,
+            max:0,
+            exchangetype: exchangetype,
+        }
+
         try {
           const param = {
             from: sell.toUpperCase(),
@@ -537,22 +579,30 @@ class exchangeRatesController {
             body: JSON.stringify(param),
           })
         
-          const data=await response.json(); 
-          if(data.amount){
-            const rate=data.amount;
-            let rate_id=null;
-            if(rate!=="0"){
-              return res.status(200).json({name:"godex", rate:rate, rate_id:rate_id, message:"success"});
-            }else{
-              return res.status(404).json({name:"godex", rate:0, message:"amount_not_in_range"});
-            }
-          }else if(data.error){
-            throw new Error();
-          }else{
-            throw new Error();
-          }
+          const data=await response.json();
+          //Storing minimum and maximum amount for both fixed and floating rate in rateObject
+          if(!isNaN(data.amount) && !isNaN(data.min_amount) && !isNaN(data.max_amount)){
+            rateObject.min=parseFloat(data.min_amount);
+            rateObject.max=parseFloat(data.max_amount);
+            rateObject.rate=parseFloat(data.amount);
+
+            if(rateObject.rate>rateObject.min){
+                return res.status(200).json({rateObject:rateObject, message:"success"});
+              }else{
+                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+              }
+        
+        // If reponse an error object
+        }else if(data.error){
+          throw new Error();
+
+          // if response is not as expected
+        }else{
+          throw new Error();
+        }
+
         } catch (error) {
-          return res.status(502).json({name:"godex", rate:0, message:"exchange_response_error"});
+          return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
         }
       }
 
@@ -560,6 +610,15 @@ class exchangeRatesController {
 
         const {sell,get,amount, exchangetype}=req.body;
         const typeidentifier=exchangetype=="Floating"?true:false;
+
+        let rateObject={
+            name:"letsexchange",
+            rate:0,
+            rate_id:null,
+            min:0,
+            max:0,
+            exchangetype: exchangetype,
+        }
     
         try {
           const param = {
@@ -579,23 +638,32 @@ class exchangeRatesController {
           })
         
           const data=await response.json();
-          if(data.amount){
-            const rate=data.amount;
-            if(rate!=="0"){
-                let rate_id=null;
-                if(exchangetype=="Fixed"){
-                    rate_id=data.rate_id;
-                }
-                    return res.status(200).json({name:"letsexchange", rate:rate, rate_id:rate_id, message:"success"});
-            }else{
-              return res.status(404).json({name:"letsexchange", rate:0, message:"amount_not_in_range"});
+
+        //   Storing rate min and max in rateObject if response is as expected
+          if(!isNaN(data.amount) && !isNaN(data.deposit_min_amount) && !isNaN(data.deposit_max_amount)){
+            rateObject.min=parseFloat(data.deposit_min_amount);
+            rateObject.max=parseFloat(data.deposit_max_amount);
+            rateObject.rate=parseFloat(data.amount);
+
+            if(exchangetype=="Fixed" && data.rate_id!==""){
+                rateObject.rate_id=data.rate_id;
             }
+
+            // finding if rate is greater than minimum amount
+            if(rateObject.rate>rateObject.min){
+                return res.status(200).json({rateObject:rateObject, message:"success"});
+              }
+            //   If rate is less than minimum amount
+              else{
+                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+              }
+            //   If response is not as expected
           }else{
             throw new Error();
           }
     
         } catch (error) {
-          return res.status(502).json({name:"letsexchange", rate:0, message:"exchange_response_error"});
+          return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
         }
     
       }
