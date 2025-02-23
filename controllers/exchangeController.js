@@ -547,7 +547,7 @@ class exchangeController{
             try {
               if(data.result.id){
                 let profit=await calculateProfitInBTC("changelly", sell, amount, "Floating");
-                if(!NaN(profit)){
+                if(profit){
                   //Dont Do any thing
                 }else{
                   profit=0;
@@ -617,7 +617,7 @@ class exchangeController{
         try {
           if(data.id){
             let profit=await calculateProfitInBTC("changenow", sell, amount, "Floating");
-            if(!NaN(profit)){
+            if(profit){
               //Dont Do any thing
             }else{
               profit=0;
@@ -691,7 +691,7 @@ class exchangeController{
         try {
           if(data.result.id){
             let profit=await calculateProfitInBTC("changehero", sell, amount, "Floating");
-            if(!NaN(profit)){
+            if(profit){
               //Dont Do any thing
             }else{
               profit=0;
@@ -778,7 +778,7 @@ class exchangeController{
 
           if(data.id){
             let profit=await calculateProfitInBTC("stealthex", sell, amount, "Floating");
-            if(!NaN(profit)){
+            if(profit){
               //Dont Do any thing
             }else{
               profit=0;
@@ -858,7 +858,7 @@ class exchangeController{
         try {
           if(data.id){
             let profit=await calculateProfitInBTC("exolix", sell, amount, "Floating");
-            if(!NaN(profit)){
+            if(profit){
               //Dont Do any thing
             }else{
               profit=0;
@@ -924,7 +924,7 @@ class exchangeController{
         try {
           if(data.id){
             let profit=await calculateProfitInBTC("simpleswap", sell, amount, "Floating");
-            if(!NaN(profit)){
+            if(profit){
               //Dont Do any thing
             }else{
               profit=0;
@@ -995,7 +995,7 @@ class exchangeController{
         try {
           if(data.transaction_id){
             let profit=await calculateProfitInBTC("godex", sell, amount, "Floating");
-            if(!NaN(profit)){
+            if(profit){
               //Dont Do any thing
             }else{
               profit=0;
@@ -1067,7 +1067,7 @@ class exchangeController{
   try {
     if(data.transaction_id){
       let profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
-      if(!NaN(profit)){
+      if(profit){
         //Dont Do any thing
       }else{
         profit=0;
@@ -1178,7 +1178,7 @@ class exchangeController{
 
             try {
               let profit=await calculateProfitInBTC("changelly", sell, amount, "Fixed");
-              if(!NaN(profit)){
+              if(profit){
                 //Dont Do any thing
               }else{
                 profit=0;
@@ -1248,7 +1248,7 @@ class exchangeController{
   try {
     if(data.id){
       let profit=await calculateProfitInBTC("changenow", sell, amount, "Fixed");
-      if(!NaN(profit)){
+      if(profit){
         //Dont Do any thing
       }else{
         profit=0;
@@ -1331,7 +1331,7 @@ class exchangeController{
   try {
     if(data.result.id){
       let profit=await calculateProfitInBTC("changehero", sell, amount, "Fixed");
-      if(!NaN(profit)){
+      if(profit){
         //Dont Do any thing
       }else{
         profit=0;
@@ -1418,7 +1418,7 @@ class exchangeController{
   try {
     if(data.id){
       let profit=await calculateProfitInBTC("stealthex", sell, amount, "Fixed");
-      if(!NaN(profit)){
+      if(profit){
         //Dont Do any thing
       }else{
         profit=0;
@@ -1487,7 +1487,7 @@ class exchangeController{
         try {
           if(data.id){
             let profit=await calculateProfitInBTC("exolix", sell, amount, "Fixed");
-            if(!NaN(profit)){
+            if(profit){
               //Dont Do any thing
             }else{
               profit=0;
@@ -1557,7 +1557,7 @@ class exchangeController{
   try {
     if(data.id){
       let profit=await calculateProfitInBTC("simpleswap", sell, amount, "Fixed");
-      if(!NaN(profit)){
+      if(profit){
         //Dont Do any thing
       }else{
         profit=0;
@@ -1628,7 +1628,7 @@ class exchangeController{
         try {
           if(data.transaction_id){
             let profit=await calculateProfitInBTC("letsexchange", sell, amount, "Floating");
-            if(!NaN(profit)){
+            if(profit){
               //Dont Do any thing
             }else{
               profit=0;
