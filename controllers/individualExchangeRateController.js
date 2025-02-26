@@ -7,6 +7,23 @@ import { response } from 'express';
 import {db} from '../database/connectdb.js';
 dotenv.config();
 
+function fetchGiveawayMeta(){
+    return new Promise((resolve, reject)=>{
+    const checkQuery = "SELECT * FROM meta_data WHERE meta_identifier = ?";
+    db.query(checkQuery, ["giveaway"], (err, results) => {
+      if (err) {
+        return reject({ error: "Database error while checking metadata" });
+    }
+    try {
+      const metaData=JSON.parse(results[0].meta_object);
+      resolve(metaData);
+    } catch (error) {
+      reject({ error: "Invalid metadata format" });
+    }
+    });
+  });
+  }
+
 class exchangeRatesController {
 
     static changellyprice=async (req, res)=>{
@@ -35,6 +52,10 @@ class exchangeRatesController {
             min:0,
             max:0,
             exchangetype: exchangetype,
+            eta:"5-30 Min", 
+            kyc:"On Occasion", 
+            rating:"4.2/5",
+            giveaway:"no giveaway"
         }
         
 
@@ -85,7 +106,11 @@ class exchangeRatesController {
                     if (error) {
                         return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
                     } else {
-                        resolve(JSON.parse(body));
+                        if (response.ok) {
+                            resolve(JSON.parse(body));
+                          }else{
+                            return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
+                          }
                     }
                 });
             });
@@ -106,29 +131,6 @@ class exchangeRatesController {
             return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
         }
             
-
-                // request(param2, async function (error, response) {
-                //   try {
-                //     if (error) {
-                //         return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
-                //     }
-                //     const data = await JSON.parse(response.body);
-                //     if(!isNaN(data.result[0].minAmountFloat)&&!isNaN(data.result[0].maxAmountFloat)&&!isNaN(data.result[0].minAmountFixed)&&!isNaN(data.result[0].maxAmountFixed)){
-                    
-                //         //Storing minimum and maximum amount for both fixed and floating rate in rateObject
-                //       if(exchangetype=="Floating"){
-                //         rateObject.min=parseFloat(data.result[0].minAmountFixed);
-                //         rateObject.max=parseFloat(data.result[0].maxAmountFixed);
-                //         }else{
-                //         rateObject.min=parseFloat(data.result[0].minAmountFixed);
-                //         rateObject.max=parseFloat(data.result[0].maxAmountFixed);
-                //         }
-                //     }
-        
-                //   } catch (error) {
-                //     return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
-                //   }
-                // })
       
         const message1 = {
           jsonrpc: "2.0",
@@ -188,7 +190,14 @@ class exchangeRatesController {
               if(exchangetype=="Fixed"){
                 rate_id=data.result[0].id;
               }
-              return res.status(200).json({rateObject:rateObject, message:"success"});
+
+                const metaData= await fetchGiveawayMeta();
+                if(metaData.giveaway){
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    return res.status(200).json({rateObject:rateObject, message:"success"});
+                }else{
+                    return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
+                }              
             } catch (error) {
               return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
             }
@@ -208,6 +217,10 @@ class exchangeRatesController {
             min:0,
             max:0,
             exchangetype: exchangetype,
+            eta:"10-60 Min", 
+            kyc:"On Occasion", 
+            rating:"4.5/5",
+            giveaway:"no giveaway"
         }
 
         try {
@@ -248,7 +261,13 @@ class exchangeRatesController {
 
             // finding if rate is greater than minimum amount
             if(rateObject.rate>rateObject.min){
-                return res.status(200).json({rateObject:rateObject, message:"success"});
+                const metaData= await fetchGiveawayMeta();
+                if(metaData.giveaway){
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    return res.status(200).json({rateObject:rateObject, message:"success"});
+                }else{
+                    return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
+                }
             }else{
                 return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
@@ -277,6 +296,10 @@ class exchangeRatesController {
             min:0,
             max:0,
             exchangetype: exchangetype,
+            eta:"7-38 Min", 
+            kyc:"Rarely Required", 
+            rating:"4.7/5",
+            giveaway:"no giveaway"
         }
 
         try {
@@ -315,7 +338,14 @@ class exchangeRatesController {
 
             // finding if rate is greater than minimum amount
             if(rateObject.rate>rateObject.min){
-                return res.status(200).json({rateObject:rateObject, message:"success"});
+                
+                const metaData= await fetchGiveawayMeta();
+                if(metaData.giveaway){
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    return res.status(200).json({rateObject:rateObject, message:"success"});
+                }else{
+                    return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
+                }  
             }else{
                 return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
@@ -344,6 +374,10 @@ class exchangeRatesController {
             min:0,
             max:0,
             exchangetype: exchangetype,
+            eta:"4-20 Min", 
+            kyc:"Not Required", 
+            rating:"4.3/5",
+            giveaway:"no giveaway"
         }
 
         try {
@@ -378,7 +412,14 @@ class exchangeRatesController {
 
           //Comapring rate with minimum amount
             if(rateObject.rate>rateObject.min){
-                return res.status(200).json({rateObject:rateObject, message:"success"});
+                
+                const metaData= await fetchGiveawayMeta();
+                if(metaData.giveaway){
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    return res.status(200).json({rateObject:rateObject, message:"success"});
+                }else{
+                    return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
+                }
             }else{
                 return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
@@ -401,6 +442,10 @@ class exchangeRatesController {
             min:0,
             max:0,
             exchangetype: exchangetype,
+            eta:"9-50 Min", 
+            kyc:"Rarely Required", 
+            rating:"4.4/5",
+            giveaway:"no giveaway"
         }
 
         try {
@@ -436,7 +481,14 @@ class exchangeRatesController {
 
             // finding if rate is greater than minimum amount
             if(rateObject.rate>rateObject.min){
-                return res.status(200).json({rateObject:rateObject, message:"success"});
+                
+                const metaData= await fetchGiveawayMeta();
+                if(metaData.giveaway){
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    return res.status(200).json({rateObject:rateObject, message:"success"});
+                }else{
+                    return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
+                }
             }
             else{
                 return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
@@ -467,6 +519,10 @@ class exchangeRatesController {
             min:0,
             max:0,
             exchangetype: exchangetype,
+            eta:"12-26 Min", 
+            kyc:"On Occasion", 
+            rating:"3.7/5",
+            giveaway:"no giveaway"
         }
 
         try {
@@ -533,7 +589,14 @@ class exchangeRatesController {
 
             // finding if rate is greater than minimum amount
             if(rateObject.rate>rateObject.min){
-                return res.status(200).json({rateObject:rateObject, message:"success"});
+                
+                const metaData= await fetchGiveawayMeta();
+                if(metaData.giveaway){
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    return res.status(200).json({rateObject:rateObject, message:"success"});
+                }else{
+                    return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
+                }
             }else{
                 return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
@@ -561,6 +624,10 @@ class exchangeRatesController {
             min:0,
             max:0,
             exchangetype: exchangetype,
+            eta:"14-51 Min", 
+            kyc:"Rarely Required", 
+            rating:"4.6/5",
+            giveaway:"no giveaway"
         }
 
         try {
@@ -587,7 +654,14 @@ class exchangeRatesController {
             rateObject.rate=parseFloat(data.amount);
 
             if(rateObject.rate>rateObject.min){
-                return res.status(200).json({rateObject:rateObject, message:"success"});
+                
+                const metaData= await fetchGiveawayMeta();
+                if(metaData.giveaway){
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    return res.status(200).json({rateObject:rateObject, message:"success"});
+                }else{
+                    return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
+                }  
               }else{
                 return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
               }
@@ -618,6 +692,10 @@ class exchangeRatesController {
             min:0,
             max:0,
             exchangetype: exchangetype,
+            eta:"2-44 Min", 
+            kyc:"Not Required", 
+            rating:"4.6/5",
+            giveaway:"no giveaway"
         }
     
         try {
@@ -651,7 +729,14 @@ class exchangeRatesController {
 
             // finding if rate is greater than minimum amount
             if(rateObject.rate>rateObject.min){
-                return res.status(200).json({rateObject:rateObject, message:"success"});
+                
+                const metaData= await fetchGiveawayMeta();
+                if(metaData.giveaway){
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    return res.status(200).json({rateObject:rateObject, message:"success"});
+                }else{
+                    return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
+                }  
               }
             //   If rate is less than minimum amount
               else{

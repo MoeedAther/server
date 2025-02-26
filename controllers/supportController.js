@@ -244,6 +244,7 @@ class SupportController{
     //********************************** Contact Email *********************** */
     static contactMail=async(req, res)=>{
         const {email, name, subject, orderid, message}=req.body;
+
         const mailOptions = {
             from: process.env.CONTACT_EMAIL,
             to: subject=="support@coinoswap.com"?"support@coinoswap.com":subject,
@@ -266,6 +267,31 @@ class SupportController{
         });
     }
 
+    //********************************** Affiliate Email *********************** */
+    static affiliateMail=async(req, res)=>{
+        const {email, name}=req.body;
+        if(!email || !name){
+            return res.json({status:0});
+        }
+
+        const mailOptions = {
+            from: process.env.CONTACT_EMAIL,
+            to: "affiliate@coinoswap.com",
+            subject: "Coinoswap Affiliate",
+            html: `<div style="line-height: 1.5;">
+               <b>Affiliate User:</b> <span>${name}</span> <br>
+               <b>Email:</b> <span>${email}</span> <br>
+            </div>`
+          };
+    
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                   return res.json({status:0});
+            }else{
+                return res.json({status:1});
+            }
+        });
+    }
     
 };
 

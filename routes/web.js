@@ -191,6 +191,7 @@ router.get('/coin_market_data', offerController.getcryptomarket);
 
 //....................................... Contact Api Route ......................................./
 router.post('/contact_form', SupportController.contactMail);
+router.post('/affiliate_form', SupportController.affiliateMail);
 
 //....................................... Meta Data Api ......................................./
 
