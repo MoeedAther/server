@@ -24,6 +24,23 @@ function fetchGiveawayMeta(){
   });
   }
 
+function fetchExchangeVisibilityMeta(){
+    return new Promise((resolve, reject)=>{
+    const checkQuery = "SELECT * FROM meta_data WHERE meta_identifier = ?";
+    db.query(checkQuery, ["exchangevisibility"], (err, results) => {
+      if (err) {
+        return reject({ error: "Database error while checking metadata" });
+    }
+    try {
+      const metaData=JSON.parse(results[0].meta_object);
+      resolve(metaData);
+    } catch (error) {
+      reject([{name:"changelly", fixed:0, floating:0},{name:"changenow", fixed:0, floating:0},{name:"changehero", fixed:0, floating:0},{name:"exolix", fixed:0, floating:0},{name:"letsexchange", fixed:0, floating:0},{name:"stealthex", fixed:0, floating:0},{name:"simpleswap", fixed:0, floating:0},{name:"godex", fixed:0, floating:0}]);
+    }
+    });
+  });
+  }
+
 class exchangeRatesController {
 
     static changellyprice=async (req, res)=>{
@@ -106,8 +123,8 @@ class exchangeRatesController {
                     if (error) {
                         return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
                     } else {
-                        if (response.ok) {
-                            resolve(JSON.parse(body));
+                        if (response.statusCode===200) {
+                            resolve(JSON.parse(response.body));
                           }else{
                             return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
                           }
@@ -127,6 +144,7 @@ class exchangeRatesController {
                 rateObject.max=parseFloat(data.result[0].maxAmountFixed);
                 }
             }
+
         } catch (error) {
             return res.status(502).json({rateObject:rateObject, message:"exchange_response_error"});
         }
@@ -179,20 +197,22 @@ class exchangeRatesController {
               //Check if amount is not in range
               if(data.error){
                 if(data.error.data.limits){
-                  return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+                  return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
                 }
               }
     
               //Sending response becase amount in range
               let rate = parseFloat(data.result[0].amountTo);
               rateObject.rate=rate;
-              let rate_id=null;
               if(exchangetype=="Fixed"){
                 rate_id=data.result[0].id;
               }
 
                 const metaData= await fetchGiveawayMeta();
-                if(metaData.giveaway){
+                const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
+                const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[0].floating:visibilityMetaDeta[0].fixed;
+
+                if(metaData.giveaway && visibilityBool===1){
                     rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
@@ -262,19 +282,22 @@ class exchangeRatesController {
             // finding if rate is greater than minimum amount
             if(rateObject.rate>rateObject.min){
                 const metaData= await fetchGiveawayMeta();
-                if(metaData.giveaway){
+                const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
+                const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[1].floating:visibilityMetaDeta[1].fixed;
+
+                if(metaData.giveaway && visibilityBool===1){
                     rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
                 }
             }else{
-                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+                return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
 
             // If exchanges tells amount is out of range
           }else if(data.error=="deposit_too_small" || data.error=="out_of_range"){
-            return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
 
             // If exchange response is not as expected
           }else{
@@ -340,19 +363,21 @@ class exchangeRatesController {
             if(rateObject.rate>rateObject.min){
                 
                 const metaData= await fetchGiveawayMeta();
-                if(metaData.giveaway){
+                const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
+                const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[5].floating:visibilityMetaDeta[5].fixed;
+                if(metaData.giveaway && visibilityBool===1){
                     rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
                 }  
             }else{
-                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+                return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
 
             // If exchanges tells amount is out of range
           }else if(data.err.details=="Amount is out of range"){
-            return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
           }else{
             // If exchange response is not as expected
             throw new Error();
@@ -405,7 +430,7 @@ class exchangeRatesController {
                 rateObject.max=parseFloat(data.maxAmount);
             } 
           }else if(data.message=="Amount to exchange is below the possible min amount to exchange"){
-            return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
           }else{
             throw new Error();
           }
@@ -414,14 +439,17 @@ class exchangeRatesController {
             if(rateObject.rate>rateObject.min){
                 
                 const metaData= await fetchGiveawayMeta();
-                if(metaData.giveaway){
+                const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
+                const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[3].floating:visibilityMetaDeta[3].fixed;
+
+                if(metaData.giveaway && visibilityBool===1){
                     rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
                 }
             }else{
-                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+                return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
 
         } catch (error) {
@@ -483,7 +511,10 @@ class exchangeRatesController {
             if(rateObject.rate>rateObject.min){
                 
                 const metaData= await fetchGiveawayMeta();
-                if(metaData.giveaway){
+                const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
+                const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[6].floating:visibilityMetaDeta[6].fixed;
+            
+                if(metaData.giveaway && visibilityBool===1){
                     rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
@@ -491,12 +522,12 @@ class exchangeRatesController {
                 }
             }
             else{
-                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+                return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
 
             // If exchanges tells amount is out of range
           }else if(data.error=="Unprocessable Entity"){
-            return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
 
         // If exchange response is not as expected  
         }else{
@@ -581,7 +612,7 @@ class exchangeRatesController {
             // Changehero response is different for fixed and floating rate so when there is rate response response object is stored inside an array and when there is floating response object isnt stored in an array
             // Storing rate_id in rateObject if exchangetype is Fixed
             if(exchangetype=="Fixed"){
-            rateObject.rate=parseFloat(data.result[0].result);
+            rateObject.rate=parseFloat((parseFloat(amount)*parseFloat(data.result[0].result))-parseFloat(data.result[0].networkFee));
             rateObject.rate_id=data.result[0].id;
             }else{
             rateObject.rate=parseFloat(data.result);
@@ -591,19 +622,22 @@ class exchangeRatesController {
             if(rateObject.rate>rateObject.min){
                 
                 const metaData= await fetchGiveawayMeta();
-                if(metaData.giveaway){
+                const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
+                const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[2].floating:visibilityMetaDeta[2].fixed;
+
+                if(metaData.giveaway && visibilityBool===1){
                     rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
                 }
             }else{
-                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+                return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
             }
 
             // If exchanges tells amount is out of range
           }else if(data.error.message.split(":")[0]=="Amount is less than minimal"){
-            res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+            res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
 
             // If exchange response is not as expected
           }else{
@@ -656,14 +690,17 @@ class exchangeRatesController {
             if(rateObject.rate>rateObject.min){
                 
                 const metaData= await fetchGiveawayMeta();
-                if(metaData.giveaway){
+                const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
+                const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[7].floating:visibilityMetaDeta[7].fixed;
+
+                if(metaData.giveaway && visibilityBool===1){
                     rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
                 }  
               }else{
-                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+                return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
               }
         
         // If reponse an error object
@@ -731,7 +768,10 @@ class exchangeRatesController {
             if(rateObject.rate>rateObject.min){
                 
                 const metaData= await fetchGiveawayMeta();
-                if(metaData.giveaway){
+                const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
+                const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[4].floating:visibilityMetaDeta[4].fixed;
+                
+                if(metaData.giveaway && visibilityBool===1){
                     rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
@@ -740,7 +780,7 @@ class exchangeRatesController {
               }
             //   If rate is less than minimum amount
               else{
-                return res.status(404).json({rateObject:rateObject, message:"amount_not_in_range"});
+                return res.status(200).json({rateObject:rateObject, message:"amount_not_in_range"});
               }
             //   If response is not as expected
           }else{
