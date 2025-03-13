@@ -472,7 +472,7 @@ class exchangeController{
     // *********************** Floating Transactions ************************* //
 
     static changellyFloatingTransaction = async (req, res) => {
-        const {sell, get, sellname, getname, selllogo, getlogo,  amount, recieving_Address, refund_Address, email, rateId ,extraid, refextraid, expirytime} = req.body;
+        const {sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo,  amount, recieving_Address, refund_Address, email, rateId ,extraid, refextraid, expirytime} = req.body;
         const privateKeyString = process.env.CHANGELLY_PRIVATE_KEY;
         const privateKey = crypto.createPrivateKey({
             key: privateKeyString,
@@ -552,8 +552,8 @@ class exchangeController{
                 }else{
                   profit=0;
                 }
-                var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit], function(error, result){
+                var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.result.amountExpectedTo, data.result.payinExtraId, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit], function(error, result){
                   if (error) throw error;
                 })
               }
@@ -582,7 +582,7 @@ class exchangeController{
 
     static changenowFloatingTransaction = async (req, res)=>{
 
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, extraid ,refextraid, expirytime} = req.body
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, extraid ,refextraid, expirytime} = req.body
 
         const url = `https://api.changenow.io/v1/transactions/${process.env.CHANGENOW}`;
       
@@ -622,8 +622,8 @@ class exchangeController{
             }else{
               profit=0;
             }
-            var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, profit ], function(error, result){
+            var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount,data.payinExtraId, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
           
@@ -651,7 +651,7 @@ class exchangeController{
     }
 
     static changeheroFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
       
         const url = "https://api.changehero.io/v2/";
       
@@ -696,8 +696,8 @@ class exchangeController{
             }else{
               profit=0;
             }
-            var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit ], function(error, result){
+            var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.result.amountExpectedTo, data.result.payinExtraId, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
           
@@ -731,7 +731,7 @@ class exchangeController{
     }
 
     static stealthexFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
 
         const url = `https://api.stealthex.io/api/v2/exchange?api_key=${process.env.STEALTHEX}`;
       
@@ -784,8 +784,8 @@ class exchangeController{
               profit=0;
             }
 
-            var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
+            var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount_to, data.extra_id_from, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
               logger.error(`Error: ${error} || transaction_id:${data.id} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit}`);
               if (error) throw error;
             })
@@ -822,7 +822,7 @@ class exchangeController{
     }
 
     static exolixFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
 
         const url = "https://exolix.com/api/v2/transactions";
       
@@ -863,8 +863,8 @@ class exchangeController{
             }else{
               profit=0;
             }
-            var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, profit ], function(error, result){
+            var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amountTo, data.depositExtraId, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, profit ], function(error, result){
               if (error) throw error;
             })
           
@@ -891,7 +891,7 @@ class exchangeController{
     }
 
     static simpleswapFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body      
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body      
         const url = "https://api.simpleswap.io/create_exchange?api_key=ae57f22d-7a23-4dbe-9881-624b2e147759";
       
         const params = {
@@ -929,8 +929,8 @@ class exchangeController{
             }else{
               profit=0;
             }
-            var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
+            var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount_to,data.extra_id_from, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
               if (error) throw error;
             })
           
@@ -957,7 +957,7 @@ class exchangeController{
     }
 
     static godexFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
       
         const url = "https://api.godex.io/api/v1/transaction";
       
@@ -1000,8 +1000,8 @@ class exchangeController{
             }else{
               profit=0;
             }
-            var sql="INSERT INTO godex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
+            var sql="INSERT INTO godex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.withdrawal_amount, data.deposit_extra_id, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
               if (error) throw error;
             })
           
@@ -1028,7 +1028,7 @@ class exchangeController{
     }
 
     static letsexchangeFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid,  refextraid, expirytime} = req.body;
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid,  refextraid, expirytime} = req.body;
 
         const url = "https://api.letsexchange.io/api/v1/transaction";
 
@@ -1072,8 +1072,8 @@ class exchangeController{
       }else{
         profit=0;
       }
-      var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
+      var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname,sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.withdrawal_amount, data.deposit_extra_id, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
         if (error) throw error;
       })
     
@@ -1102,7 +1102,7 @@ class exchangeController{
     // *********************** Fixed Transactions ************************* //
 
     static changellyFixedTransaction = async (req, res)=>{
-        const {sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId ,extraid, refextraid, expirytime} = req.body;
+        const {sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId ,extraid, refextraid, expirytime} = req.body;
         const privateKeyString = process.env.CHANGELLY_PRIVATE_KEY;
         const privateKey = crypto.createPrivateKey({
             key: privateKeyString,
@@ -1184,8 +1184,8 @@ class exchangeController{
                 profit=0;
               }
               if(data.result.id){
-                var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit], function(error, result){
+                var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.result.amountExpectedTo, data.result.payinExtraId, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit], function(error, result){
                   if (error) throw error;
                 })
               }
@@ -1213,7 +1213,7 @@ class exchangeController{
 
     static changenowFixedTransaction = async (req, res)=>{
 
-  const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
+  const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
 
   const url = `https://api.changenow.io/v1/transactions/fixed-rate/${process.env.CHANGENOW}`;
 
@@ -1240,7 +1240,6 @@ class exchangeController{
 
   const response = await fetch(url, options)
   const data = await response.json();
-
           //Exchange Api error
           if (data.error){
             return res.status(404).json(data);
@@ -1253,8 +1252,8 @@ class exchangeController{
       }else{
         profit=0;
       }
-      var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, "Fixed", profit ], function(error, result){
+      var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount, data.payinExtraId, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
     
@@ -1290,7 +1289,7 @@ class exchangeController{
     }
 
   static changeheroFixedTransaction = async (req, res)=>{
-  const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+  const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
 
   const url = "https://api.changehero.io/v2/";
 
@@ -1336,8 +1335,8 @@ class exchangeController{
       }else{
         profit=0;
       }
-      var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.result.amountExpectedTo, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit ], function(error, result){
+      var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.result.amountExpectedTo, data.result.payinExtraId, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
     
@@ -1371,7 +1370,7 @@ class exchangeController{
     }
 
   static stealthexFixedTransaction = async (req, res)=>{
-  const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+  const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
 
   const url = `https://api.stealthex.io/api/v2/exchange?api_key=${process.env.STEALTHEX}`;
 
@@ -1423,8 +1422,8 @@ class exchangeController{
       }else{
         profit=0;
       }
-      var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
+      var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount_to, data.extra_id_from, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
         logger.error(`Error: ${error} || transaction_id:${data.id} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} transaction_type:Fixed average_profit_percent: ${profit}`);
         if (error) throw error;
       })
@@ -1451,7 +1450,7 @@ class exchangeController{
 }
 
     static exolixFixedTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime  } = req.body
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime  } = req.body
 
         const url = "https://exolix.com/api/v2/transactions";
       
@@ -1492,8 +1491,8 @@ class exchangeController{
             }else{
               profit=0;
             }
-            var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amountTo, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, "Fixed", profit ], function(error, result){
+            var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amountTo, data.depositExtraId, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, "Fixed", profit ], function(error, result){
               if (error) throw error;
             })
           
@@ -1520,7 +1519,7 @@ class exchangeController{
 
     static simpleswapFixedTransaction = async (req, res)=>{
     
-    const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+    const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
   
   const url = `https://api.simpleswap.io/create_exchange?api_key=${process.env.SIMPLESWAP}`;
 
@@ -1562,8 +1561,8 @@ class exchangeController{
       }else{
         profit=0;
       }
-      var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.amount_to, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
+      var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount_to, data.extra_id_from, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
         if (error) throw error;
       })
     
@@ -1591,7 +1590,7 @@ class exchangeController{
     }
 
     static letsexchangeFixedTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
         const url = "https://api.letsexchange.io/api/v1/transaction";
       
         const params = {
@@ -1633,8 +1632,8 @@ class exchangeController{
             }else{
               profit=0;
             }
-            var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, selllogo, getlogo, amount, data.withdrawal_amount, extraid, refextraid, data.status, recieving_Address, refund_Address,  data.deposit, email, "Fixed", profit ], function(error, result){
+            var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.withdrawal_amount, data.deposit_extra_id, extraid, refextraid, data.status, recieving_Address, refund_Address,  data.deposit, email, "Fixed", profit ], function(error, result){
               if (error) throw error;
             })
           

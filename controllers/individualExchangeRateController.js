@@ -41,6 +41,11 @@ function fetchExchangeVisibilityMeta(){
   });
   }
 
+function calculateUnitConversionPrice(rate, networkFee, amount){
+  let unitPrice=(rate + networkFee)/amount;
+  return unitPrice;
+}
+
 class exchangeRatesController {
 
     static changellyprice=async (req, res)=>{
@@ -72,7 +77,7 @@ class exchangeRatesController {
             eta:"5-30 Min", 
             kyc:"On Occasion", 
             rating:"4.2/5",
-            giveaway:"no giveaway"
+            giveaway:"no_giveaway"
         }
         
 
@@ -213,7 +218,7 @@ class exchangeRatesController {
                 const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[0].floating:visibilityMetaDeta[0].fixed;
 
                 if(metaData.giveaway && visibilityBool===1){
-                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no_giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
@@ -240,7 +245,7 @@ class exchangeRatesController {
             eta:"10-60 Min", 
             kyc:"On Occasion", 
             rating:"4.5/5",
-            giveaway:"no giveaway"
+            giveaway:"no_giveaway"
         }
 
         try {
@@ -286,7 +291,7 @@ class exchangeRatesController {
                 const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[1].floating:visibilityMetaDeta[1].fixed;
 
                 if(metaData.giveaway && visibilityBool===1){
-                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no_giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
@@ -322,7 +327,7 @@ class exchangeRatesController {
             eta:"7-38 Min", 
             kyc:"Rarely Required", 
             rating:"4.7/5",
-            giveaway:"no giveaway"
+            giveaway:"no_giveaway"
         }
 
         try {
@@ -348,7 +353,6 @@ class exchangeRatesController {
           })
         
           const data=await response2.json();
-
           if(data.estimated_amount){
 
             // Storing rate in rateObject
@@ -366,7 +370,7 @@ class exchangeRatesController {
                 const visibilityMetaDeta=await fetchExchangeVisibilityMeta();
                 const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[5].floating:visibilityMetaDeta[5].fixed;
                 if(metaData.giveaway && visibilityBool===1){
-                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no_giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
@@ -402,7 +406,7 @@ class exchangeRatesController {
             eta:"4-20 Min", 
             kyc:"Not Required", 
             rating:"4.3/5",
-            giveaway:"no giveaway"
+            giveaway:"no_giveaway"
         }
 
         try {
@@ -443,7 +447,7 @@ class exchangeRatesController {
                 const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[3].floating:visibilityMetaDeta[3].fixed;
 
                 if(metaData.giveaway && visibilityBool===1){
-                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no_giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
@@ -473,7 +477,7 @@ class exchangeRatesController {
             eta:"9-50 Min", 
             kyc:"Rarely Required", 
             rating:"4.4/5",
-            giveaway:"no giveaway"
+            giveaway:"no_giveaway"
         }
 
         try {
@@ -515,7 +519,7 @@ class exchangeRatesController {
                 const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[6].floating:visibilityMetaDeta[6].fixed;
             
                 if(metaData.giveaway && visibilityBool===1){
-                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no_giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
@@ -553,7 +557,7 @@ class exchangeRatesController {
             eta:"12-26 Min", 
             kyc:"On Occasion", 
             rating:"3.7/5",
-            giveaway:"no giveaway"
+            giveaway:"no_giveaway"
         }
 
         try {
@@ -626,7 +630,7 @@ class exchangeRatesController {
                 const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[2].floating:visibilityMetaDeta[2].fixed;
 
                 if(metaData.giveaway && visibilityBool===1){
-                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no_giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
@@ -661,7 +665,7 @@ class exchangeRatesController {
             eta:"14-51 Min", 
             kyc:"Rarely Required", 
             rating:"4.6/5",
-            giveaway:"no giveaway"
+            giveaway:"no_giveaway"
         }
 
         try {
@@ -694,7 +698,7 @@ class exchangeRatesController {
                 const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[7].floating:visibilityMetaDeta[7].fixed;
 
                 if(metaData.giveaway && visibilityBool===1){
-                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no_giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
@@ -732,7 +736,7 @@ class exchangeRatesController {
             eta:"2-44 Min", 
             kyc:"Not Required", 
             rating:"4.6/5",
-            giveaway:"no giveaway"
+            giveaway:"no_giveaway"
         }
     
         try {
@@ -772,7 +776,7 @@ class exchangeRatesController {
                 const visibilityBool=exchangetype==="Floating"?visibilityMetaDeta[4].floating:visibilityMetaDeta[4].fixed;
                 
                 if(metaData.giveaway && visibilityBool===1){
-                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no giveaway";
+                    rateObject.name===metaData.giveaway?rateObject.giveaway=metaData.tagline:rateObject.giveaway="no_giveaway";
                     return res.status(200).json({rateObject:rateObject, message:"success"});
                 }else{
                     return res.status(502).json({rateObject:rateObject, message:"giveaway meta query error"});
