@@ -473,6 +473,19 @@ class exchangeController{
 
     static changellyFloatingTransaction = async (req, res) => {
         const {sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo,  amount, recieving_Address, refund_Address, email, rateId ,extraid, refextraid, expirytime} = req.body;
+
+        // Create the logger
+        const logger = createLogger({
+                    format: combine(
+                        timestamp(),
+                        logFormat
+                    ),
+                    transports: [
+                        new transports.Console(),
+                        new transports.File({ filename: './logs/exchangeErrorLogs/changelly/swap.log' })
+                    ]
+            });
+
         const privateKeyString = process.env.CHANGELLY_PRIVATE_KEY;
         const privateKey = crypto.createPrivateKey({
             key: privateKeyString,
@@ -536,12 +549,16 @@ class exchangeController{
           };
         
           request(paramCreateExchange, async function (error, response) {
-              if (error) throw error;
+              if (error) throw new Error();
             
             const data = await JSON.parse(response.body);
 
             if(data.error){
-                return res.status(404).json(data);
+              const errorString=JSON.stringify(data.error);
+              const stringData=JSON.stringify(data);
+              const requestBody=JSON.stringify(paramCreateExchange);
+              logger.error(`Error: ${errorString} || response:${stringData} requestURL:https://api.changelly.com/v2, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+              return res.status(404).json(data);
             }
 
             try {
@@ -554,7 +571,7 @@ class exchangeController{
                 }
                 var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.result.amountExpectedTo, data.result.payinExtraId, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit], function(error, result){
-                  if (error) throw error;
+                  if (error) throw new Error();
                 })
               }
               return res.status(200).json({
@@ -575,7 +592,10 @@ class exchangeController{
               });
 
             } catch (error) {
-              return res.status(502).json();              
+              let stringData=JSON.stringify(data);
+              let requestBody=JSON.stringify(paramCreateExchange);
+              logger.error(`Error: ${error} || response:${stringData} requestURL:https://api.changelly.com/v2, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+              return res.status(502).json();             
             }
           })
     }
@@ -583,6 +603,18 @@ class exchangeController{
     static changenowFloatingTransaction = async (req, res)=>{
 
         const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, extraid ,refextraid, expirytime} = req.body
+
+        // Create the logger
+        const logger = createLogger({
+                  format: combine(
+                      timestamp(),
+                      logFormat
+                  ),
+                  transports: [
+                      new transports.Console(),
+                      new transports.File({ filename: './logs/exchangeErrorLogs/changenow/swap.log' })
+                  ]
+          });
 
         const url = `https://api.changenow.io/v1/transactions/${process.env.CHANGENOW}`;
       
@@ -611,6 +643,10 @@ class exchangeController{
 
         //Exchange Api error
         if (data.error){
+          const errorString=JSON.stringify(data.error);
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           return res.status(404).json(data);
         }
 
@@ -624,7 +660,7 @@ class exchangeController{
             }
             var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount,data.payinExtraId, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, profit ], function(error, result){
-              if (error) throw error;
+              if (error) throw new Error();
             })
           
           return res.status(200).json({
@@ -641,10 +677,14 @@ class exchangeController{
             deposit_address:data.payinAddress,
             deposit_extraid:data.payinExtraId?data.payinExtraId:null,
             email:email	,
-            transaction_type:"Floating"
+            transaction_type:"Floating",
+            requestObject:requestObject
           });
         }
         } catch (error) {
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           //Exchange response invalid
           return res.status(502).json();
         }
@@ -653,6 +693,18 @@ class exchangeController{
     static changeheroFloatingTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
       
+                  // Create the logger
+                  const logger = createLogger({
+                    format: combine(
+                        timestamp(),
+                        logFormat
+                    ),
+                    transports: [
+                        new transports.Console(),
+                        new transports.File({ filename: './logs/exchangeErrorLogs/changehero/swap.log' })
+                    ]
+            });
+
         const url = "https://api.changehero.io/v2/";
       
         const params = {
@@ -685,6 +737,10 @@ class exchangeController{
         const data = await response.json();
 
         if (data.error){
+          const errorString=JSON.stringify(data.error);
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           return res.status(404).json(data);
         }
 
@@ -698,7 +754,7 @@ class exchangeController{
             }
             var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.result.amountExpectedTo, data.result.payinExtraId, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, profit ], function(error, result){
-              if (error) throw error;
+              if (error) throw new Error();
             })
           
           return res.status(200).json({
@@ -725,6 +781,10 @@ class exchangeController{
             transaction_type:"Floating"
           })}
         } catch (error) {
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          //Exchange response invalid
           return res.status(502).json();
         }      
       
@@ -732,7 +792,18 @@ class exchangeController{
 
     static stealthexFloatingTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
-
+          
+        // Create the logger
+  const logger = createLogger({
+    format: combine(
+        timestamp(),
+        logFormat
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: './logs/exchangeErrorLogs/stealthex/swap.log' })
+    ]
+});
         const url = `https://api.stealthex.io/api/v2/exchange?api_key=${process.env.STEALTHEX}`;
       
         const params = {
@@ -759,20 +830,12 @@ class exchangeController{
         const response = await fetch(url, options);
         const data = await response.json();
         if(data.err){
+          const errorString=JSON.stringify(data.err);
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           return res.status(404).json(data);
         }
-
-                  // Create the logger
-                  const logger = createLogger({
-                    format: combine(
-                        timestamp(),
-                        logFormat
-                    ),
-                    transports: [
-                        new transports.Console(),
-                        new transports.File({ filename: './logs/stealthex/swap.log' })
-                    ]
-                });
         
         try {
 
@@ -786,8 +849,7 @@ class exchangeController{
 
             var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount_to, data.extra_id_from, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
-              logger.error(`Error: ${error} || transaction_id:${data.id} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit}`);
-              if (error) throw error;
+              if (error) throw new Error();
             })
           
           return res.status(200).json({
@@ -816,13 +878,28 @@ class exchangeController{
           })}
 
         } catch (error) {
-          logger.error(`Error: ${error} returning 502 response`);
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          //Exchange response invalid
           return res.status(502).json();
         }
     }
 
     static exolixFloatingTransaction = async (req, res)=>{
-        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
+        const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body;
+
+                // Create the logger
+  const logger = createLogger({
+    format: combine(
+        timestamp(),
+        logFormat
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: './logs/exchangeErrorLogs/exolix/swap.log' })
+    ]
+});
 
         const url = "https://exolix.com/api/v2/transactions";
       
@@ -849,9 +926,11 @@ class exchangeController{
       
         const response = await fetch(url, options);
         const data = await response.json();
-        console.log(data);
 
         if(data.error || data.message){
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${stringResponse} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           return res.status(404).json(data);
         }
 
@@ -865,7 +944,7 @@ class exchangeController{
             }
             var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amountTo, data.depositExtraId, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, profit ], function(error, result){
-              if (error) throw error;
+              if (error) throw new Error();
             })
           
           return res.status(200).json({
@@ -886,6 +965,10 @@ class exchangeController{
           })};
 
         } catch (error) {
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          //Exchange response invalid
           return res.status(502).json();
         }
     }
@@ -894,6 +977,17 @@ class exchangeController{
         const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body      
         const url = "https://api.simpleswap.io/create_exchange?api_key=ae57f22d-7a23-4dbe-9881-624b2e147759";
       
+                        // Create the logger
+  const logger = createLogger({
+    format: combine(
+        timestamp(),
+        logFormat
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: './logs/exchangeErrorLogs/simpleswap/swap.log' })
+    ]
+});
         const params = {
       
           fixed: false,
@@ -918,6 +1012,10 @@ class exchangeController{
         const data = await response.json();
         
         if(data.error){
+          const errorString=JSON.stringify(data.error);
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           return res.status(404).json(data);
         }
 
@@ -931,7 +1029,7 @@ class exchangeController{
             }
             var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount_to,data.extra_id_from, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, profit ], function(error, result){
-              if (error) throw error;
+              if (error) throw new Error();
             })
           
           return res.status(200).json({
@@ -952,13 +1050,27 @@ class exchangeController{
           })}
 
         } catch (error) {
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          //Exchange response invalid
           return res.status(502).json();
         }
     }
 
     static godexFloatingTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
-      
+        // Create the logger
+  const logger = createLogger({
+    format: combine(
+        timestamp(),
+        logFormat
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: './logs/exchangeErrorLogs/godex/swap.log' })
+    ]
+});
         const url = "https://api.godex.io/api/v1/transaction";
       
         const params = {
@@ -989,6 +1101,10 @@ class exchangeController{
         const data = await response.json();
 
         if(data.validation){
+          const errorString=JSON.stringify(data.validation);
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           return res.status(404).json(data);
         }
       
@@ -1002,7 +1118,7 @@ class exchangeController{
             }
             var sql="INSERT INTO godex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.withdrawal_amount, data.deposit_extra_id, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
-              if (error) throw error;
+              if (error) throw new Error();
             })
           
         return res.status(200).json({
@@ -1023,13 +1139,27 @@ class exchangeController{
           })}
 
         } catch (error) {
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          //Exchange response invalid
           return res.status(502).json();
         }
     }
 
     static letsexchangeFloatingTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid,  refextraid, expirytime} = req.body;
-
+        // Create the logger
+        const logger = createLogger({
+          format: combine(
+              timestamp(),
+              logFormat
+          ),
+          transports: [
+              new transports.Console(),
+              new transports.File({ filename: './logs/exchangeErrorLogs/letsexchange/swap.log' })
+          ]
+      });
         const url = "https://api.letsexchange.io/api/v1/transaction";
 
   const params = {
@@ -1061,6 +1191,10 @@ class exchangeController{
   const data = await response.json();
 
   if(data.error){
+    const errorString=JSON.stringify(data.error);
+    const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
     return res.status(404).json(data);
   }
 
@@ -1074,7 +1208,7 @@ class exchangeController{
       }
       var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname,sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.withdrawal_amount, data.deposit_extra_id, extraid, refextraid, data.status, recieving_Address, refund_Address, data.deposit, email, profit ], function(error, result){
-        if (error) throw error;
+        if (error) throw new Error();
       })
     
     return res.status(200).json({
@@ -1095,7 +1229,11 @@ class exchangeController{
     })}
     
   } catch (error) {
-   return res.status(502).json();
+    const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    //Exchange response invalid
+    return res.status(502).json();
   }
     }
 
@@ -1103,6 +1241,18 @@ class exchangeController{
 
     static changellyFixedTransaction = async (req, res)=>{
         const {sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId ,extraid, refextraid, expirytime} = req.body;
+        // Create the logger
+        const logger = createLogger({
+          format: combine(
+              timestamp(),
+              logFormat
+          ),
+          transports: [
+              new transports.Console(),
+              new transports.File({ filename: './logs/exchangeErrorLogs/changelly/swap.log' })
+          ]
+        });
+        
         const privateKeyString = process.env.CHANGELLY_PRIVATE_KEY;
         const privateKey = crypto.createPrivateKey({
             key: privateKeyString,
@@ -1168,11 +1318,15 @@ class exchangeController{
         
           request(paramy, async function (error, response) {
 
-            if (error) throw error;
+            if (error) throw new Error();
 
             const data = await JSON.parse(response.body);
 
             if(data.error){
+              const errorString=JSON.stringify(data.error);
+              const responseString=JSON.stringify(data);
+              const requestBody=JSON.stringify(paramy);
+              logger.error(`Error: ${errorString} || response:${responseString} requestURL:https://api.changelly.com/v2, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
               return res.status(404).json(data);
           }
 
@@ -1186,7 +1340,7 @@ class exchangeController{
               if(data.result.id){
                 var sql="INSERT INTO changelly_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid,	status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.result.amountExpectedTo, data.result.payinExtraId, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit], function(error, result){
-                  if (error) throw error;
+                  if (error) throw new Error();
                 })
               }
               return res.status(200).json({
@@ -1206,6 +1360,9 @@ class exchangeController{
                 transaction_type:"Fixed"
               });
             } catch (error) {
+              const stringData=JSON.stringify(data);
+              const requestBody=JSON.stringify(paramy)
+              logger.error(`Error: ${error}, response:${stringData} || requestURL:https://api.changelly.com/v2, reauestBody${requestBody} transaction_id:${stringData} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
               return res.status(502).json();
             }
           })
@@ -1214,6 +1371,18 @@ class exchangeController{
     static changenowFixedTransaction = async (req, res)=>{
 
   const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime} = req.body
+
+          // Create the logger
+          const logger = createLogger({
+            format: combine(
+                timestamp(),
+                logFormat
+            ),
+            transports: [
+                new transports.Console(),
+                new transports.File({ filename: './logs/exchangeErrorLogs/changenow/swap.log' })
+            ]
+    });
 
   const url = `https://api.changenow.io/v1/transactions/fixed-rate/${process.env.CHANGENOW}`;
 
@@ -1242,6 +1411,10 @@ class exchangeController{
   const data = await response.json();
           //Exchange Api error
           if (data.error){
+            const errorString=JSON.stringify(data.error);
+            const stringResponse=JSON.stringify(data);
+            const requestBody=JSON.stringify(options);
+            logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
             return res.status(404).json(data);
           }
   try {
@@ -1254,7 +1427,7 @@ class exchangeController{
       }
       var sql="INSERT INTO changenow_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status,  recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount, data.payinExtraId, extraid, refextraid, "waiting", recieving_Address, refund_Address, data.payinAddress, email, "Fixed", profit ], function(error, result){
-        if (error) throw error;
+        if (error) throw new Error();;
       })
     
 
@@ -1284,13 +1457,28 @@ class exchangeController{
     })}
 
   } catch (error) {
-    return res.status(502).json();
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          //Exchange response invalid
+          return res.status(502).json();
   }
     }
 
   static changeheroFixedTransaction = async (req, res)=>{
   const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
 
+                  // Create the logger
+                  const logger = createLogger({
+                    format: combine(
+                        timestamp(),
+                        logFormat
+                    ),
+                    transports: [
+                        new transports.Console(),
+                        new transports.File({ filename: './logs/exchangeErrorLogs/changehero/swap.log' })
+                    ]
+            });
   const url = "https://api.changehero.io/v2/";
 
   const params = {
@@ -1324,6 +1512,10 @@ class exchangeController{
 
   const data = await response.json();
   if (data.error){
+    const errorString=JSON.stringify(data.error);
+    const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
     return res.status(404).json(data);
   }
 
@@ -1337,7 +1529,7 @@ class exchangeController{
       }
       var sql="INSERT INTO changehero_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.result.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.result.amountExpectedTo, data.result.payinExtraId, extraid, refextraid, data.result.status, recieving_Address, refund_Address, data.result.payinAddress, email, "Fixed", profit ], function(error, result){
-        if (error) throw error;
+        if (error) throw new Error();
       })
     
       return res.status(200).json({
@@ -1365,12 +1557,28 @@ class exchangeController{
       transaction_type:"Fixed"
     })}
   } catch (error) {
+    const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    //Exchange response invalid
     return res.status(502).json();
   }   
     }
 
   static stealthexFixedTransaction = async (req, res)=>{
   const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+
+  // Create the logger
+  const logger = createLogger({
+                      format: combine(
+                          timestamp(),
+                          logFormat
+                      ),
+                      transports: [
+                          new transports.Console(),
+                          new transports.File({ filename: './logs/exchangeErrorLogs/stealthex/swap.log' })
+                      ]
+              });
 
   const url = `https://api.stealthex.io/api/v2/exchange?api_key=${process.env.STEALTHEX}`;
 
@@ -1399,20 +1607,13 @@ class exchangeController{
   const data = await response.json();
 
   if(data.err){
+    const errorString=JSON.stringify(data.err);
+    const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
     return res.status(404).json(data);
   }
 
-                    // Create the logger
-                    const logger = createLogger({
-                      format: combine(
-                          timestamp(),
-                          logFormat
-                      ),
-                      transports: [
-                          new transports.Console(),
-                          new transports.File({ filename: './logs/stealthex/swap.log' })
-                      ]
-                  });
 
   try {
     if(data.id){
@@ -1424,8 +1625,7 @@ class exchangeController{
       }
       var sql="INSERT INTO stealthex_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount_to, data.extra_id_from, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
-        logger.error(`Error: ${error} || transaction_id:${data.id} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} transaction_type:Fixed average_profit_percent: ${profit}`);
-        if (error) throw error;
+        if (error) throw new Error();
       })
     
     return res.status(200).json({
@@ -1445,12 +1645,28 @@ class exchangeController{
       transaction_type:"Fixed"
     })}
   } catch (error) {
+    const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    //Exchange response invalid
     return res.status(502).json();
   }
 }
 
     static exolixFixedTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid , refextraid, expirytime  } = req.body
+                
+        // Create the logger
+                const logger = createLogger({
+                  format: combine(
+                      timestamp(),
+                      logFormat
+                  ),
+                  transports: [
+                      new transports.Console(),
+                      new transports.File({ filename: './logs/exchangeErrorLogs/exolix/swap.log' })
+                  ]
+              });
 
         const url = "https://exolix.com/api/v2/transactions";
       
@@ -1480,6 +1696,9 @@ class exchangeController{
         const data = await response.json();
 
         if(data.error || data.message){
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${stringResponse} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           return res.status(404).json(data);
         }
 
@@ -1493,7 +1712,7 @@ class exchangeController{
             }
             var sql="INSERT INTO exolix_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amountTo, data.depositExtraId, extraid, refextraid, data.status, recieving_Address, refund_Address, data.depositAddress, email, "Fixed", profit ], function(error, result){
-              if (error) throw error;
+              if (error) throw new Error();
             })
           
           return res.status(200).json({
@@ -1513,6 +1732,10 @@ class exchangeController{
             transaction_type:"Fixed"
           })}
         } catch (error) {
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          //Exchange response invalid
           return res.status(502).json();
         }
     }
@@ -1520,7 +1743,17 @@ class exchangeController{
     static simpleswapFixedTransaction = async (req, res)=>{
     
     const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
-  
+  // Create the logger
+  const logger = createLogger({
+    format: combine(
+        timestamp(),
+        logFormat
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: './logs/exchangeErrorLogs/simpleswap/swap.log' })
+    ]
+});
   const url = `https://api.simpleswap.io/create_exchange?api_key=${process.env.SIMPLESWAP}`;
 
   const params = {
@@ -1550,6 +1783,10 @@ class exchangeController{
   const data = await response.json();
 
   if(data.error){
+    const errorString=JSON.stringify(data.error);
+    const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
     return res.status(404).json(data);
   }
 
@@ -1563,7 +1800,7 @@ class exchangeController{
       }
       var sql="INSERT INTO simpleswap_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       db.query(sql,[data.id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.amount_to, data.extra_id_from, extraid, refextraid, data.status, recieving_Address, refund_Address, data.address_from, email, "Fixed", profit ], function(error, result){
-        if (error) throw error;
+        if (error) throw new Error();
       })
     
     return res.status(200).json({
@@ -1584,6 +1821,10 @@ class exchangeController{
     })}
 
   } catch (error) {
+    const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    //Exchange response invalid
     return res.status(502).json();
   }
 
@@ -1591,6 +1832,19 @@ class exchangeController{
 
     static letsexchangeFixedTransaction = async (req, res)=>{
         const { sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, recieving_Address, refund_Address, email, rateId, extraid, refextraid, expirytime } = req.body
+                
+        // Create the logger
+                const logger = createLogger({
+                  format: combine(
+                      timestamp(),
+                      logFormat
+                  ),
+                  transports: [
+                      new transports.Console(),
+                      new transports.File({ filename: './logs/exchangeErrorLogs/letsexchange/swap.log' })
+                  ]
+              });
+
         const url = "https://api.letsexchange.io/api/v1/transaction";
       
         const params = {
@@ -1621,6 +1875,10 @@ class exchangeController{
         const data = await response.json();
 
         if(data.error){
+          const errorString=JSON.stringify(data.error);
+          const stringResponse=JSON.stringify(data);
+          const requestBody=JSON.stringify(options);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
           return res.status(404).json(data);
         }
 
@@ -1634,7 +1892,7 @@ class exchangeController{
             }
             var sql="INSERT INTO letsexchange_transactions(transaction_id, expiry_time,	sell_coin,	get_coin, sell_coin_name, get_coin_name, sell_coin_network, get_coin_network, sell_coin_logo, get_coin_logo,	sell_amount,	get_amount, deposit_extraid,	recipient_extraid,	refund_extraid, status, recipient_address, refund_address, deposit_address, email, transaction_type, average_profit_percent	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             db.query(sql,[data.transaction_id, expirytime, sell, get, sellname, getname, sellcoinnetwork, getcoinnetwork, selllogo, getlogo, amount, data.withdrawal_amount, data.deposit_extra_id, extraid, refextraid, data.status, recieving_Address, refund_Address,  data.deposit, email, "Fixed", profit ], function(error, result){
-              if (error) throw error;
+              if (error) throw new Error();
             })
           
           return res.status(200).json({
@@ -1655,7 +1913,11 @@ class exchangeController{
           })}
 
         } catch (error) {
-          return res.status(502).json();
+              const stringResponse=JSON.stringify(data);
+    const requestBody=JSON.stringify(options);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    //Exchange response invalid
+    return res.status(502).json();
         }
     }
 
