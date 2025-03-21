@@ -617,7 +617,7 @@ class exchangeRatesController {
                 }
               )
 
-            const data1=await response1.json();    
+            const data1=await response1.json();
             if(!isNaN(data1.result[0].minFrom)&&!isNaN(data1.result[0].maxFrom)){
                 rateObject.min=parseFloat(data1.result[0].minFrom);
                 rateObject.higher_min=increaseByPercentage(data1.result[0].minFrom, 2);
