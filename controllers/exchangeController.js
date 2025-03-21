@@ -561,7 +561,8 @@ class exchangeController{
               const errorString=JSON.stringify(data.error);
               const stringData=JSON.stringify(data);
               const requestBody=JSON.stringify(paramCreateExchange);
-              logger.error(`Error: ${errorString} || response:${stringData} requestURL:https://api.changelly.com/v2, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+              const proxyRequestBody=JSON.stringify(req.body);
+              logger.error(`Error: ${errorString} || response:${stringData} requestURL:https://api.changelly.com/v2, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody} `);
               return res.status(404).json(data);
             }
 
@@ -592,7 +593,8 @@ class exchangeController{
             } catch (error) {
               let stringData=JSON.stringify(data);
               let requestBody=JSON.stringify(paramCreateExchange);
-              logger.error(`Error: ${error} || response:${stringData} requestURL:https://api.changelly.com/v2, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+              const proxyRequestBody=JSON.stringify(req.body);
+              logger.error(`Error: ${error} || response:${stringData} requestURL:https://api.changelly.com/v2, reauestBody:${requestBody} proxyRequestBody:${proxyRequestBody}`);
               return res.status(502).json();             
             }
           })
@@ -649,7 +651,8 @@ class exchangeController{
           const errorString=JSON.stringify(data.error);
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           return res.status(404).json(data);
         }
 
@@ -675,13 +678,13 @@ class exchangeController{
             deposit_extraid:data.payinExtraId?data.payinExtraId:null,
             email:email	,
             transaction_type:"Floating",
-            requestObject:requestObject
           });
         }
         } catch (error) {
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           //Exchange response invalid
           return res.status(502).json();
         }
@@ -741,7 +744,8 @@ class exchangeController{
           const errorString=JSON.stringify(data.error);
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           return res.status(404).json(data);
         }
 
@@ -778,7 +782,8 @@ class exchangeController{
         } catch (error) {
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reuestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           //Exchange response invalid
           return res.status(502).json();
         }      
@@ -831,7 +836,8 @@ class exchangeController{
           const errorString=JSON.stringify(data.err);
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           return res.status(404).json(data);
         }
         
@@ -871,7 +877,8 @@ class exchangeController{
         } catch (error) {
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           //Exchange response invalid
           return res.status(502).json();
         }
@@ -924,7 +931,8 @@ class exchangeController{
         if(data.error || data.message){
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${stringResponse} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${stringResponse} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           return res.status(404).json(data);
         }
 
@@ -955,7 +963,8 @@ class exchangeController{
         } catch (error) {
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           //Exchange response invalid
           return res.status(502).json();
         }
@@ -1009,7 +1018,8 @@ class exchangeController{
           const errorString=JSON.stringify(data.error);
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           return res.status(404).json(data);
         }
 
@@ -1040,7 +1050,8 @@ class exchangeController{
         } catch (error) {
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           //Exchange response invalid
           return res.status(502).json();
         }
@@ -1096,7 +1107,8 @@ class exchangeController{
           const errorString=JSON.stringify(data.validation);
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           return res.status(404).json(data);
         }
       
@@ -1127,7 +1139,8 @@ class exchangeController{
         } catch (error) {
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} ${proxyRequestBody}`);
           //Exchange response invalid
           return res.status(502).json();
         }
@@ -1184,7 +1197,8 @@ class exchangeController{
     const errorString=JSON.stringify(data.error);
     const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     return res.status(404).json(data);
   }
 
@@ -1216,7 +1230,8 @@ class exchangeController{
   } catch (error) {
     const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     //Exchange response invalid
     return res.status(502).json();
   }
@@ -1315,7 +1330,8 @@ class exchangeController{
               const errorString=JSON.stringify(data.error);
               const responseString=JSON.stringify(data);
               const requestBody=JSON.stringify(paramy);
-              logger.error(`Error: ${errorString} || response:${responseString} requestURL:https://api.changelly.com/v2, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+              const proxyRequestBody=JSON.stringify(req.body);
+              logger.error(`Error: ${errorString} || response:${responseString} requestURL:https://api.changelly.com/v2, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
               return res.status(404).json(data);
           }
 
@@ -1344,8 +1360,9 @@ class exchangeController{
               });
             } catch (error) {
               const stringData=JSON.stringify(data);
-              const requestBody=JSON.stringify(paramy)
-              logger.error(`Error: ${error}, response:${stringData} || requestURL:https://api.changelly.com/v2, reauestBody${requestBody} transaction_id:${stringData} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+              const requestBody=JSON.stringify(paramy);
+              const proxyRequestBody=JSON.stringify(req.body);
+              logger.error(`Error: ${error}, response:${stringData} || requestURL:https://api.changelly.com/v2, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
               return res.status(502).json();
             }
           })
@@ -1400,7 +1417,8 @@ class exchangeController{
             const errorString=JSON.stringify(data.error);
             const stringResponse=JSON.stringify(data);
             const requestBody=JSON.stringify(options);
-            logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+            const proxyRequestBody=JSON.stringify(req.body);
+            logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
             return res.status(404).json(data);
           }
   try {
@@ -1439,7 +1457,8 @@ class exchangeController{
   } catch (error) {
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           //Exchange response invalid
           return res.status(502).json();
   }
@@ -1498,7 +1517,8 @@ class exchangeController{
     const errorString=JSON.stringify(data.error);
     const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     return res.status(404).json(data);
   }
 
@@ -1536,7 +1556,8 @@ class exchangeController{
   } catch (error) {
     const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     //Exchange response invalid
     return res.status(502).json();
   }   
@@ -1589,7 +1610,8 @@ class exchangeController{
     const errorString=JSON.stringify(data.err);
     const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     return res.status(404).json(data);
   }
 
@@ -1621,7 +1643,8 @@ class exchangeController{
   } catch (error) {
     const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     //Exchange response invalid
     return res.status(502).json();
   }
@@ -1675,7 +1698,8 @@ class exchangeController{
         if(data.error || data.message){
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${stringResponse} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${stringResponse} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           return res.status(404).json(data);
         }
 
@@ -1706,7 +1730,8 @@ class exchangeController{
         } catch (error) {
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
           //Exchange response invalid
           return res.status(502).json();
         }
@@ -1761,7 +1786,8 @@ class exchangeController{
     const errorString=JSON.stringify(data.error);
     const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     return res.status(404).json(data);
   }
 
@@ -1792,7 +1818,8 @@ class exchangeController{
   } catch (error) {
     const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     //Exchange response invalid
     return res.status(502).json();
   }
@@ -1851,7 +1878,8 @@ class exchangeController{
           const errorString=JSON.stringify(data.error);
           const stringResponse=JSON.stringify(data);
           const requestBody=JSON.stringify(options);
-          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+          const proxyRequestBody=JSON.stringify(req.body);
+          logger.error(`Error: ${errorString} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody${proxyRequestBody}`);
           return res.status(404).json(data);
         }
 
@@ -1882,7 +1910,8 @@ class exchangeController{
         } catch (error) {
               const stringResponse=JSON.stringify(data);
     const requestBody=JSON.stringify(options);
-    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} expiry_time:${expirytime} sell: ${sell} get: ${get}   sellname: ${sellname} getname: ${getname} selllogo: ${selllogo} getlogo: ${getlogo} amount: ${amount} get_amount: ${data.amount_to} extraid: ${extraid} refextraid: ${refextraid} status: ${data.status} recipient_address: ${recieving_Address} refund_address: ${refund_Address} deposit_address: ${data.address_from} email: ${email} average_profit_percent: ${profit} rateId${rateId}`);
+    const proxyRequestBody=JSON.stringify(req.body);
+    logger.error(`Error: ${error} || response${stringResponse} requestURL:${url}, reauestBody${requestBody} proxyRequestBody:${proxyRequestBody}`);
     //Exchange response invalid
     return res.status(502).json();
         }
